@@ -30,13 +30,29 @@ public class ArmadaDAO {
         }
     }
     
-    public List<Armada> getArmadaByPage(int page, int pageSize) throws SQLException {
+    public List<Armada> getArmadaByPage(int page, int pageSize, String filter) throws SQLException {
         List<Armada> armadaList = new ArrayList<>();
-        String sql = "SELECT * FROM armada LIMIT ? OFFSET ?";
+        
+        // Query dengan WHERE jika ada filter
+        String sql = "SELECT * FROM armada";
+
+        if (filter != null && !filter.trim().isEmpty()) {
+            sql += " WHERE nopol LIKE ? OR kendaraan LIKE ? OR pemilik LIKE ? OR alamat LIKE ? OR kota LIKE ? OR telp LIKE ?";
+        }
+
+        sql += " LIMIT ? OFFSET ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, pageSize); // Jumlah data per halaman
-            stmt.setInt(2, (page - 1) * pageSize); // Offset = (page - 1) * pageSize
+            int paramIndex = 1;
+        
+            if (filter != null && !filter.trim().isEmpty()) {
+                for (int i = 0; i < 6; i++) { // 6 kolom yang difilter
+                    stmt.setString(paramIndex++, "%" + filter + "%");
+                }
+            }
+
+            stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
+            stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

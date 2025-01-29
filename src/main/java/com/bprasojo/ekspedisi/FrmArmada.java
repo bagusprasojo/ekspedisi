@@ -41,7 +41,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
 
     private void loadData(int page) {
         try {
-            List<Armada> armadaList = dao.getArmadaByPage(page, pageSize);
+            List<Armada> armadaList = dao.getArmadaByPage(page, pageSize, edSearch.getText());
             tableModel.setRowCount(0); // Bersihkan tabel
 
             for (Armada armada : armadaList) {
