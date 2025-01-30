@@ -1,6 +1,9 @@
 package com.bprasojo.ekspedisi;
 
+import java.awt.Component;
+import java.net.URL;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -39,6 +42,7 @@ public class MainForm extends javax.swing.JFrame {
         miCustomer = new javax.swing.JMenuItem();
         miArmada = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
+        miTransaksiKas = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -71,6 +75,11 @@ public class MainForm extends javax.swing.JFrame {
         jMenu2.setText("Master Data");
 
         miCustomer.setText("Customer");
+        miCustomer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miCustomerActionPerformed(evt);
+            }
+        });
         jMenu2.add(miCustomer);
 
         miArmada.setText("Armada");
@@ -84,6 +93,15 @@ public class MainForm extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Administrasi");
+
+        miTransaksiKas.setText("Transaksi Kas");
+        miTransaksiKas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miTransaksiKasActionPerformed(evt);
+            }
+        });
+        jMenu3.add(miTransaksiKas);
+
         jMenuBar1.add(jMenu3);
 
         jMenu4.setText("Akuntansi");
@@ -114,6 +132,18 @@ public class MainForm extends javax.swing.JFrame {
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void miTransaksiKasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miTransaksiKasActionPerformed
+        FrmTransaksiKas frmTransaksiKas = new FrmTransaksiKas();
+        desktopPane.add(frmTransaksiKas);
+        frmTransaksiKas.setVisible(true);
+    }//GEN-LAST:event_miTransaksiKasActionPerformed
+
+    private void miCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCustomerActionPerformed
+        FrmDefault frmDefault = new FrmDefault();
+        desktopPane.add(frmDefault);
+        frmDefault.setVisible(true);
+    }//GEN-LAST:event_miCustomerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -160,5 +190,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
+    private javax.swing.JMenuItem miTransaksiKas;
     // End of variables declaration//GEN-END:variables
 }

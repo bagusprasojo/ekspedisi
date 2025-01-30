@@ -31,6 +31,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Customer"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miCustomerActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miArmada">
               <Properties>
@@ -46,6 +49,16 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Administrasi"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miTransaksiKas">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Transaksi Kas"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miTransaksiKasActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu4">
           <Properties>

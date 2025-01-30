@@ -94,5 +94,33 @@ public class ArmadaDAO {
             return false;
         }
     }
+
+    public Armada getArmadaById(int armadaId) throws SQLException {
+        return getArmada("id", armadaId);
+    }
+    
+    public Armada getArmadaByNoPol(String noPol) throws SQLException {
+        return getArmada("nopol", noPol);
+    }
+    
+    
+    private Armada getArmada(String column, Object value) throws SQLException {
+        String query = "SELECT * FROM armada WHERE " + column + " = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setObject(1, value);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Armada(
+                        rs.getString("nopol"),
+                        rs.getString("kendaraan"),
+                        rs.getString("pemilik"),
+                        rs.getString("alamat"),
+                        rs.getString("kota"),                        
+                        rs.getString("telp")
+                );
+            }
+        }
+        return null;
+    }
 }
 
