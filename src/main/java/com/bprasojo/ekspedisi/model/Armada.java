@@ -8,22 +8,24 @@ package com.bprasojo.ekspedisi.model;
  *
  * @author USER
  */
-public class Armada {
+public class Armada extends BaseClass{
     private String nopol;
     private String kendaraan;
     private String pemilik;
     private String alamat;
     private String kota;
     private String telp;
+    private Integer id;
 
     // Constructor
-    public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp) {
+    public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp, Integer id) {
         this.nopol = nopol;
         this.kendaraan = kendaraan;
         this.pemilik = pemilik;
         this.alamat = alamat;
         this.kota = kota;
         this.telp = telp;
+        this.id = id;
     }
 
     // Getters and Setters
@@ -33,6 +35,15 @@ public class Armada {
 
     public void setNopol(String nopol) {
         this.nopol = nopol;
+    }
+    
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getKendaraan() {
@@ -77,14 +88,7 @@ public class Armada {
 
     @Override
     public String toString() {
-        return "Armada{" +
-                "nopol='" + nopol + '\'' +
-                ", kendaraan='" + kendaraan + '\'' +
-                ", pemilik='" + pemilik + '\'' +
-                ", alamat='" + alamat + '\'' +
-                ", kota='" + kota + '\'' +
-                ", telp='" + telp + '\'' +
-                '}';
+        return nopol + '-' +kendaraan;
     }
 }
 

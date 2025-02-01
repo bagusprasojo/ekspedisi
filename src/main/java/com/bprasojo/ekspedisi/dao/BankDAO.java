@@ -26,7 +26,7 @@ public class BankDAO {
 
     // Tambah Bank
     public void addBank(Bank bank) throws SQLException {
-        String query = "INSERT INTO bank (no_rekening, nama_bank, atas_nama, keterangan) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO bank (no_rekening, nama_bank, atas_nama, keterangan, akun_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, bank.getNoRekening());
             stmt.setString(2, bank.getNamaBank());
@@ -37,11 +37,10 @@ public class BankDAO {
         }
     }
 
-    // Ambil Bank berdasarkan No Rekening
-    public Bank getBankByNoRekening(String noRekening) throws SQLException {
-        String query = "SELECT * FROM bank WHERE no_rekening = ?";
+    private Bank getBank(String column, Object value) throws SQLException {
+        String query = "SELECT * FROM bank WHERE " + column + " = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, noRekening);
+            stmt.setObject(1, value);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 PerkiraanDAO perkiraanDao = new PerkiraanDAO();
@@ -57,6 +56,15 @@ public class BankDAO {
             }
         }
         return null;
+    }
+    
+    // Ambil Bank berdasarkan No Rekening
+    public Bank getBankByNoRekening(String noRekening) throws SQLException {
+        return getBank("noRekening", noRekening);
+    }
+    
+    public Bank getBankById(Integer id) throws SQLException {
+        return getBank("id", id);
     }
 
     // Ambil semua Bank

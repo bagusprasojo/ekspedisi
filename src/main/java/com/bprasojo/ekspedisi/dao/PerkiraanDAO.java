@@ -75,6 +75,26 @@ public class PerkiraanDAO {
     }
 
 
+    public List<Perkiraan> getAllPerkiraanKas() throws SQLException {
+        List<Perkiraan> perkiraans = new ArrayList<>();
+        String query = "SELECT * FROM perkiraan where nama = 'KAS'";
+        try (Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                perkiraans.add(new Perkiraan(
+                        rs.getString("kode"),
+                        rs.getString("nama"),
+                        rs.getInt("parent_id"),
+                        rs.getString("golongan"),
+                        rs.getString("kelompok"),
+                        rs.getInt("level"),
+                        rs.getString("saldo_normal"),
+                        rs.getInt("id")
+                ));
+            }
+        }
+        return perkiraans;
+    }
     // Mengambil seluruh data Perkiraan
     public List<Perkiraan> getAllPerkiraan() throws SQLException {
         List<Perkiraan> perkiraans = new ArrayList<>();

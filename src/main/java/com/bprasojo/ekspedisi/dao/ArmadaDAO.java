@@ -62,7 +62,8 @@ public class ArmadaDAO {
                         rs.getString("pemilik"),
                         rs.getString("alamat"),
                         rs.getString("kota"),
-                        rs.getString("telp")
+                        rs.getString("telp"),
+                        rs.getInt("id")
                     );
                     armadaList.add(armada);
                 }
@@ -116,7 +117,8 @@ public class ArmadaDAO {
                         rs.getString("pemilik"),
                         rs.getString("alamat"),
                         rs.getString("kota"),                        
-                        rs.getString("telp")
+                        rs.getString("telp"),
+                        rs.getInt("id")
                 );
             }
         }

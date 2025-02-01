@@ -130,7 +130,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_miArmadaActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        
+        dispose();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void miTransaksiKasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miTransaksiKasActionPerformed

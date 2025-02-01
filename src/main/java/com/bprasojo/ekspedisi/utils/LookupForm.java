@@ -1,21 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.bprasojo.ekspedisi.utils;
 
-/**
- *
- * @author USER
- */
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import javax.swing.*;
 import javax.swing.table.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,17 +18,18 @@ public class LookupForm extends javax.swing.JDialog {
     private JTextField txtFilter;
     private final JButton btnOK;
     private final JButton btnCancel;
-    private Object selectedRecord;
+    private Map<String, Object> selectedRecord;
     private Connection conn;
+    private List<String> columnNames;
 
-    public LookupForm(Frame parent, String sqlQuery) {
-        super(parent, true); // Menggunakan JOptionPane untuk mengambil Frame
+    public LookupForm(javax.swing.JInternalFrame owner, String sqlQuery, Boolean setVisible) {
+        super(JOptionPane.getFrameForComponent(owner), true); // Menggunakan JOptionPane untuk mengambil Frame
         try {
             this.conn = DatabaseConnection.getConnection();
         } catch (SQLException ex) {
             Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         setLayout(new BorderLayout());
 
         // Panel untuk Filter
@@ -77,7 +71,7 @@ public class LookupForm extends javax.swing.JDialog {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
                 int modelRow = table.convertRowIndexToModel(selectedRow);
-                selectedRecord = tableModel.getDataVector().get(modelRow);
+                selectedRecord = getSelectedRowData(modelRow);
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Pilih baris terlebih dahulu.");
@@ -95,7 +89,8 @@ public class LookupForm extends javax.swing.JDialog {
 
         // Atur ukuran dan lokasi form
         setSize(800, 600);
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(JOptionPane.getFrameForComponent(owner));
+        this.setVisible(setVisible);
     }
 
     private void loadData(String sqlQuery, Connection connection) {
@@ -103,11 +98,15 @@ public class LookupForm extends javax.swing.JDialog {
             // Atur kolom di tabel
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
-            Vector<String> columnNames = new Vector<>();
+            columnNames = new ArrayList<>();
+
+            Vector<String> columnHeaders = new Vector<>();
             for (int i = 1; i <= columnCount; i++) {
-                columnNames.add(metaData.getColumnName(i));
+                String columnName = metaData.getColumnName(i);
+                columnNames.add(columnName);
+                columnHeaders.add(columnName);
             }
-            tableModel.setColumnIdentifiers(columnNames);
+            tableModel.setColumnIdentifiers(columnHeaders);
 
             // Isi data ke tabel
             Vector<Vector<Object>> data = new Vector<>();
@@ -126,26 +125,15 @@ public class LookupForm extends javax.swing.JDialog {
         }
     }
 
-    public Object getSelectedRecord() {
-        return selectedRecord;
+    private Map<String, Object> getSelectedRowData(int modelRow) {
+        Map<String, Object> rowData = new LinkedHashMap<>();
+        for (int i = 0; i < columnNames.size(); i++) {
+            rowData.put(columnNames.get(i), tableModel.getValueAt(modelRow, i));
+        }
+        return rowData;
     }
 
-//    public static void main(String[] args) {
-//        // Contoh koneksi ke database
-//        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/your_database", "username", "password")) {
-//            String sqlQuery = "SELECT * FROM your_table"; // Ganti dengan SQL Anda
-//            LookupForm lookupForm = new LookupForm(null, sqlQuery);
-//            lookupForm.setVisible(true);
-//
-//            Object selectedRecord = lookupForm.getSelectedRecord();
-//            if (selectedRecord != null) {
-//                System.out.println("Data Terpilih: " + selectedRecord);
-//            } else {
-//                System.out.println("Tidak ada data yang dipilih.");
-//            }
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
+    public Map<String, Object> getSelectedRecord() {
+        return selectedRecord;
+    }
 }
-

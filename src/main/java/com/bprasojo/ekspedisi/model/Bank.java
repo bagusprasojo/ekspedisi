@@ -3,7 +3,7 @@ package com.bprasojo.ekspedisi.model;
 /**
  * Model Bank
  */
-public class Bank {
+public class Bank extends BaseClass{
     private String noRekening;
     private String namaBank;
     private String atasNama;
@@ -30,7 +30,8 @@ public class Bank {
         this.akun = akun;
     }
     
-    public Integer getId() {
+    @Override
+    public int getId() {
         return id;
     }
     
@@ -72,11 +73,6 @@ public class Bank {
 
     @Override
     public String toString() {
-        return "Bank{" +
-                "noRekening='" + noRekening + '\'' +
-                ", namaBank='" + namaBank + '\'' +
-                ", atasNama='" + atasNama + '\'' +
-                ", keterangan='" + keterangan + '\'' +
-                '}';
+        return namaBank + '-' + noRekening ;
     }
 }

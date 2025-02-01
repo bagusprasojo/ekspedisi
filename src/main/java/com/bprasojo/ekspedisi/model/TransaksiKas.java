@@ -5,21 +5,25 @@
 package com.bprasojo.ekspedisi.model;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
+import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import java.sql.SQLException;
-import java.sql.Date;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
  *
  * @author USER
  */
-public class TransaksiKas {
+public class TransaksiKas extends  BaseClass{
     private int id;
     private int akunKasId; // ID untuk lazy loading
     private Perkiraan akunKas; // Properti lazy
     private int akunTransaksiId; // ID untuk lazy loading
     private Perkiraan akunTransaksi; // Properti lazy
+    
+    private int bankId;
+    private Bank bank;
     private Date tanggal;
     private int nominalMasuk;
     private int nominalKeluar;
@@ -29,18 +33,26 @@ public class TransaksiKas {
 
     private final PerkiraanDAO perkiraanDAO; // DAO untuk lazy loading
     private final ArmadaDAO armadaDAO; // DAO untuk lazy loading
+    private final BankDAO bankDAO; // DAO untuk lazy loading
 
     // Constructor untuk DAO injection
     public TransaksiKas() {
         this.perkiraanDAO = new PerkiraanDAO();
         this.armadaDAO = new ArmadaDAO();
+        this.bankDAO = new BankDAO();
     }
 
     // Getter dan Setter biasa
+    @Override
     public int getId() { return id; }
+    
     public void setId(int id) { this.id = id; }
     public int getAkunKasId() { return akunKasId; }
     public void setAkunKasId(int akunKasId) { this.akunKasId = akunKasId; }
+    
+    public int getBankId() { return bankId; }
+    public void setBankId(int bankId) { this.bankId = bankId; }
+    
     public int getAkunTransaksiId() { return akunTransaksiId; }
     public void setAkunTransaksiId(int akunTransaksiId) { this.akunTransaksiId = akunTransaksiId; }
     public Date getTanggal() { return tanggal; }
@@ -84,6 +96,14 @@ public class TransaksiKas {
             armada = armadaDAO.getArmadaById(armadaId);
         }
         return armada;
+    }
+    
+    // Lazy loading untuk bank
+    public Bank getBank() throws SQLException {
+        if (bank == null && bankId != 0) {
+            bank = bankDAO.getBankById(bankId);
+        }
+        return bank;
     }
 }
 

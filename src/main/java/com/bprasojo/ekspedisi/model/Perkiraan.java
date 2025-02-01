@@ -97,16 +97,8 @@ public class Perkiraan {
     }
 
     @Override
-    public String toString() {
-        return "Perkiraan{" +
-                "kode='" + kode + '\'' +
-                ", nama='" + nama + '\'' +
-                ", parentId=" + parent_Id +
-                ", golongan='" + golongan + '\'' +
-                ", group='" + kelompok + '\'' +
-                ", level=" + level +
-                ", kredit='" + saldo_normal + '\'' +
-                '}';
+    public String toString() {        
+        return kode + '-' + nama; // Agar JComboBox menampilkan hanya nama
     }
 }
 

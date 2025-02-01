@@ -142,6 +142,11 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         btnEdit.setMaximumSize(new java.awt.Dimension(60, 70));
         btnEdit.setMinimumSize(new java.awt.Dimension(60, 70));
         btnEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnEdit);
 
         btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Delete32.png"))); // NOI18N
@@ -250,7 +255,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
                         .addComponent(edPemilik, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(edKendaraan, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(edNoPolisi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -434,7 +439,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         String telp = edTelp.getText();
 
         // Buat objek Armada
-        Armada armada = new Armada(nopol, kendaraan, pemilik, alamat, kota, telp);
+        Armada armada = new Armada(nopol, kendaraan, pemilik, alamat, kota, telp, 0);
 
         // Simpan ke database
         
@@ -474,6 +479,10 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         currentPage++;
         loadData(currentPage);
     }//GEN-LAST:event_btnNextActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+//        setT
+    }//GEN-LAST:event_btnEditActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
