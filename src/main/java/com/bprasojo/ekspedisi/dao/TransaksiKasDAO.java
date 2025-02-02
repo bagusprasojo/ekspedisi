@@ -30,6 +30,10 @@ public class TransaksiKasDAO {
             Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public Connection getConnection(){
+        return this.conn;
+    }
 
     public List<Map<String, Object>> getTransaksiKasByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -45,7 +49,7 @@ public class TransaksiKasDAO {
             sql += " AND (a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ? OR c.no_rekening LIKE ? OR d.nopol LIKE ?)";
         }
 
-        sql += " LIMIT ? OFFSET ?";
+        sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Set date parameters

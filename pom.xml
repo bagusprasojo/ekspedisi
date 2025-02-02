@@ -29,6 +29,12 @@
             <artifactId>JDatePicker</artifactId>
             <version>1.3.6</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>7.0.1</version>
+        </dependency>
+
     </dependencies> <!-- Tutup tag dependencies -->
 
 </project>

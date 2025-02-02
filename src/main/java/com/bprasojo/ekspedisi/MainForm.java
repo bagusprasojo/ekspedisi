@@ -1,5 +1,6 @@
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.awt.Component;
 import java.net.URL;
 import javax.swing.JFrame;
@@ -42,7 +43,12 @@ public class MainForm extends javax.swing.JFrame {
         miCustomer = new javax.swing.JMenuItem();
         miArmada = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
+        jMenu5 = new javax.swing.JMenu();
         miTransaksiKas = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -94,13 +100,37 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenu3.setText("Administrasi");
 
+        jMenu5.setText("Mutasi Kas");
+
         miTransaksiKas.setText("Transaksi Kas");
         miTransaksiKas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miTransaksiKasActionPerformed(evt);
             }
         });
-        jMenu3.add(miTransaksiKas);
+        jMenu5.add(miTransaksiKas);
+
+        jMenuItem1.setText("Pembelian BBM");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem1);
+
+        jMenuItem2.setText("Jurnal Penyesuaian");
+        jMenu5.add(jMenuItem2);
+        jMenu5.add(jSeparator1);
+
+        jMenuItem4.setText("Rekap Transaksi Kas");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem4);
+
+        jMenu3.add(jMenu5);
 
         jMenuBar1.add(jMenu3);
 
@@ -145,6 +175,19 @@ public class MainForm extends javax.swing.JFrame {
         frmDefault.setVisible(true);
     }//GEN-LAST:event_miCustomerActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        FrmInputBBM frmInputBBM = new FrmInputBBM();
+        desktopPane.add(frmInputBBM);
+        frmInputBBM.setVisible(true);
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        FrmRptRekapTransaksiKas frmRptRekapTransaksiKas = new FrmRptRekapTransaksiKas();
+        desktopPane.add(frmRptRekapTransaksiKas);
+        frmRptRekapTransaksiKas.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -186,8 +229,13 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
     private javax.swing.JMenuItem miTransaksiKas;

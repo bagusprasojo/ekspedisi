@@ -4,9 +4,21 @@
  */
 package com.bprasojo.ekspedisi.utils;
 
+import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.BaseClass;
+import com.toedter.calendar.JDateChooser;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -43,5 +55,48 @@ public class AppUtils {
         }
         
         comboBox.setSelectedIndex(-1);
+    }
+    
+    public static void showReport(String sourceFileName, Map<String, Object> params) throws JRException{
+        try {
+            Connection conn  = DatabaseConnection.getConnection();
+            
+            JasperPrint print = JasperFillManager.fillReport(sourceFileName, params, conn);
+            JasperViewer viewer = new JasperViewer(print, false);
+            viewer.setVisible(true);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }       
+        
+    }
+    
+    public static void SetTanggalToday(JDateChooser edTanggal){
+        Calendar calendar = Calendar.getInstance();
+        Date today = calendar.getTime(); 
+        edTanggal.setDate(today);    
+    }
+    
+    public static void SetTanggalAwalBulan(JDateChooser edTanggal){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set tanggal ke 1
+        Date firstOfMonth = calendar.getTime();
+        edTanggal.setDate(firstOfMonth);   
+    }
+    
+    public static void SetTanggalAkhirBulan(JDateChooser edTanggal){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Set ke hari terakhir bulan
+        Date lastDayOfMonth = calendar.getTime();
+        edTanggal.setDate(lastDayOfMonth);
+    }
+    
+    public static Integer getIntValue(JFormattedTextField ed) {
+        Integer nilaiInt = 0;
+        if (ed.getValue() != null){
+            nilaiInt = ((Number) ed.getValue()).intValue();
+        }
+        
+        return nilaiInt;
+        
     }
 }
