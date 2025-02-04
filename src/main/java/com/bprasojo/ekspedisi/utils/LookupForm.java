@@ -22,6 +22,9 @@ public class LookupForm extends javax.swing.JDialog {
     private Connection conn;
     private List<String> columnNames;
 
+//	 Tambahkan MouseListener ke tabel
+    
+
     public LookupForm(javax.swing.JInternalFrame owner, String sqlQuery, Boolean setVisible) {
         super(JOptionPane.getFrameForComponent(owner), true); // Menggunakan JOptionPane untuk mengambil Frame
         try {
@@ -83,6 +86,23 @@ public class LookupForm extends javax.swing.JDialog {
             selectedRecord = null;
             dispose();
         });
+        
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Cek apakah ini adalah double-click (klik dua kali)
+                if (e.getClickCount() == 2) {
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow != -1) {
+                        int modelRow = table.convertRowIndexToModel(selectedRow);
+                        selectedRecord = getSelectedRowData(modelRow);
+                        dispose(); // Menutup dialog setelah memilih data
+                    } else {
+                        JOptionPane.showMessageDialog(LookupForm.this, "Pilih baris terlebih dahulu.");
+                    }
+                }
+            }
+        });
 
         // Load Data ke Tabel
         loadData(sqlQuery, conn);
@@ -90,6 +110,8 @@ public class LookupForm extends javax.swing.JDialog {
         // Atur ukuran dan lokasi form
         setSize(800, 600);
         setLocationRelativeTo(JOptionPane.getFrameForComponent(owner));
+        
+        
         this.setVisible(setVisible);
     }
 

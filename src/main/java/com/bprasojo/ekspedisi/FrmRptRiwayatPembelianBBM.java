@@ -65,6 +65,7 @@ public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         edPemilik = new javax.swing.JTextField();
 
+        setClosable(true);
         setTitle("Riwayat Pembelian BBM");
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -158,6 +159,7 @@ public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
+//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/Blank_A4.jasper";
         String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/RiwayatPembelianBBM.jasper";
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
