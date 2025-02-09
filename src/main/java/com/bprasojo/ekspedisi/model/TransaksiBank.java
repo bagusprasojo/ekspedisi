@@ -11,20 +11,22 @@ package com.bprasojo.ekspedisi.model;
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.JenisTransaksiDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.SQLException;
 
-public class TransaksiBank {
+public class TransaksiBank extends BaseClass{
     private int id;
     private Date tanggal;
     private int bankUtamaId;
     private JenisTransaksi jenisTransaksi;
-    private double debet;
-    private double kredit;
+    private int debet;
+    private int kredit;
     private int bankTujuanId;
     private int akunUtamaId;
     private int akunTujuanId;
     private int jenisTransaksiId;
+    private String uraian;
+    private int biayaAdmBank;
 
     private transient Bank bankUtama; // Lazy loading
     private transient Bank bankTujuan; // Lazy loading
@@ -34,7 +36,7 @@ public class TransaksiBank {
 
     public TransaksiBank() {}
 
-    public TransaksiBank(int id, Date tanggal, int bankUtamaId, int jenisTransaksiid, double debet, double kredit, int bankTujuanId, int akunUtamaId, int akunTujuanId) {
+    public TransaksiBank(int id, Date tanggal, int bankUtamaId, int jenisTransaksiid, int debet, int kredit, int bankTujuanId, int akunUtamaId, int akunTujuanId, int biayaAdmBank, String uraian) {
         this.id = id;
         this.tanggal = tanggal;
         this.bankUtamaId = bankUtamaId;
@@ -44,35 +46,59 @@ public class TransaksiBank {
         this.bankTujuanId = bankTujuanId;
         this.akunUtamaId = akunUtamaId;
         this.akunTujuanId = akunTujuanId;
+        this.biayaAdmBank = biayaAdmBank;
+        this.uraian = uraian;
     }
 
     // Getter & Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+    
+    public int getbiayaAdmBank() { return biayaAdmBank; }
+    public void setbiayaAdmBank(int biayaAdmBank) { this.biayaAdmBank = biayaAdmBank; }
+    
+    public String getUraian() { return uraian; }
+    public void setUraian(String uraian) { this.uraian = uraian; }
 
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
 
     public int getBankUtamaId() { return bankUtamaId; }
-    public void setBankUtamaId(int bankUtamaId) { this.bankUtamaId = bankUtamaId; }
+    public void setBankUtamaId(int bankUtamaId) { 
+        this.bankUtamaId = bankUtamaId; 
+        this.bankUtama = null; 
+    }
 
     public int getJenisTransaksiId() { return jenisTransaksiId; }
-    public void setJenisTransaksiId(int jenisTransaksiId) { this.jenisTransaksiId = jenisTransaksiId; }
+    public void setJenisTransaksiId(int jenisTransaksiId) { 
+        this.jenisTransaksiId = jenisTransaksiId; 
+        this.jenisTransaksi = null;
+    
+    }
 
-    public double getDebet() { return debet; }
-    public void setDebet(double debet) { this.debet = debet; }
+    public int getDebet() { return debet; }
+    public void setDebet(int debet) { this.debet = debet; }
 
-    public double getKredit() { return kredit; }
-    public void setKredit(double kredit) { this.kredit = kredit; }
+    public int getKredit() { return kredit; }
+    public void setKredit(int kredit) { this.kredit = kredit; }
 
     public Integer getBankTujuanId() { return bankTujuanId; }
-    public void setBankTujuanId(Integer bankTujuanId) { this.bankTujuanId = bankTujuanId; }
+    public void setBankTujuanId(Integer bankTujuanId) { 
+        this.bankTujuanId = bankTujuanId; 
+        this.bankTujuan = null; 
+    }
 
     public int getAkunUtamaId() { return akunUtamaId; }
-    public void setAkunUtamaId(int akunUtamaId) { this.akunUtamaId = akunUtamaId; }
+    public void setAkunUtamaId(int akunUtamaId) { 
+        this.akunUtamaId = akunUtamaId; 
+        this.akunTujuan = null;
+    }
 
     public Integer getAkunTujuanId() { return akunTujuanId; }
-    public void setAkunTujuanId(Integer akunTujuanId) { this.akunTujuanId = akunTujuanId; }
+    public void setAkunTujuanId(Integer akunTujuanId) { 
+        this.akunTujuanId = akunTujuanId; 
+        this.akunTujuan = null;
+    }
 
     // Lazy Loading Bank Utama
     public Bank getBankUtama() throws SQLException {

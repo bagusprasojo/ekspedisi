@@ -60,7 +60,7 @@ public class BankDAO {
     
     // Ambil Bank berdasarkan No Rekening
     public Bank getBankByNoRekening(String noRekening) throws SQLException {
-        return getBank("noRekening", noRekening);
+        return getBank("no_Rekening", noRekening);
     }
     
     public Bank getBankById(Integer id) throws SQLException {

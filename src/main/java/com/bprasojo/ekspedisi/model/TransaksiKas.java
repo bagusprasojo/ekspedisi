@@ -48,13 +48,22 @@ public class TransaksiKas extends  BaseClass{
     
     public void setId(int id) { this.id = id; }
     public int getAkunKasId() { return akunKasId; }
-    public void setAkunKasId(int akunKasId) { this.akunKasId = akunKasId; }
+    public void setAkunKasId(int akunKasId) { 
+        this.akunKasId = akunKasId; 
+        this.akunKas   = null; 
+    }
     
     public int getBankId() { return bankId; }
-    public void setBankId(int bankId) { this.bankId = bankId; }
+    public void setBankId(int bankId) { 
+        this.bankId = bankId; 
+        this.bank = null; 
+    }
     
     public int getAkunTransaksiId() { return akunTransaksiId; }
-    public void setAkunTransaksiId(int akunTransaksiId) { this.akunTransaksiId = akunTransaksiId; }
+    public void setAkunTransaksiId(int akunTransaksiId) { 
+        this.akunTransaksiId = akunTransaksiId; 
+        this.akunTransaksi = null; 
+    }
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
     public int getNominalMasuk() { return nominalMasuk; }
@@ -64,7 +73,10 @@ public class TransaksiKas extends  BaseClass{
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
     public int getArmadaId() { return armadaId; }
-    public void setArmadaId(int armadaId) { this.armadaId = armadaId; }
+    public void setArmadaId(int armadaId) { 
+        this.armadaId = armadaId; 
+        this.armada = null; 
+    }
 
     // Lazy loading untuk akunKas
     public Perkiraan getAkunKas() {

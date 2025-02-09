@@ -4,6 +4,27 @@
  */
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.dao.BankDAO;
+import com.bprasojo.ekspedisi.dao.JenisTransaksiDAO;
+import com.bprasojo.ekspedisi.dao.TransaksiBankDAO;
+import com.bprasojo.ekspedisi.model.Bank;
+import com.bprasojo.ekspedisi.model.JenisTransaksi;
+import com.bprasojo.ekspedisi.model.TransaksiBank;
+import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author USER
@@ -13,8 +34,51 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     /**
      * Creates new form FrmTransaksiBank
      */
+    
+    Bank bank = null;    
+    Bank bankTujuan = null;    
+    BankDAO bankDAO = null;
+    
+    TransaksiBank transaksiBank= null;
+    TransaksiBankDAO transaksiBankDAO = null;
+    
+    JenisTransaksi jenisTransaksi = null;
+    JenisTransaksiDAO jenisTransaksiDAO = null; 
+    
+    private int currentPage = 1;
+    private boolean SilakanLoadData = false;
+    private final DefaultTableModel tableModel;
+    private String frmMode = "";
+    
     public FrmTransaksiBank() {
         initComponents();
+        
+        pnlInput.remove(pnlBank);
+        pnlInput.revalidate();
+        pnlInput.repaint();
+        
+        bankDAO = new BankDAO();
+        transaksiBankDAO = new TransaksiBankDAO();
+        jenisTransaksiDAO = new JenisTransaksiDAO();
+        
+        AppUtils.SetTanggalAwalBulan(edTglAwal);
+        AppUtils.SetTanggalToday(edTglAkhir);        
+        
+        LoadJenisTransaksi();
+        cbJenisTransaksi.setSelectedIndex(-1);
+        
+        LoadBankTujuan();
+        cbBankTujuan.setSelectedIndex(-1);
+        
+        tableModel = new DefaultTableModel(new String[]{"ID","Tanggal", "No Rek", "Nama Bank","Atas Nama", "Kode","Transaksi", "Debet", "Kredit","Adm. Bank", "Keterangan","User"}, 0);
+        tblTransaksiBank.setModel(tableModel);
+//        tblTransaksiBank.setEnabled(false);
+        
+        SilakanLoadData = true;
+        LoadDataTransaksiBank(currentPage);
+        inisialisasiEventTableModel();
+        
+        setStatusTombol("awal");
     }
 
     /**
@@ -26,27 +90,1023 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pnlList = new javax.swing.JPanel();
+        pnlNextPrev = new javax.swing.JPanel();
+        btnPrev = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        edTglAwal = new com.toedter.calendar.JDateChooser();
+        jLabel6 = new javax.swing.JLabel();
+        edTglAkhir = new com.toedter.calendar.JDateChooser();
+        jLabel10 = new javax.swing.JLabel();
+        edFilter = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblTransaksiBank = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        jToolBar1 = new javax.swing.JToolBar();
+        btnNew = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
+        btnBatal = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+        btnKeluar = new javax.swing.JButton();
+        pnlInput = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        edNoRek = new javax.swing.JTextField();
+        btnRek = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        edBank = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        edAtasNama = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        edSaldoAkhir = new javax.swing.JFormattedTextField();
+        jLabel7 = new javax.swing.JLabel();
+        edTanggal = new com.toedter.calendar.JDateChooser();
+        jLabel8 = new javax.swing.JLabel();
+        cbJenisTransaksi = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        edDebet = new javax.swing.JFormattedTextField();
+        jLabel11 = new javax.swing.JLabel();
+        edKredit = new javax.swing.JFormattedTextField();
+        jLabel12 = new javax.swing.JLabel();
+        edUraian = new javax.swing.JTextField();
+        pnlBank = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        cbBankTujuan = new javax.swing.JComboBox<>();
+        jLabel14 = new javax.swing.JLabel();
+        edBiayaAdmBank = new javax.swing.JFormattedTextField();
+        btnBack = new javax.swing.JButton();
+        btnLihatBank = new javax.swing.JButton();
+
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
         setTitle("Transaksi Bank");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 394, Short.MAX_VALUE)
+        pnlList.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlList.setLayout(new java.awt.BorderLayout());
+
+        pnlNextPrev.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        btnPrev.setText("<< Prev");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
+
+        btnNext.setText("Next >>");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlNextPrevLayout = new javax.swing.GroupLayout(pnlNextPrev);
+        pnlNextPrev.setLayout(pnlNextPrevLayout);
+        pnlNextPrevLayout.setHorizontalGroup(
+            pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNextPrevLayout.createSequentialGroup()
+                .addContainerGap(610, Short.MAX_VALUE)
+                .addComponent(btnPrev)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnNext)
+                .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 274, Short.MAX_VALUE)
+        pnlNextPrevLayout.setVerticalGroup(
+            pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNextPrevLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNext)
+                    .addComponent(btnPrev))
+                .addContainerGap())
         );
+
+        pnlList.add(pnlNextPrev, java.awt.BorderLayout.SOUTH);
+
+        jLabel5.setText("Periode");
+
+        edTglAwal.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                edTglAwalPropertyChange(evt);
+            }
+        });
+
+        jLabel6.setText("s.d.");
+
+        edTglAkhir.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                edTglAkhirPropertyChange(evt);
+            }
+        });
+
+        jLabel10.setText("Filter");
+
+        edFilter.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                edFilterKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(edTglAwal, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel6)
+                .addGap(12, 12, 12)
+                .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(edFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel10)
+                        .addComponent(edFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edTglAkhir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(edTglAwal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(10, 10, 10))
+        );
+
+        pnlList.add(jPanel2, java.awt.BorderLayout.NORTH);
+
+        tblTransaksiBank.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tblTransaksiBank.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tblTransaksiBankFocusGained(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblTransaksiBank);
+
+        pnlList.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(pnlList, java.awt.BorderLayout.CENTER);
+
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        jToolBar1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jToolBar1.setRollover(true);
+
+        btnNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Add32.png"))); // NOI18N
+        btnNew.setText("Tambah");
+        btnNew.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnNew.setFocusable(false);
+        btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNew.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnNew.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnNew);
+
+        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Edit32.png"))); // NOI18N
+        btnEdit.setText("Edit");
+        btnEdit.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnEdit.setFocusable(false);
+        btnEdit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEdit.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnEdit.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnEdit);
+
+        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Save32.png"))); // NOI18N
+        btnSimpan.setText("Simpan");
+        btnSimpan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnSimpan.setFocusable(false);
+        btnSimpan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimpan.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnSimpan.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnSimpan.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnSimpan);
+
+        btnBatal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Undo32.png"))); // NOI18N
+        btnBatal.setText("Batal");
+        btnBatal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnBatal.setFocusable(false);
+        btnBatal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBatal.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnBatal.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnBatal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnBatal);
+
+        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Delete32.png"))); // NOI18N
+        btnHapus.setText("Hapus");
+        btnHapus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnHapus.setFocusable(false);
+        btnHapus.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnHapus.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnHapus.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnHapus.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnHapus);
+
+        btnKeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Close32.png"))); // NOI18N
+        btnKeluar.setText("Keluar");
+        btnKeluar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnKeluar.setFocusable(false);
+        btnKeluar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnKeluar.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnKeluar.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnKeluar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKeluarActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnKeluar);
+
+        jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
+
+        pnlInput.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText("No Rekening");
+
+        btnRek.setText("...");
+        btnRek.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRekActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel2.setText("Nama Bank");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("Atas Nama");
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel4.setText("Saldo Akhir");
+
+        edSaldoAkhir.setEditable(false);
+        edSaldoAkhir.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edSaldoAkhir.setEnabled(false);
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setText("Tanggal");
+
+        jLabel8.setText("Transaksi");
+
+        cbJenisTransaksi.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbJenisTransaksiItemStateChanged(evt);
+            }
+        });
+        cbJenisTransaksi.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                cbJenisTransaksiPropertyChange(evt);
+            }
+        });
+
+        jLabel9.setText("Debet");
+
+        edDebet.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel11.setText("Kredit");
+
+        edKredit.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel12.setText("Uraian");
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel13.setText("Bank Tujuan");
+
+        cbBankTujuan.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbBankTujuanItemStateChanged(evt);
+            }
+        });
+
+        jLabel14.setText("Biaya Adm. Bank");
+
+        edBiayaAdmBank.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edBiayaAdmBank.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        btnBack.setText("Kembali");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlBankLayout = new javax.swing.GroupLayout(pnlBank);
+        pnlBank.setLayout(pnlBankLayout);
+        pnlBankLayout.setHorizontalGroup(
+            pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBankLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cbBankTujuan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(edBiayaAdmBank, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnBack)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        pnlBankLayout.setVerticalGroup(
+            pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBankLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                    .addGroup(pnlBankLayout.createSequentialGroup()
+                        .addGroup(pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(cbBankTujuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlBankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel14)
+                            .addComponent(edBiayaAdmBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnLihatBank.setText("Lihat Bank");
+        btnLihatBank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLihatBankActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
+        pnlInput.setLayout(pnlInputLayout);
+        pnlInputLayout.setHorizontalGroup(
+            pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlInputLayout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(edNoRek)
+                    .addComponent(edBank)
+                    .addComponent(edAtasNama)
+                    .addComponent(edSaldoAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addComponent(btnRek)
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addComponent(cbJenisTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLihatBank))
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addComponent(edDebet, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edKredit, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edUraian))
+                .addContainerGap(24, Short.MAX_VALUE))
+            .addGroup(pnlInputLayout.createSequentialGroup()
+                .addComponent(pnlBank, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlInputLayout.setVerticalGroup(
+            pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlInputLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(edNoRek, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRek)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(edBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8)
+                            .addComponent(cbJenisTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnLihatBank))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(edAtasNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(edDebet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11)
+                            .addComponent(edKredit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(edSaldoAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12)
+                            .addComponent(edUraian, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel1.add(pnlInput, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        transaksiBank  = new TransaksiBank();
+        
+        bank = null;
+        edNoRek.setText("");
+        edAtasNama.setText("");
+        edBank.setText("");
+        edSaldoAkhir.setValue(0);        
+
+        AppUtils.SetTanggalToday(edTanggal);
+        cbJenisTransaksi.setSelectedIndex(-1);
+        edDebet.setValue(0);
+        edKredit.setValue(0);
+        edUraian.setText("");
+        
+        cbBankTujuan.setSelectedIndex(-1);
+        edBiayaAdmBank.setValue(0);
+
+        setStatusTombol("tambah");
+    }//GEN-LAST:event_btnNewActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        setStatusTombol("edit");
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        if (validasiInput() == false){
+            return;
+        }
+
+        try {
+            transaksiBank.setBankUtamaId(bank.getId());
+            transaksiBank.setAkunUtamaId(bank.getAkun().getId());
+            transaksiBank.setTanggal(edTanggal.getDate());
+            
+            transaksiBank.setJenisTransaksiId(jenisTransaksi.getId());
+            
+            if (jenisTransaksi.getKode().equals("20")){
+                transaksiBank.setBankTujuanId(bankTujuan.getId());
+                transaksiBank.setAkunTujuanId(bankTujuan.getAkun().getId());                
+                
+                transaksiBank.setbiayaAdmBank(((Number) edBiayaAdmBank.getValue()).intValue());
+            } else {
+                transaksiBank.setAkunTujuanId(jenisTransaksi.getAkunId());
+                transaksiBank.setBankTujuanId(0);
+                transaksiBank.setbiayaAdmBank(0);
+            }
+            
+            
+            int nominalDebet = 0;
+            if (edDebet.getValue() != null){
+                nominalDebet  = ((Number) edDebet.getValue()).intValue();
+            }
+            
+            int nominalKredit = 0;
+            if (edKredit.getValue() != null){
+                nominalKredit = ((Number) edKredit.getValue()).intValue();
+            }
+            
+            
+            transaksiBank.setDebet(nominalDebet);
+            transaksiBank.setKredit(nominalKredit);
+            transaksiBank.setUraian(edUraian.getText());
+            
+            transaksiBankDAO.save(transaksiBank);
+
+            AppUtils.showInfoDialog("Data berhasil disimpan!");
+            LoadDataTransaksiBank(currentPage);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
+            AppUtils.showErrorDialog("Gagal simpan dengan pesan " + ex.toString());
+            
+        }
+    }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        setStatusTombol("awal");
+    }//GEN-LAST:event_btnBatalActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
+
+        if (userConfirmed) {
+            try {
+                transaksiBankDAO.delete(transaksiBank.getId());
+                setStatusTombol("awal");
+                LoadDataTransaksiBank(currentPage);
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnKeluarActionPerformed
+
+    private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
+        if (currentPage > 1) {
+            currentPage--;
+            LoadDataTransaksiBank(currentPage);
+        }
+    }//GEN-LAST:event_btnPrevActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        currentPage++;
+        LoadDataTransaksiBank(currentPage);
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void edTglAwalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwalPropertyChange
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataTransaksiBank(currentPage);
+        }
+    }//GEN-LAST:event_edTglAwalPropertyChange
+
+    private void edTglAkhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAkhirPropertyChange
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataTransaksiBank(currentPage);
+        }
+    }//GEN-LAST:event_edTglAkhirPropertyChange
+
+    private void edFilterKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edFilterKeyReleased
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataTransaksiBank(currentPage);
+        }
+    }//GEN-LAST:event_edFilterKeyReleased
+
+    private void btnRekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRekActionPerformed
+        String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
+        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+        if (selectedRecord != null) {
+            try {
+                // Mengambil nilai dengan nama kolom
+                String no_rekening = selectedRecord.get("no_rekening").toString();
+                bank = bankDAO.getBankByNoRekening(no_rekening);
+                
+                if (bank != null){
+                    edNoRek.setText(bank.getNoRekening());
+                    edAtasNama.setText(bank.getAtasNama());
+                    edBank.setText(bank.getNamaBank());
+                    edSaldoAkhir.setValue(0);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
+        }
+    }//GEN-LAST:event_btnRekActionPerformed
+
+    private void cbJenisTransaksiPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbJenisTransaksiPropertyChange
+        
+    }//GEN-LAST:event_cbJenisTransaksiPropertyChange
+
+    private void cbJenisTransaksiItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbJenisTransaksiItemStateChanged
+        btnLihatBank.setVisible(false);
+        
+        edDebet.setValue(0);
+        edKredit.setValue(0);
+        
+        jenisTransaksi = (JenisTransaksi) cbJenisTransaksi.getSelectedItem();
+        if (jenisTransaksi != null){
+            if (null != jenisTransaksi.getKode())switch (jenisTransaksi.getKode()) {
+                case "01" -> {
+                    edDebet.setEnabled(false);
+                    edKredit.setEnabled(true);
+                }
+                case "02" -> {
+                    edDebet.setEnabled(false);
+                    edKredit.setEnabled(true);
+                }
+                case "03" -> {
+                    edDebet.setEnabled(false);
+                    edKredit.setEnabled(true);
+                }
+                case "04" -> {
+                    edDebet.setEnabled(true);
+                    edKredit.setEnabled(true);
+                }
+                case "06" -> {
+                    edDebet.setEnabled(true);
+                    edKredit.setEnabled(true);
+                }
+                case "08" -> {
+                    edDebet.setEnabled(true);
+                    edKredit.setEnabled(false);
+                }
+                case "20" -> {
+                    edDebet.setEnabled(true);
+                    edKredit.setEnabled(false);
+                    
+                    btnLihatBank.setVisible(true);
+                    
+                    if (frmMode.equals("tambah") || frmMode.equals("edit")){                    
+                        jPanel1.remove(pnlInput);
+                        jPanel1.add(pnlBank, java.awt.BorderLayout.CENTER);
+                        jPanel1.revalidate();
+                        jPanel1.repaint();
+                    }
+                    
+                }
+                default -> {
+                }
+            }
+        }
+    }//GEN-LAST:event_cbJenisTransaksiItemStateChanged
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        jPanel1.remove(pnlBank);
+        jPanel1.add(pnlInput, java.awt.BorderLayout.CENTER);
+        jPanel1.revalidate();
+        jPanel1.repaint();
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnLihatBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLihatBankActionPerformed
+        jPanel1.remove(pnlInput);
+        jPanel1.add(pnlBank, java.awt.BorderLayout.CENTER);
+        jPanel1.revalidate();
+        jPanel1.repaint();
+    }//GEN-LAST:event_btnLihatBankActionPerformed
+
+    private void tblTransaksiBankFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblTransaksiBankFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblTransaksiBankFocusGained
+
+    private void cbBankTujuanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbBankTujuanItemStateChanged
+        bankTujuan = (Bank) cbBankTujuan.getSelectedItem();
+    }//GEN-LAST:event_cbBankTujuanItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnKeluar;
+    private javax.swing.JButton btnLihatBank;
+    private javax.swing.JButton btnNew;
+    private javax.swing.JButton btnNext;
+    private javax.swing.JButton btnPrev;
+    private javax.swing.JButton btnRek;
+    private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<Bank> cbBankTujuan;
+    private javax.swing.JComboBox<JenisTransaksi> cbJenisTransaksi;
+    private javax.swing.JTextField edAtasNama;
+    private javax.swing.JTextField edBank;
+    private javax.swing.JFormattedTextField edBiayaAdmBank;
+    private javax.swing.JFormattedTextField edDebet;
+    private javax.swing.JTextField edFilter;
+    private javax.swing.JFormattedTextField edKredit;
+    private javax.swing.JTextField edNoRek;
+    private javax.swing.JFormattedTextField edSaldoAkhir;
+    private com.toedter.calendar.JDateChooser edTanggal;
+    private com.toedter.calendar.JDateChooser edTglAkhir;
+    private com.toedter.calendar.JDateChooser edTglAwal;
+    private javax.swing.JTextField edUraian;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JPanel pnlBank;
+    private javax.swing.JPanel pnlInput;
+    private javax.swing.JPanel pnlList;
+    private javax.swing.JPanel pnlNextPrev;
+    private javax.swing.JTable tblTransaksiBank;
     // End of variables declaration//GEN-END:variables
+    
+    private void inisialisasiEventTableModel() {
+        tblTransaksiBank.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // Memeriksa apakah ada baris yang dipilih
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = tblTransaksiBank.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    if (selectedRow != -1) {
+                        
+                        Integer id = (Integer) tblTransaksiBank.getValueAt(selectedRow, 0);
+                        LoadTransaksiBank(id);
+                        setStatusTombol("selected");
+                    }
+                }
+            }
+
+            private void LoadTransaksiBank(Integer id) {
+                try {
+                    transaksiBank = transaksiBankDAO.getById(id);
+                    if (transaksiBank != null){
+                        bank = transaksiBank.getBankUtama();
+                        edBank.setText(bank.getNamaBank());
+                        edNoRek.setText(bank.getNoRekening());
+                        edAtasNama.setText(bank.getAtasNama());
+                        
+                        edTanggal.setDate(transaksiBank.getTanggal());
+                        
+                        if (transaksiBank.getJenisTransaksiId() > 0){
+                            AppUtils.setSelectedIndexById(cbJenisTransaksi, transaksiBank.getJenisTransaksiId());                            
+                            if (transaksiBank.getJenisTransaksi().getKode().equals("20")){
+                                btnLihatBank.setVisible(true);
+                                AppUtils.setSelectedIndexById(cbBankTujuan, transaksiBank.getBankTujuanId());
+                                edBiayaAdmBank.setValue(transaksiBank.getbiayaAdmBank());                                
+                            } else {
+                                btnLihatBank.setVisible(false);
+                                cbBankTujuan.setSelectedIndex(-1);
+                                edBiayaAdmBank.setValue(0);
+                            }
+                        } else {
+                          cbJenisTransaksi.setSelectedIndex(-1);
+                        }
+                        
+                        edDebet.setValue(transaksiBank.getDebet());
+                        edKredit.setValue(transaksiBank.getKredit());
+                        edUraian.setText(transaksiBank.getUraian());
+                        
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+    
+    private void enableKomponenInput(boolean enable){
+        edNoRek.setEnabled(enable);
+        btnRek.setEnabled(enable);
+        edBank.setEnabled(enable);
+        edAtasNama.setEnabled(enable);
+        edTanggal.setEnabled(enable);
+        cbJenisTransaksi.setEnabled(enable);
+        edDebet.setEnabled(enable);
+        edKredit.setEnabled(enable);
+        edUraian.setEnabled(enable);
+    }
+    
+    private void setStatusTombol(String mode){
+        frmMode = mode;
+        if (frmMode == "awal"){
+            btnNew.setEnabled(true);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(false);
+            btnBatal.setEnabled(false);
+            btnHapus.setEnabled(false);
+            pnlInput.setEnabled(false);
+            
+            enableKomponenInput(false);
+            
+            
+        } else if (frmMode == "tambah"){
+            btnNew.setEnabled(false);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(true);
+            btnBatal.setEnabled(true);
+            btnHapus.setEnabled(false);
+            pnlInput.setEnabled(true);
+            
+            enableKomponenInput(true);
+        } else if (frmMode == "edit"){
+            btnNew.setEnabled(false);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(true);
+            btnBatal.setEnabled(true);
+            btnHapus.setEnabled(true);
+            pnlInput.setEnabled(true);
+            
+            enableKomponenInput(true);
+        } else if (frmMode == "selected"){
+            btnNew.setEnabled(true);
+            btnEdit.setEnabled(true);
+            btnSimpan.setEnabled(false);
+            btnBatal.setEnabled(false);
+            btnHapus.setEnabled(true);
+            pnlInput.setEnabled(false);
+            
+            enableKomponenInput(false);
+        }
+    }
+    
+    private void LoadJenisTransaksi() {
+        try {
+            List<JenisTransaksi> jenisTransaksis = jenisTransaksiDAO.getAll();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<JenisTransaksi> model = new DefaultComboBoxModel<>();
+            for (JenisTransaksi jt : jenisTransaksis) {
+                model.addElement(jt); // Menambahkan objek Perkiraan ke model
+            }
+            cbJenisTransaksi.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private boolean validasiInput() {
+        if (bank == null){
+            AppUtils.showWarningDialog("Bank belum dipilih");
+            edNoRek.requestFocusInWindow();
+            return false;
+        } else if (jenisTransaksi == null){
+            AppUtils.showWarningDialog("Jenis transaksi belum dipilih");
+            cbJenisTransaksi.requestFocusInWindow();
+            return false;
+        } 
+        
+        if (jenisTransaksi.getKode().equals("20")){
+            if (bankTujuan == null){
+                AppUtils.showWarningDialog("Bank tujuan belum diisi");
+                return false;
+            }
+            
+            int biayaAdmBank = ((Number) edBiayaAdmBank.getValue()).intValue();
+            if (biayaAdmBank <= 0){
+                AppUtils.showWarningDialog("Biaya adm bank tujuan belum diisi");
+                return false;
+            }
+        }
+        
+        if (validasiInputNominal() == false){
+            return false;
+        }
+        
+        return true;
+        
+    }
+
+    private boolean validasiInputNominal(){
+        int nilaiDebet = ((Number) edDebet.getValue()).intValue();
+        int nilaiKredit = ((Number) edKredit.getValue()).intValue();
+        
+        if (jenisTransaksi != null){
+            if (null != jenisTransaksi.getKode())switch (jenisTransaksi.getKode()) {
+                case "01" -> {
+                    edDebet.setValue(0);
+                    if (nilaiKredit <= 0){
+                        AppUtils.showWarningDialog("Nilai kredit belum diisi");
+                        return false;
+                    }
+                    
+                }
+                case "02" -> {
+                    edDebet.setValue(0);
+                    if (nilaiKredit <= 0){
+                        AppUtils.showWarningDialog("Nilai kredit belum diisi");
+                        return false;
+                    }
+                }
+                case "03" -> {
+                    edDebet.setValue(0);
+                    if (nilaiKredit <= 0){
+                        AppUtils.showWarningDialog("Nilai kredit belum diisi");
+                        return false;
+                    }
+                }
+                case "04" -> {
+//                    edDebet.setValue(0);
+                    if (nilaiKredit <= 0 && nilaiDebet <= 0){
+                        AppUtils.showWarningDialog("Nilai debet/kredit belum diisi");
+                        return false;
+                    }
+                }
+                case "06" -> {
+                    if (nilaiKredit <= 0 && nilaiDebet <= 0){
+                        AppUtils.showWarningDialog("Nilai debet/kredit belum diisi");
+                        return false;
+                    }
+                }
+                case "08" -> {
+                    edKredit.setValue(0);
+                    if (nilaiDebet <= 0){
+                        AppUtils.showWarningDialog("Nilai debet belum diisi");
+                        return false;
+                    }
+                }
+                case "20" -> {
+                    edKredit.setValue(0);
+                    if (nilaiDebet <= 0){
+                        AppUtils.showWarningDialog("Nilai debet belum diisi");
+                        return false;
+                    }
+                    
+                }
+                default -> {
+                }
+            }
+        }
+        
+        return true;
+    }
+    private void LoadDataTransaksiBank(int currentPage) {
+        tableModel.setRowCount(0);
+        
+        List<Map<String, Object>> result = transaksiBankDAO.getTransaksiBankByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
+        for (Map<String, Object> row : result) {
+            tableModel.addRow(new Object[]{
+                        (Integer) row.get("id"),
+                        (Date) row.get("tanggal"),
+                        (String) row.get("no_rekening"),
+                        (String) row.get("nama_bank"),
+                        (String) row.get("atas_nama"),
+                        (String) row.get("kode"),
+                        (String) row.get("nama"),
+                        (String) row.get("debet").toString(),
+                        (String) row.get("kredit").toString(),
+                        (String) row.get("biaya_adm_bank").toString(),
+                        (String) row.get("uraian"),
+                        (String) row.get("pc")
+                });
+        }
+        
+        tblTransaksiBank.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    }
+
+    private void LoadBankTujuan() {
+        try {
+            List<Bank> banks = bankDAO.getAllBank();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Bank> model = new DefaultComboBoxModel<>();
+            for (Bank b : banks) {
+                model.addElement(b); // Menambahkan objek Perkiraan ke model
+            }
+            cbBankTujuan.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

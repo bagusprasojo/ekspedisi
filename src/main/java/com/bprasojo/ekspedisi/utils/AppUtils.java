@@ -25,6 +25,10 @@ import net.sf.jasperreports.view.JasperViewer;
  * @author USER
  */
 public class AppUtils {
+    public static void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
     public static void showWarningDialog(String message) {
         JOptionPane.showMessageDialog(null, message, "Warning", JOptionPane.WARNING_MESSAGE);
     }

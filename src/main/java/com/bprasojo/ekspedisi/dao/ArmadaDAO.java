@@ -30,6 +30,10 @@ public class ArmadaDAO {
         }
     }
     
+    protected Connection getConnection(){
+        return this.conn;
+    
+    }
     public List<Armada> getArmadaByPage(int page, int pageSize, String filter) throws SQLException {
         List<Armada> armadaList = new ArrayList<>();
         
@@ -42,7 +46,7 @@ public class ArmadaDAO {
 
         sql += " LIMIT ? OFFSET ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             int paramIndex = 1;
         
             if (filter != null && !filter.trim().isEmpty()) {
@@ -77,7 +81,7 @@ public class ArmadaDAO {
         String sql = "INSERT INTO armada (nopol, kendaraan, pemilik, alamat, kota, telp) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
             // Mengatur nilai parameter
             stmt.setString(1, armada.getNopol());
@@ -107,7 +111,7 @@ public class ArmadaDAO {
     
     private Armada getArmada(String column, Object value) throws SQLException {
         String query = "SELECT * FROM armada WHERE " + column + " = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setObject(1, value);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

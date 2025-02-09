@@ -18,7 +18,6 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -28,10 +27,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -44,8 +39,6 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
      */
     
     private Perkiraan perkiraanTransaksi = null;
-    private Armada armada = null;
-    private Bank bank = null;
     private TransaksiKas transaksiKas = null;
             
     
@@ -54,7 +47,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     private final BankDAO bankDAO = new BankDAO();
     private final TransaksiKasDAO transaksiKasDAO = new TransaksiKasDAO();
     
-    private DefaultTableModel tableModel;
+    private final DefaultTableModel tableModel;
             
     
     private int currentPage = 1;
@@ -520,7 +513,6 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         perkiraanTransaksi = null;
         cbBank.setSelectedIndex(-1);
         
-        armada = null;
         cbArmada.setSelectedIndex(-1);
         
         
@@ -852,6 +844,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                         
                         edUangKeluar.setValue(transaksiKas.getNominalKeluar());
                         edUangMasuk.setValue(transaksiKas.getNominalMasuk());
+                        edTanggal.setDate(transaksiKas.getTanggal());
+                        edKeterangan.setText(transaksiKas.getKeterangan());
                         
                     }
                 } catch (SQLException ex) {

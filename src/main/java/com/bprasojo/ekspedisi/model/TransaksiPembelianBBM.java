@@ -41,7 +41,10 @@ public class TransaksiPembelianBBM extends BaseClass{
     public void setId(int id) { this.id = id; }
 
     public int getArmadaId() { return armadaId; }
-    public void setArmadaId(int armadaId) { this.armadaId = armadaId; }
+    public void setArmadaId(int armadaId) { 
+        this.armadaId = armadaId; 
+        this.armada  = null; 
+    }
 
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }

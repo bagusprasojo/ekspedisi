@@ -9,10 +9,9 @@ package com.bprasojo.ekspedisi.model;
  * @author USER
  */
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
-import java.sql.Connection;
 import java.sql.SQLException;
 
-public class JenisTransaksi {
+public class JenisTransaksi extends BaseClass{
     private int id;
     private String kode;
     private String nama;
@@ -40,7 +39,10 @@ public class JenisTransaksi {
     public void setNama(String nama) { this.nama = nama; }
 
     public int getAkunId() { return akunId; }
-    public void setAkunId(int akunId) { this.akunId = akunId; }
+    public void setAkunId(int akunId) { 
+        this.akunId = akunId; 
+        this.akun = null;
+    }
 
     // Lazy Loading Akun
     public Perkiraan getAkun() throws SQLException {
@@ -49,6 +51,11 @@ public class JenisTransaksi {
             akun = perkiraanDAO.getPerkiraanById(this.akunId);
         }
         return akun;
+    }
+    
+    @Override
+    public String toString() {
+        return kode + '-' + nama ;
     }
 }
 

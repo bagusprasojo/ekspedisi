@@ -50,7 +50,11 @@ public class MainForm extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenu6 = new javax.swing.JMenu();
+        jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -142,13 +146,31 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenu3.add(jMenu5);
 
-        jMenuItem6.setText("Transaksi Bank");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+        jMenu6.setText("Transaksi Bank");
+
+        jMenuItem8.setText("Transaksi Bank");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
+                jMenuItem8ActionPerformed(evt);
             }
         });
-        jMenu3.add(jMenuItem6);
+        jMenu6.add(jMenuItem8);
+
+        jMenuItem6.setText("Rekening Koran");
+        jMenu6.add(jMenuItem6);
+
+        jMenuItem7.setText("Rekap Transaksi");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem7);
+
+        jMenuItem9.setText("Rekap Saldo Bank");
+        jMenu6.add(jMenuItem9);
+
+        jMenu3.add(jMenu6);
 
         jMenuBar1.add(jMenu3);
 
@@ -212,12 +234,17 @@ public class MainForm extends javax.swing.JFrame {
         frmRptRiwayatPembelianBBM.setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         FrmTransaksiBank frmTransaksiBank = new FrmTransaksiBank();
         desktopPane.add(frmTransaksiBank);
         frmTransaksiBank.setVisible(true);
-                
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        FrmRptRekapTransaksiBank frmRptRekapTransaksiBank = new FrmRptRekapTransaksiBank();
+        desktopPane.add(frmRptRekapTransaksiBank);
+        frmRptRekapTransaksiBank.setVisible(true);
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,6 +288,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -268,6 +296,9 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;

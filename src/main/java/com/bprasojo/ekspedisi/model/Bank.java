@@ -21,6 +21,16 @@ public class Bank extends BaseClass{
         this.akun = akun;
     }
 
+    public Bank() {
+        this.noRekening = "";
+        this.namaBank = "";
+        this.atasNama = "";
+        this.keterangan = "";
+        this.id = 0;
+        this.akun = null;
+        
+    }
+
     // Getter dan Setter
     public Perkiraan getAkun() {
         return akun;
