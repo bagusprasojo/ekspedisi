@@ -157,6 +157,11 @@ public class MainForm extends javax.swing.JFrame {
         jMenu6.add(jMenuItem8);
 
         jMenuItem6.setText("Rekening Koran");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
         jMenu6.add(jMenuItem6);
 
         jMenuItem7.setText("Rekap Transaksi");
@@ -168,6 +173,11 @@ public class MainForm extends javax.swing.JFrame {
         jMenu6.add(jMenuItem7);
 
         jMenuItem9.setText("Rekap Saldo Bank");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
         jMenu6.add(jMenuItem9);
 
         jMenu3.add(jMenu6);
@@ -245,6 +255,18 @@ public class MainForm extends javax.swing.JFrame {
         desktopPane.add(frmRptRekapTransaksiBank);
         frmRptRekapTransaksiBank.setVisible(true);
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        FrmRekeningKoranBank frmRekeningKoranBank = new FrmRekeningKoranBank();
+        desktopPane.add(frmRekeningKoranBank);
+        frmRekeningKoranBank.setVisible(true);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        FrmSaldoBank frmSaldoBank = new FrmSaldoBank();
+        desktopPane.add(frmSaldoBank);
+        frmSaldoBank.setVisible(true);
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     /**
      * @param args the command line arguments

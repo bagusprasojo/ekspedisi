@@ -710,7 +710,9 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                     edNoRek.setText(bank.getNoRekening());
                     edAtasNama.setText(bank.getAtasNama());
                     edBank.setText(bank.getNamaBank());
-                    edSaldoAkhir.setValue(0);
+                    
+                    long saldoAkhir = bankDAO.getSaldoAkhir(bank.getId(), edTanggal.getDate());
+                    edSaldoAkhir.setValue(saldoAkhir);
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);

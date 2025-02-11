@@ -1,5 +1,6 @@
 package com.bprasojo.ekspedisi.dao;
 
+import com.bprasojo.ekspedisi.database.DBUtils;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.Perkiraan;
@@ -109,4 +110,54 @@ public class BankDAO {
             stmt.executeUpdate();
         }
     }
+    
+    
+    public Integer getSaldoAkhir(int bank_id, java.util.Date tanggal) {
+        int saldoAkhir = 0;
+        Date tanggal_acuan = new Date(2000,1,1);
+
+        // Konversi java.util.Date ke java.sql.Date
+        java.sql.Date sqlTanggal = new java.sql.Date(tanggal.getTime());
+        
+
+        // Query pertama untuk mendapatkan saldo akhir dan tanggal acuan
+        String sql = "select a.saldo_akhir, a.tanggal "
+                   + " from closing_bank a " 
+                   + " where a.bank_id = ? "
+                   + " and date(a.tanggal) <= ? "
+                   + " order by tanggal desc limit 1"; 
+
+        Object[] params = {bank_id, sqlTanggal};
+
+        try {
+            ResultSet rs = DBUtils.openQuery(conn, sql, params);
+            while (rs.next()) {
+                saldoAkhir = rs.getInt("saldo_akhir");
+                tanggal_acuan = rs.getDate("tanggal");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BankDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Query kedua untuk menghitung saldo akhir berdasarkan transaksi
+        sql = "select sum(a.kredit - a.debet) as saldo_akhir"
+                + " from v_mutasi_bank a "
+                + " where a.bank_id = ? "
+                + " and date(a.tanggal) > ?"
+                + " and date(a.tanggal) <= ?";
+
+        params = new Object[] {bank_id, tanggal_acuan, sqlTanggal};
+
+        try {
+            ResultSet rs = DBUtils.openQuery(conn, sql, params);
+            while (rs.next()) {
+                saldoAkhir = saldoAkhir + rs.getInt("saldo_akhir");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BankDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return saldoAkhir;
+    }
+
 }

@@ -4,8 +4,11 @@
  */
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.dao.BankDAO;
+import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.utils.AppUtils;
-import java.text.SimpleDateFormat;
+import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,20 +21,17 @@ import net.sf.jasperreports.engine.JRException;
  *
  * @author USER
  */
-public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
+public class FrmSaldoBank extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
-    public FrmRptRekapTransaksiBank() {
+    
+    public FrmSaldoBank() {
         initComponents();
         
-        edTglAkhir.setDate(new Date());
+        edTanggal.setDate(new Date());
         
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, 1); 
-        edTglAwal.setDate(calendar.getTime());
     }
 
     /**
@@ -44,17 +44,13 @@ public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        edTglAwal = new com.toedter.calendar.JDateChooser();
-        jLabel2 = new javax.swing.JLabel();
-        edTglAkhir = new com.toedter.calendar.JDateChooser();
+        edTanggal = new com.toedter.calendar.JDateChooser();
         btnTampilkan = new javax.swing.JButton();
 
         setClosable(true);
-        setTitle("Rekap Transaksi Kas");
+        setTitle("Saldo Bank");
 
         jLabel1.setText("Periode");
-
-        jLabel2.setText("s.d.");
 
         btnTampilkan.setText("Tampilkan");
         btnTampilkan.addActionListener(new java.awt.event.ActionListener() {
@@ -68,44 +64,34 @@ public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(21, 21, 21)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(edTglAwal, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(edTglAkhir, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTampilkan)
-                .addGap(16, 16, 16))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(edTglAwal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(1, 1, 1))
+                    .addComponent(btnTampilkan)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel2)
-                        .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnTampilkan)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/RekapTransaksiBank.jasper";
+        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SaldoBank.jasper";
         
         Map<String, Object> params = new HashMap<>();
-        params.put("p_tglawal", edTglAwal.getDate());
-        params.put("p_tglakhir", edTglAkhir.getDate());
+        params.put("p_tanggal", edTanggal.getDate());
         
         
         try {
@@ -118,9 +104,7 @@ public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnTampilkan;
-    private com.toedter.calendar.JDateChooser edTglAkhir;
-    private com.toedter.calendar.JDateChooser edTglAwal;
+    private com.toedter.calendar.JDateChooser edTanggal;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
