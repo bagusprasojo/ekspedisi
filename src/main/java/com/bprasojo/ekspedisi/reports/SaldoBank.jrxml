@@ -2,6 +2,8 @@
 <jasperReport name="Laporan" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Ekspedisi"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="302"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="687"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50.0" bold="false" pdfFontName="Times-Bold"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18.0" bold="false" pdfFontName="Times-Roman"/>
 	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14.0" bold="true"/>
@@ -53,59 +55,15 @@
 	<dataset name="tableDataset" uuid="f13e6d36-5148-4ecc-bbe3-3035def80980">
 		<query language="sql"><![CDATA[]]></query>
 	</dataset>
-	<parameter name="p_tglawal" class="java.util.Date"/>
-	<parameter name="p_tglakhir" class="java.util.Date"/>
-	<query language="SQL"><![CDATA[select a.*, b.kode as kode_akun, b.nama as nama_akun , c.no_rekening, c.atas_nama, c.nama_bank, d.nopol, d.kendaraan, d.pemilik
-from transaksi_kas a
-INNER JOIN perkiraan b on a.akun_transaksi_id = b.id
-left join bank c on a.bank_id = c.id
-left join armada d on a.armada_id = d.id
-where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]></query>
-	<field name="id" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="id"/>
-		<property name="com.jaspersoft.studio.field.label" value="id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="akun_kas_id" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="akun_kas_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="akun_kas_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="akun_transaksi_id" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="akun_transaksi_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="akun_transaksi_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="tanggal" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="tanggal"/>
-		<property name="com.jaspersoft.studio.field.label" value="tanggal"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="nominal_masuk" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="nominal_masuk"/>
-		<property name="com.jaspersoft.studio.field.label" value="nominal_masuk"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="nominal_keluar" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="nominal_keluar"/>
-		<property name="com.jaspersoft.studio.field.label" value="nominal_keluar"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="keterangan" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="keterangan"/>
-		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="armada_id" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="armada_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="armada_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
-	<field name="bank_id" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="bank_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="bank_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_kas"/>
-	</field>
+	<parameter name="p_tanggal" class="java.util.Date"/>
+	<query language="SQL"><![CDATA[SELECT d.kode as kode_akun, d.nama as nama_akun, cb.bank_id, c.no_rekening, c.nama_bank, c.atas_nama, cb.saldo_akhir + COALESCE(SUM(v.kredit - v.debet), 0) AS saldo_akhir_per_bank
+    FROM closing_bank cb
+    LEFT JOIN v_mutasi_bank v ON v.bank_id = cb.bank_id AND v.tanggal BETWEEN cb.tanggal AND  $P{p_tanggal} 
+		left join bank c on cb.bank_id = c.id
+		left join perkiraan d on c.akun_id = d.id
+    WHERE cb.tanggal <=  $P{p_tanggal} 
+    GROUP BY d.kode , d.nama , cb.bank_id, c.no_rekening, c.nama_bank, c.atas_nama, cb.saldo_akhir
+    order by d.kode,  c.no_rekening]]></query>
 	<field name="kode_akun" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="kode"/>
 		<property name="com.jaspersoft.studio.field.label" value="kode_akun"/>
@@ -116,14 +74,14 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 		<property name="com.jaspersoft.studio.field.label" value="nama_akun"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="perkiraan"/>
 	</field>
+	<field name="bank_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="bank_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bank_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="closing_bank"/>
+	</field>
 	<field name="no_rekening" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="no_rekening"/>
 		<property name="com.jaspersoft.studio.field.label" value="no_rekening"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="bank"/>
-	</field>
-	<field name="atas_nama" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="atas_nama"/>
-		<property name="com.jaspersoft.studio.field.label" value="atas_nama"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="bank"/>
 	</field>
 	<field name="nama_bank" class="java.lang.String">
@@ -131,30 +89,39 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 		<property name="com.jaspersoft.studio.field.label" value="nama_bank"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="bank"/>
 	</field>
-	<field name="nopol" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="nopol"/>
-		<property name="com.jaspersoft.studio.field.label" value="nopol"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="armada"/>
+	<field name="atas_nama" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="atas_nama"/>
+		<property name="com.jaspersoft.studio.field.label" value="atas_nama"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bank"/>
 	</field>
-	<field name="kendaraan" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="kendaraan"/>
-		<property name="com.jaspersoft.studio.field.label" value="kendaraan"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="armada"/>
+	<field name="saldo_akhir_per_bank" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="saldo_akhir_per_bank"/>
+		<property name="com.jaspersoft.studio.field.label" value="saldo_akhir_per_bank"/>
 	</field>
-	<field name="pemilik" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="pemilik"/>
-		<property name="com.jaspersoft.studio.field.label" value="pemilik"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="armada"/>
-	</field>
-	<variable name="nominal_masuk1" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{nominal_masuk}]]></expression>
-	</variable>
-	<variable name="nominal_keluar1" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{nominal_keluar}]]></expression>
-	</variable>
-	<title height="149" splitType="Stretch">
+	<group name="GroupAkun">
+		<expression><![CDATA[$F{kode_akun}]]></expression>
+		<groupHeader>
+			<band height="18">
+				<element kind="textField" uuid="9b117c17-649c-4a8d-81f1-6e088df96098" x="0" y="0" width="554" height="18" bold="true" vTextAlign="Middle">
+					<expression><![CDATA[$F{kode_akun} + " - " + $F{nama_akun}]]></expression>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box leftPadding="5">
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="10"/>
+		</groupFooter>
+	</group>
+	<title height="146" splitType="Stretch">
 		<element kind="staticText" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a" x="0" y="90" width="556" height="25" fontSize="16.0" bold="true" hTextAlign="Center">
-			<text><![CDATA[Rekap Transaksi Kas]]></text>
+			<text><![CDATA[Rekap Saldo Bank]]></text>
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</element>
@@ -184,11 +151,11 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 			<text><![CDATA[Kab. Sukoharjo, Jawa Tengah]]></text>
 		</element>
 		<element kind="textField" uuid="ad2aee85-1df9-4662-8645-6d37cbf99968" x="0" y="115" width="554" height="15" hTextAlign="Center">
-			<expression><![CDATA["Periode : " + DATEFORMAT($P{p_tglawal},"dd/MM/yyyy") + " s.d. " + DATEFORMAT($P{p_tglakhir},"dd/MM/yyyy")]]></expression>
+			<expression><![CDATA["Periode : " + DATEFORMAT($P{p_tanggal},"dd/MM/yyyy")]]></expression>
 		</element>
 	</title>
 	<columnHeader height="20">
-		<element kind="staticText" uuid="b7c8e117-a3d8-497f-97d2-c22573632cc2" positionType="Float" x="0" y="0" width="32" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="b7c8e117-a3d8-497f-97d2-c22573632cc2" positionType="Float" x="0" y="0" width="28" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[No]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06f25017-3143-4809-8903-d3f1aa14fca8"/>
 			<box padding="1" style="Column header">
@@ -199,8 +166,8 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" x="32" y="0" width="63" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Tanggal]]></text>
+		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" x="28" y="0" width="112" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+			<text><![CDATA[No Rekening]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
 			<box padding="1" style="Column header">
 				<pen lineColor="#000000"/>
@@ -210,8 +177,8 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="c9957f59-7fa0-4039-b6da-fa181fa6732d" positionType="Float" x="95" y="0" width="265" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Account & Keterangan]]></text>
+		<element kind="staticText" uuid="c9957f59-7fa0-4039-b6da-fa181fa6732d" positionType="Float" x="140" y="0" width="110" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+			<text><![CDATA[Bank]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
 			<box style="Column header">
 				<pen lineColor="#000000"/>
@@ -221,29 +188,7 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="72577e14-faa9-4a25-b1b0-aa86a49a01d6" positionType="Float" x="360" y="0" width="80" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Keluar]]></text>
-			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
-			<box style="Column header">
-				<pen lineColor="#000000"/>
-				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
-				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
-				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-			</box>
-		</element>
-		<element kind="staticText" uuid="f3e463b7-fab2-48ed-a68a-a2991876ecbe" positionType="Float" x="440" y="0" width="82" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Masuk]]></text>
-			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
-			<box style="Column header">
-				<pen lineColor="#000000"/>
-				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
-				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
-				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-			</box>
-		</element>
-		<element kind="staticText" uuid="31e8a6ab-9a66-453f-846d-6009d13cee18" positionType="Float" x="522" y="0" width="32" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="31e8a6ab-9a66-453f-846d-6009d13cee18" positionType="Float" x="522" y="0" width="32" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Pc]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
 			<box style="Column header">
@@ -254,69 +199,94 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
+		<element kind="staticText" uuid="908f402d-0a23-49d0-8e06-cd5a3040e887" positionType="Float" x="390" y="0" width="132" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+			<text><![CDATA[Saldo]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+			<box style="Column header">
+				<pen lineColor="#000000"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="bfadfc33-3870-4dee-9f04-98464ba672ce" positionType="Float" x="250" y="0" width="140" height="20" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+			<text><![CDATA[Atas Nama]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
+			<box style="Column header">
+				<pen lineColor="#000000"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
 	</columnHeader>
 	<detail>
-		<band height="20">
-			<element kind="textField" uuid="a4151b98-5182-4386-9e42-47254acd60c9" positionType="Float" x="0" y="0" width="32" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+		<band height="18">
+			<element kind="textField" uuid="a4151b98-5182-4386-9e42-47254acd60c9" positionType="Float" x="0" y="0" width="28" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 				<expression><![CDATA[$V{REPORT_COUNT}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06f25017-3143-4809-8903-d3f1aa14fca8"/>
-				<box padding="2" style="Detail">
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="97b23753-137e-4b1c-a28b-4bff3378ff3c" positionType="Float" x="32" y="0" width="63" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="dd/MM/yy" blankWhenNull="true" bold="false" hTextAlign="Center" style="Detail">
-				<expression><![CDATA[$F{tanggal}]]></expression>
+			<element kind="textField" uuid="97b23753-137e-4b1c-a28b-4bff3378ff3c" positionType="Float" x="28" y="0" width="112" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" pattern="dd/MM/yy" blankWhenNull="true" bold="false" hTextAlign="Left" style="Detail">
+				<expression><![CDATA[$F{no_rekening}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
-				<box padding="2" style="Detail">
+				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="95" y="0" width="265" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
-				<expression><![CDATA[$F{kode_akun} + " " + $F{nama_akun} +"," + $F{kendaraan}]]></expression>
+			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="140" y="0" width="110" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+				<expression><![CDATA[$F{nama_bank}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
-				<box padding="2" style="Detail">
+				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="94674bfa-8196-4cc1-b032-f90550ff4898" positionType="Float" x="360" y="0" width="80" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{nominal_keluar}]]></expression>
-				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
-				<box padding="2" style="Detail">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-			</element>
-			<element kind="textField" uuid="42ceed78-3b82-4f0a-851c-76168eab3142" positionType="Float" x="440" y="0" width="82" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{nominal_masuk}]]></expression>
-				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
-				<box padding="2" style="Detail">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-			</element>
-			<element kind="textField" uuid="316833a1-5878-4dc5-8bb4-50dfd0514fc5" positionType="Float" x="522" y="0" width="32" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" style="Detail">
+			<element kind="textField" uuid="316833a1-5878-4dc5-8bb4-50dfd0514fc5" positionType="Float" x="522" y="0" width="32" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" bold="false" style="Detail">
 				<expression><![CDATA["Lia"]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
-				<box padding="2" style="Detail">
+				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
+			<element kind="textField" uuid="1df4affb-4fdb-4ae9-a03a-c8e4c14d56d3" positionType="Float" x="390" y="0" width="132" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+				<expression><![CDATA[$F{saldo_akhir_per_bank}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+				<box padding="3" style="Detail">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="04dbaa81-b7a0-4169-a375-5298bf711069" positionType="Float" x="250" y="0" width="140" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+				<expression><![CDATA[$F{atas_nama}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
+				<box padding="3" style="Detail">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</band>
 	</detail>
 	<summary height="173">
@@ -346,43 +316,6 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 		</element>
 		<element kind="textField" uuid="4f2cf2b0-790b-42ec-9161-2c4076e67848" x="2" y="30" width="552" height="18" hTextAlign="Right">
 			<expression><![CDATA["Kab. Sukoharjo, " + DATEFORMAT(TODAY( ),"dd MMM yyyy")]]></expression>
-		</element>
-		<element kind="textField" uuid="62dadb0f-2b76-4eeb-9800-f40fb7d47e33" positionType="Float" x="0" y="0" width="360" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" printWhenDetailOverflows="true" bold="true" hTextAlign="Right" style="Detail">
-			<expression><![CDATA["Total   "]]></expression>
-			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
-			<box padding="2" style="Detail">
-				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-			</box>
-		</element>
-		<element kind="textField" uuid="47df39d6-b13b-4685-8a13-1d5a102de7fc" positionType="Float" x="522" y="0" width="32" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="true" style="Detail">
-			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
-			<box padding="2" style="Detail">
-				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-			</box>
-		</element>
-		<element kind="textField" uuid="d1de7811-2fef-47f2-b6fe-3ada01fbe15d" x="440" y="0" width="82" height="20" pattern="#,##0.###;#,##0.###-" bold="true" hTextAlign="Right">
-			<expression><![CDATA[$V{nominal_masuk1}]]></expression>
-			<box padding="2">
-				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-			</box>
-		</element>
-		<element kind="textField" uuid="9bccd5b5-d955-4e39-9182-b01c14a0f40a" x="360" y="0" width="80" height="20" pattern="#,##0.###;#,##0.###-" bold="true" hTextAlign="Right">
-			<expression><![CDATA[$V{nominal_keluar1}]]></expression>
-			<box padding="2">
-				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-			</box>
 		</element>
 	</summary>
 </jasperReport>
