@@ -8,7 +8,7 @@ package com.bprasojo.ekspedisi.model;
  *
  * @author USER
  */
-public class Perkiraan {
+public class Perkiraan extends BaseClass{
     private String kode;
     private String nama;
     private Integer parent_Id;
@@ -31,7 +31,10 @@ public class Perkiraan {
     }
 
     // Getter dan Setter
-    public Integer getId() {
+    
+    
+    @Override
+    public int getId() {
         return id;
     }
 

@@ -4,6 +4,29 @@
  */
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.dao.BankDAO;
+import com.bprasojo.ekspedisi.dao.KasBonKaryawanDAO;
+import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
+import com.bprasojo.ekspedisi.model.Bank;
+import com.bprasojo.ekspedisi.model.KasBonKaryawan;
+import com.bprasojo.ekspedisi.model.Perkiraan;
+import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.awt.event.ItemEvent;
+import java.beans.PropertyVetoException;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author USER
@@ -13,8 +36,49 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     /**
      * Creates new form FrmKasBonKaryawan
      */
+    
+    Perkiraan jenisKasBon = null;
+    Bank bank = null;
+    PerkiraanDAO perkiraanDAO = null;
+    BankDAO bankDAO = null;
+    KasBonKaryawan kasBonKaryawan = null;
+    KasBonKaryawanDAO kasBonKaryawanDAO = null;
+    
+    private int currentPage = 1;
+    private boolean SilakanLoadData = false;
+    
+    private final DefaultTableModel tableModel;
+    private boolean showLoopUpBank = false;
+    
     public FrmKasBonKaryawan() {
         initComponents();
+        lblBank.setText("");
+        
+        try {
+            setMaximum(true);
+        } catch (PropertyVetoException ex) {
+            Logger.getLogger(FrmKasBonKaryawan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        bankDAO = new BankDAO();
+        perkiraanDAO = new PerkiraanDAO();
+        kasBonKaryawanDAO = new KasBonKaryawanDAO();
+        
+        LoadJenisKasbon();
+        
+        AppUtils.SetTanggalAwalBulan(edTglAwal);
+        AppUtils.SetTanggalToday(edTglAkhir);
+        edFilter.setText("");
+        
+        tableModel = new DefaultTableModel(new String[]{"ID","Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status Lunas", "Keterangan",  "Pc"}, 0);
+        tblKasBon.setModel(tableModel);
+        
+        SilakanLoadData = true;
+        LoadDataKasBon(currentPage);
+        setStatusTombol("awal");
+        
+        
+        inisialisasiEventTableModel();
     }
 
     /**
@@ -35,6 +99,21 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         btnHapus = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        cbJenisKasBon = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        edNama = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        edAlamat = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        edTanggal = new com.toedter.calendar.JDateChooser();
+        cbViaBank = new javax.swing.JComboBox<>();
+        edNominal = new javax.swing.JFormattedTextField();
+        jLabel9 = new javax.swing.JLabel();
+        edKeterangan = new javax.swing.JTextField();
+        lblBank = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -47,7 +126,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTransaksiKas = new javax.swing.JTable();
+        tblKasBon = new javax.swing.JTable();
 
         setClosable(true);
         setIconifiable(true);
@@ -154,15 +233,122 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("Jenis Kasbon");
+
+        cbJenisKasBon.setNextFocusableComponent(edNama);
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel4.setText("Nama");
+
+        edNama.setNextFocusableComponent(edAlamat);
+
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel5.setText("Alamat");
+
+        edAlamat.setNextFocusableComponent(edTanggal);
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText("Tanggal");
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setText("Via Bank");
+
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel8.setText("Nominal");
+
+        edTanggal.setNextFocusableComponent(cbViaBank);
+
+        cbViaBank.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tunai", "Via Bank" }));
+        cbViaBank.setNextFocusableComponent(edNominal);
+        cbViaBank.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbViaBankItemStateChanged(evt);
+            }
+        });
+        cbViaBank.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                cbViaBankPropertyChange(evt);
+            }
+        });
+
+        edNominal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edNominal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edNominal.setNextFocusableComponent(edKeterangan);
+
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel9.setText("Keterangan");
+
+        edKeterangan.setNextFocusableComponent(cbJenisKasBon);
+
+        lblBank.setText("lblBank");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 721, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cbJenisKasBon, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(edNama)
+                    .addComponent(edAlamat, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(edNominal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addComponent(edKeterangan)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblBank)))
+                .addContainerGap(132, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 162, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblBank))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(cbJenisKasBon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel8)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel5))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -252,7 +438,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         pnlNextPrevLayout.setHorizontalGroup(
             pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNextPrevLayout.createSequentialGroup()
-                .addContainerGap(559, Short.MAX_VALUE)
+                .addContainerGap(579, Short.MAX_VALUE)
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext)
@@ -270,7 +456,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
 
         jPanel3.add(pnlNextPrev, java.awt.BorderLayout.PAGE_END);
 
-        tblTransaksiKas.setModel(new javax.swing.table.DefaultTableModel(
+        tblKasBon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -281,12 +467,12 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblTransaksiKas.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblKasBon.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tblTransaksiKasFocusGained(evt);
+                tblKasBonFocusGained(evt);
             }
         });
-        jScrollPane1.setViewportView(tblTransaksiKas);
+        jScrollPane1.setViewportView(tblKasBon);
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -298,98 +484,75 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
 //        LoadDataTransaksiKas(currentPage);
 //
-//        transaksiKas = new TransaksiKas();
-//
-//        perkiraanTransaksi = null;
-//        cbBank.setSelectedIndex(-1);
-//
-//        cbArmada.setSelectedIndex(-1);
-//
-//        edNamaAkun.setText("");
-//
-//        Calendar calendar = Calendar.getInstance();
-//        Date today = calendar.getTime(); // Mendapatkan tanggal dalam format Date
-//
-//        edTanggal.setDate(today);
-//        edUangMasuk.setText("0");
-//        edUangKeluar.setText("0");
-//        edKeterangan.setText("");
-//
-//        setStatusTombol("tambah");
-
-        //        edt
+        kasBonKaryawan = new KasBonKaryawan();
+        bank = null;
+        
+        edNama.setText("");
+        edAlamat.setText("");
+        AppUtils.SetTanggalToday(edTanggal);
+        edNominal.setValue(0);
+        edKeterangan.setText("");
+        cbJenisKasBon.setSelectedIndex(0);
+        cbViaBank.setSelectedIndex(0);
+        
+        showLoopUpBank = true;
+        
+        setStatusTombol("tambah");
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-//        setStatusTombol("edit");
+        setStatusTombol("edit");
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-//        if (validasiInput() == false){
-//            return;
-//        }
-//
-//        try {
-//            transaksiKas.setAkunTransaksiId(perkiraanTransaksi.getId());
-//
-//            if (cbBank.getSelectedIndex() >= 0){
-//                Bank selectedBank = (Bank) cbBank.getSelectedItem();
-//                transaksiKas.setBankId(selectedBank.getId());
-//                transaksiKas.setAkunKasId(selectedBank.getAkun().getId());
-//            } else {
-//                transaksiKas.setBankId(0);
-//                transaksiKas.setAkunKasId(3);
-//            }
-//
-//            if (cbArmada.getSelectedIndex() >= 0){
-//                Armada selectedArmada = (Armada) cbArmada.getSelectedItem();
-//                transaksiKas.setArmadaId(selectedArmada.getId());
-//            } else {
-//                transaksiKas.setArmadaId(0);
-//            }
-//
-//            Integer nominalMasuk = 0;
-//            if (edUangMasuk.getValue() != null){
-//                nominalMasuk = ((Number) edUangMasuk.getValue()).intValue();
-//            }
-//
-//            Integer nominalKeluar = 0;
-//            if (edUangKeluar.getValue() != null){
-//                nominalKeluar = ((Number) edUangKeluar.getValue()).intValue();
-//            }
-//
-//            transaksiKas.setNominalMasuk(nominalMasuk);
-//            transaksiKas.setNominalKeluar(nominalKeluar);
-//
-//            transaksiKas.setKeterangan(edKeterangan.getText());
-//            transaksiKas.setTanggal(edTanggal.getDate());
-//
-//            transaksiKasDAO.save(transaksiKas);
-//
-//            AppUtils.showInfoDialog("Data berhasil disimpan!");
-//            LoadDataTransaksiKas(currentPage);
-//
-//        } catch (SQLException ex) {
-//            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        if (validasiInput() == false){
+            return;
+        }
+
+        try {
+            Perkiraan perkiraan = (Perkiraan) cbJenisKasBon.getSelectedItem();
+            kasBonKaryawan.setPerkiraanPinjamanId(perkiraan.getId());
+            kasBonKaryawan.setNamaKaryawan(edNama.getText());
+            kasBonKaryawan.setAlamatKaryawan(edAlamat.getText());
+            kasBonKaryawan.setSumberDana(cbViaBank.getSelectedItem().toString());
+            kasBonKaryawan.setTanggal(edTanggal.getDate());
+            
+            if (cbViaBank.getSelectedIndex() == 0){
+                kasBonKaryawan.setBankId(0);
+                kasBonKaryawan.setPerkiraanKasId(perkiraanDAO.getPerkiraanKas().getId());
+            } else {
+                kasBonKaryawan.setBankId(bank.getId());
+                kasBonKaryawan.setPerkiraanKasId(bank.getAkun().getId());
+            }
+            
+            kasBonKaryawan.setNominal(((Number)edNominal.getValue()).intValue());
+            kasBonKaryawan.setKeterangan(edKeterangan.getText());
+            kasBonKaryawanDAO.save(kasBonKaryawan);
+
+            AppUtils.showInfoDialog("Data berhasil disimpan!");
+            LoadDataKasBon(currentPage);
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal menyimpan data dengan error " + ex.getMessage());
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-//        setStatusTombol("awal");
+        setStatusTombol("awal");
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-//        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
-//
-//        if (userConfirmed) {
-//            try {
-//                transaksiKasDAO.delete(transaksiKas.getId());
-//                setStatusTombol("awal");
-//                LoadDataTransaksiKas(currentPage);
-//            } catch (SQLException ex) {
-//                Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
+
+        if (userConfirmed) {
+            try {
+                kasBonKaryawanDAO.delete(kasBonKaryawan.getId());
+                setStatusTombol("awal");
+                LoadDataKasBon(currentPage);
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmKasBonKaryawan.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
@@ -397,41 +560,76 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnKeluarActionPerformed
 
     private void edTglAwalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwalPropertyChange
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataTransaksiKas(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataKasBon(currentPage);
+        }
     }//GEN-LAST:event_edTglAwalPropertyChange
 
     private void edTglAkhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAkhirPropertyChange
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataTransaksiKas(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataKasBon(currentPage);
+        }
     }//GEN-LAST:event_edTglAkhirPropertyChange
 
     private void edFilterKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edFilterKeyReleased
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataTransaksiKas(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataKasBon(currentPage);
+        }
     }//GEN-LAST:event_edFilterKeyReleased
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
-//        if (currentPage > 1) {
-//            currentPage--;
-//            LoadDataTransaksiKas(currentPage);
-//        }
+        if (currentPage > 1) {
+            currentPage--;
+            LoadDataKasBon(currentPage);
+        }
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-//        currentPage++;
-//        LoadDataTransaksiKas(currentPage);
+        currentPage++;
+        LoadDataKasBon(currentPage);
     }//GEN-LAST:event_btnNextActionPerformed
 
-    private void tblTransaksiKasFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblTransaksiKasFocusGained
+    private void tblKasBonFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblKasBonFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_tblTransaksiKasFocusGained
+    }//GEN-LAST:event_tblKasBonFocusGained
+
+    private void cbViaBankPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbViaBankPropertyChange
+        
+    }//GEN-LAST:event_cbViaBankPropertyChange
+
+    private void cbViaBankItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbViaBankItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED && showLoopUpBank){
+            if (cbViaBank.getSelectedIndex() <= 0){
+                bank = null;
+                lblBank.setText("");
+            } else {
+                String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
+                LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+                Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+                if (selectedRecord != null) {
+                    try {
+                        // Mengambil nilai dengan nama kolom
+                        String no_rekening = selectedRecord.get("no_rekening").toString();
+                        bank = bankDAO.getBankByNoRekening(no_rekening);
+
+                        if (bank != null){
+                            lblBank.setText(bank.toString());
+                        } else {
+                            lblBank.setText("");
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
+                }
+            }
+        }
+    }//GEN-LAST:event_cbViaBankItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -443,19 +641,207 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<Perkiraan> cbJenisKasBon;
+    private javax.swing.JComboBox<String> cbViaBank;
+    private javax.swing.JTextField edAlamat;
     private javax.swing.JTextField edFilter;
+    private javax.swing.JTextField edKeterangan;
+    private javax.swing.JTextField edNama;
+    private javax.swing.JFormattedTextField edNominal;
+    private com.toedter.calendar.JDateChooser edTanggal;
     private com.toedter.calendar.JDateChooser edTglAkhir;
     private com.toedter.calendar.JDateChooser edTglAwal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lblBank;
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlNextPrev;
-    private javax.swing.JTable tblTransaksiKas;
+    private javax.swing.JTable tblKasBon;
     // End of variables declaration//GEN-END:variables
+
+    private void LoadJenisKasbon() {
+        try {
+            List<Perkiraan> perkiraans = perkiraanDAO.getAllPerkiraanPinjaman();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Perkiraan> model = new DefaultComboBoxModel<>();
+            for (Perkiraan p : perkiraans) {
+                model.addElement(p); // Menambahkan objek Perkiraan ke model
+            }
+            cbJenisKasBon.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmKasBonKaryawan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
+    }
+    
+    private void setStatusTombol(String mode){
+        if (mode == "awal"){
+            btnNew.setEnabled(true);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(false);
+            btnBatal.setEnabled(false);
+            btnHapus.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
+        } else if (mode == "tambah"){
+            btnNew.setEnabled(false);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(true);
+            btnBatal.setEnabled(true);
+            btnHapus.setEnabled(false);
+            SetEnableKomponenInput(true);
+        } else if (mode == "edit"){
+            btnNew.setEnabled(false);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(true);
+            btnBatal.setEnabled(true);
+            btnHapus.setEnabled(true);
+            SetEnableKomponenInput(true);
+        } else if (mode == "selected"){
+            btnNew.setEnabled(true);
+            btnEdit.setEnabled(true);
+            btnSimpan.setEnabled(false);
+            btnBatal.setEnabled(false);
+            btnHapus.setEnabled(true);
+            SetEnableKomponenInput(false);
+        }
+    }
+
+    private boolean validasiInput() {
+        if (cbJenisKasBon.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Jenis Kas Bon belum dipilih");
+            cbJenisKasBon.requestFocus();
+            return false;
+        }
+        
+        if (edNama.getText().equals("")){
+            AppUtils.showWarningDialog("Nama karyawan belum diisi");
+            edNama.requestFocus();
+            return false;
+        }
+        
+        if (edAlamat.getText().equals("")){
+            AppUtils.showWarningDialog("Alamat karyawan belum diisi");
+            edAlamat.requestFocus();
+            return false;
+        }
+        
+        if (cbViaBank.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Via bank belum dipilih");
+            cbViaBank.requestFocus();
+            return false;
+        }
+        
+        if (cbViaBank.getSelectedIndex() == 1 && bank == null){
+            AppUtils.showWarningDialog("Bank belum dipilih");
+            cbViaBank.requestFocus();
+            return false;
+        }
+        
+        if (edNominal.getValue() == null || ((Number) edNominal.getValue()).intValue() <= 0){
+            AppUtils.showWarningDialog("Nominal belum diisi");
+            edNominal.requestFocus();
+            return false;
+        }
+        
+        return true;
+        
+    }
+    
+    private void inisialisasiEventTableModel() {
+        tblKasBon.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // Memeriksa apakah ada baris yang dipilih
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = tblKasBon.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    if (selectedRow != -1) {
+                        
+                        Integer id = (Integer) tblKasBon.getValueAt(selectedRow, 0);
+                        LoadKasBon(id);
+                        setStatusTombol("selected");
+                    }
+                }
+            }
+
+            private void LoadKasBon(Integer id) {
+                try {
+                    kasBonKaryawan = kasBonKaryawanDAO.getById(id);
+                    if (kasBonKaryawan != null){
+                        AppUtils.setSelectedIndexById(cbJenisKasBon, kasBonKaryawan.getPerkiraanPinjamanId());
+                        edNama.setText(kasBonKaryawan.getNamaKaryawan());
+                        edAlamat.setText(kasBonKaryawan.getAlamatKaryawan());
+                        edTanggal.setDate(kasBonKaryawan.getTanggal());
+                        
+                        showLoopUpBank = false;
+                        if (kasBonKaryawan.getBankId() == 0){
+                            cbViaBank.setSelectedIndex(0);
+                            lblBank.setText("");
+                        } else {
+                            cbViaBank.setSelectedIndex(1);
+                            bank = bankDAO.getBankById(kasBonKaryawan.getBankId());
+                            lblBank.setText(kasBonKaryawan.getBank().toString());
+                        }
+                        showLoopUpBank = true;
+                        
+                        edNominal.setValue(kasBonKaryawan.getNominal());
+                        edKeterangan.setText(kasBonKaryawan.getKeterangan());
+                        
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(FrmKasBonKaryawan.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
+    
+    private void LoadDataKasBon(int currentPage) {
+        tableModel.setRowCount(0); // Bersihkan tabel
+        
+        List<Map<String, Object>> result = kasBonKaryawanDAO.getKasBonByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
+        for (Map<String, Object> row : result) {
+//            {"ID","Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status", "Keterangan",  "Pc"}
+            
+            tableModel.addRow(new Object[]{
+                        (Integer) row.get("id"),
+                        (String) row.get("kode") + "-" + row.get("nama"),
+                        (String) row.get("nama_karyawan"),
+                        (String) row.get("alamat_karyawan"),
+                        (Date) row.get("tanggal"),
+                        (String) row.get("sumber_dana"),
+                        (Integer) row.get("nominal"),
+                        (Integer) row.get("pelunasan"),
+                        (String) row.get("status_lunas"),
+                        (String) row.get("keterangan"),
+                        "Lia"
+                });
+        }
+        
+        tblKasBon.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        
+    }
+
+    private void SetEnableKomponenInput(boolean enable) {
+        cbJenisKasBon.setEnabled(enable);
+        edNama.setEnabled(enable);
+        edAlamat.setEnabled(enable);
+        edTanggal.setEnabled(enable);
+        cbViaBank.setEnabled(enable);
+        edNominal.setEnabled(enable);
+        edKeterangan.setEnabled(enable);
+    }
 }

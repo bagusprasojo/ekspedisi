@@ -10,19 +10,22 @@ package com.bprasojo.ekspedisi.model;
  */
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.SQLException;
 
-public class KasBonKaryawan {
+public class KasBonKaryawan extends BaseClass{
     private int id;
     private Date tanggal;
     private String namaKaryawan;
+    private String alamatKaryawan;
     private int perkiraanPinjamanId;
     private int perkiraanKasId;
     private int nominal;
     private String keterangan;
     private int bankId;
     private String sumberDana;
+    private int pelunasan;
+    private String statusLunas;
 
     private transient Perkiraan perkiraanPinjaman; // Lazy loading
     private transient Perkiraan perkiraanKas; // Lazy loading
@@ -30,27 +33,41 @@ public class KasBonKaryawan {
 
     public KasBonKaryawan() {}
 
-    public KasBonKaryawan(int id, Date tanggal, String namaKaryawan, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana) {
+    public KasBonKaryawan(int id, Date tanggal, String namaKaryawan,String alamatKaryawan, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas) {
         this.id = id;
         this.tanggal = tanggal;
         this.namaKaryawan = namaKaryawan;
+        this.alamatKaryawan = alamatKaryawan;
         this.perkiraanPinjamanId = perkiraanPinjamanId;
         this.perkiraanKasId = perkiraanKasId;
         this.nominal = nominal;
         this.keterangan = keterangan;
         this.bankId = bankId;
         this.sumberDana = sumberDana;
+        this.pelunasan = pelunasan;
+        this.statusLunas = statusLunas;
     }
 
     // Getter & Setter
+    @Override
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+    
+    public int getPelunasan() { return pelunasan; }
+    public void setPelunasan(int pelunasan) { this.pelunasan = pelunasan; }   
+    
 
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
 
     public String getNamaKaryawan() { return namaKaryawan; }
     public void setNamaKaryawan(String namaKaryawan) { this.namaKaryawan = namaKaryawan; }
+    
+    public String getStatusLunas() { return statusLunas; }
+    public void setStatuLunas(String statuLunas) { this.statusLunas = statuLunas; }
+    
+    public String getAlamatKaryawan() { return alamatKaryawan; }
+    public void setAlamatKaryawan(String alamatKaryawan) { this.alamatKaryawan = alamatKaryawan; }
 
     public int getPerkiraanPinjamanId() { return perkiraanPinjamanId; }
     public void setPerkiraanPinjamanId(int perkiraanPinjamanId) { 
