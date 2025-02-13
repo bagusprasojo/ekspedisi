@@ -26,6 +26,7 @@ public class KasBonKaryawan extends BaseClass{
     private String sumberDana;
     private int pelunasan;
     private String statusLunas;
+    private String noRegister;
 
     private transient Perkiraan perkiraanPinjaman; // Lazy loading
     private transient Perkiraan perkiraanKas; // Lazy loading
@@ -33,7 +34,7 @@ public class KasBonKaryawan extends BaseClass{
 
     public KasBonKaryawan() {}
 
-    public KasBonKaryawan(int id, Date tanggal, String namaKaryawan,String alamatKaryawan, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas) {
+    public KasBonKaryawan(int id, Date tanggal, String namaKaryawan,String alamatKaryawan, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas, String noRegister) {
         this.id = id;
         this.tanggal = tanggal;
         this.namaKaryawan = namaKaryawan;
@@ -46,6 +47,7 @@ public class KasBonKaryawan extends BaseClass{
         this.sumberDana = sumberDana;
         this.pelunasan = pelunasan;
         this.statusLunas = statusLunas;
+        this.noRegister = noRegister;
     }
 
     // Getter & Setter
@@ -62,6 +64,9 @@ public class KasBonKaryawan extends BaseClass{
 
     public String getNamaKaryawan() { return namaKaryawan; }
     public void setNamaKaryawan(String namaKaryawan) { this.namaKaryawan = namaKaryawan; }
+    
+    public String getNoRegister() { return noRegister; }
+    public void setNoRegister(String noRegister) { this.noRegister = noRegister; }
     
     public String getStatusLunas() { return statusLunas; }
     public void setStatuLunas(String statuLunas) { this.statusLunas = statuLunas; }

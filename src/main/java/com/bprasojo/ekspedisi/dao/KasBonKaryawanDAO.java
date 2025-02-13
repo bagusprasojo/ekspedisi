@@ -11,6 +11,7 @@ package com.bprasojo.ekspedisi.dao;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,7 +39,11 @@ public class KasBonKaryawanDAO {
         }
         Date tanggal = new Date(kasBonKaryawan.getTanggal().getTime());
         if (kasBonKaryawan.getId() <= 0) {
-            String sql = "INSERT INTO kas_bon_karyawan (tanggal, nama_karyawan, alamat_karyawan, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
+            
+            String noRegister = generateNoRegister(kasBonKaryawan.getTanggal());
+            kasBonKaryawan.setNoRegister(noRegister);
+            
+            String sql = "INSERT INTO kas_bon_karyawan (tanggal, nama_karyawan, alamat_karyawan, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setDate(1, tanggal);
                 stmt.setString(2, kasBonKaryawan.getNamaKaryawan());
@@ -51,6 +56,7 @@ public class KasBonKaryawanDAO {
                 stmt.setString(9, kasBonKaryawan.getSumberDana());
                 stmt.setInt(10, kasBonKaryawan.getPelunasan());
                 stmt.setString(11, kasBonKaryawan.getStatusLunas());
+                stmt.setString(12, kasBonKaryawan.getNoRegister());
                 stmt.executeUpdate();
                 
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -60,7 +66,7 @@ public class KasBonKaryawanDAO {
                 }
             }
         } else {
-            String sql = "UPDATE kas_bon_karyawan SET tanggal = ?, nama_karyawan = ?,alamat_karyawan = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ? WHERE id = ?";
+            String sql = "UPDATE kas_bon_karyawan SET tanggal = ?, nama_karyawan = ?,alamat_karyawan = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register=? WHERE id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setDate(1, tanggal);
                 stmt.setString(2, kasBonKaryawan.getNamaKaryawan());
@@ -73,7 +79,8 @@ public class KasBonKaryawanDAO {
                 stmt.setString(9, kasBonKaryawan.getSumberDana());
                 stmt.setInt(10, kasBonKaryawan.getPelunasan());
                 stmt.setString(11, kasBonKaryawan.getStatusLunas());
-                stmt.setInt(12, kasBonKaryawan.getId());
+                stmt.setString(12, kasBonKaryawan.getNoRegister());
+                stmt.setInt(13, kasBonKaryawan.getId());
                 stmt.executeUpdate();
             }
         }
@@ -97,7 +104,8 @@ public class KasBonKaryawanDAO {
                         rs.getInt("bank_id"),
                         rs.getString("sumber_dana"),
                         rs.getInt("pelunasan"),
-                        rs.getString("status_lunas")
+                        rs.getString("status_lunas"),
+                        rs.getString("no_register")
                     );
                 }
             }
@@ -122,7 +130,8 @@ public class KasBonKaryawanDAO {
                     rs.getInt("bank_id"),
                     rs.getString("sumber_dana"),
                     rs.getInt("pelunasan"),
-                    rs.getString("status_lunas")
+                    rs.getString("status_lunas"),
+                    rs.getString("no_register")
                 ));
             }
         }
@@ -191,6 +200,44 @@ public class KasBonKaryawanDAO {
         }
 
         return resultList;
+    }
+    
+    public String generateNoRegister(java.util.Date inputDate) {
+        // Format tanggal input menjadi "yyyyMM"
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        String yearMonth = sdf.format(inputDate);
+
+        // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
+        String sql = "SELECT MAX(SUBSTRING(no_register, 9)) AS last_number " +
+                     "FROM kas_bon_karyawan " +
+                     "WHERE no_register LIKE 'BON-" + yearMonth + "%'";
+
+        try (Statement stmt = conn.createStatement(); 
+            ResultSet rs = stmt.executeQuery(sql)) {
+            // Inisialisasi nomor urut
+            int lastNumber = 0;
+            
+            // Jika ada data terakhir, ambil nomor urut terakhir
+            if (rs.next()) {
+                String lastNumberStr = rs.getString("last_number");
+                if (lastNumberStr != null) {
+                    lastNumber = Integer.parseInt(lastNumberStr);
+                }
+            }
+            
+            // Increment nomor urut terakhir
+            lastNumber++;
+
+            // Format nomor bukti baru
+            String noBuktiBaru = "BON-" + yearMonth + String.format("%04d", lastNumber);
+
+            // Kembalikan nomor bukti baru
+            return noBuktiBaru;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 
