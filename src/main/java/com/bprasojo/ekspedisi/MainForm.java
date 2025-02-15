@@ -53,11 +53,15 @@ public class MainForm extends javax.swing.JFrame {
         jMenu6 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenuItem11 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem12 = new javax.swing.JMenuItem();
+        jMenuItem13 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -166,6 +170,7 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu6.add(jMenuItem6);
+        jMenu6.add(jSeparator3);
 
         jMenuItem7.setText("Rekap Transaksi");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
@@ -196,7 +201,29 @@ public class MainForm extends javax.swing.JFrame {
         jMenu7.add(jMenuItem10);
 
         jMenuItem11.setText("Pembayaran Kas Bon");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
         jMenu7.add(jMenuItem11);
+        jMenu7.add(jSeparator2);
+
+        jMenuItem12.setText("Rekap Transaksi");
+        jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem12ActionPerformed(evt);
+            }
+        });
+        jMenu7.add(jMenuItem12);
+
+        jMenuItem13.setText("Rekap Saldo Kasbon");
+        jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem13ActionPerformed(evt);
+            }
+        });
+        jMenu7.add(jMenuItem13);
 
         jMenu3.add(jMenu7);
 
@@ -292,6 +319,24 @@ public class MainForm extends javax.swing.JFrame {
         frmKasBonKaryawan.setVisible(true);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
+    private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
+        FrmSaldoKasbon frmSaldoKasbon = new FrmSaldoKasbon();
+        desktopPane.add(frmSaldoKasbon);
+        frmSaldoKasbon.setVisible(true);
+    }//GEN-LAST:event_jMenuItem13ActionPerformed
+
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        FrmPembayaranKasBon frmPembayaranKasBon = new FrmPembayaranKasBon();
+        desktopPane.add(frmPembayaranKasBon);
+        frmPembayaranKasBon.setVisible(true);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
+        FrmRekapKasBon frmRekapKasBon = new FrmRekapKasBon();
+        desktopPane.add(frmRekapKasBon);
+        frmRekapKasBon.setVisible(true);
+    }//GEN-LAST:event_jMenuItem12ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -340,6 +385,8 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem12;
+    private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -349,6 +396,8 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
     private javax.swing.JMenuItem miTransaksiKas;

@@ -9,44 +9,37 @@ package com.bprasojo.ekspedisi.model;
  * @author USER
  */
 import com.bprasojo.ekspedisi.dao.BankDAO;
+import com.bprasojo.ekspedisi.dao.KasBonKaryawanDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import java.util.Date;
 import java.sql.SQLException;
 
-public class KasBonKaryawan extends BaseClass{
+public class PembayaranKasBon extends BaseClass{
     private int id;
     private Date tanggal;
-    private String namaKaryawan;
-    private String alamatKaryawan;
-    private int perkiraanPinjamanId;
+    private int kasBonKaryawanId;
     private int perkiraanKasId;
     private int nominal;
     private String keterangan;
     private int bankId;
     private String sumberDana;
-    private int pelunasan;
-    private String statusLunas;
     private String noRegister;
 
-    private transient Perkiraan perkiraanPinjaman; // Lazy loading
     private transient Perkiraan perkiraanKas; // Lazy loading
     private transient Bank bank; // Lazy loading
+    private transient KasBonKaryawan kasBonKaryawan;
 
-    public KasBonKaryawan() {}
+    public PembayaranKasBon() {}
 
-    public KasBonKaryawan(int id, Date tanggal, String namaKaryawan,String alamatKaryawan, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas, String noRegister) {
+    public PembayaranKasBon(int id, Date tanggal, int kasBonKaryawanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, String noRegister) {
         this.id = id;
         this.tanggal = tanggal;
-        this.namaKaryawan = namaKaryawan;
-        this.alamatKaryawan = alamatKaryawan;
-        this.perkiraanPinjamanId = perkiraanPinjamanId;
+        this.kasBonKaryawanId = kasBonKaryawanId;
         this.perkiraanKasId = perkiraanKasId;
         this.nominal = nominal;
         this.keterangan = keterangan;
         this.bankId = bankId;
         this.sumberDana = sumberDana;
-        this.pelunasan = pelunasan;
-        this.statusLunas = statusLunas;
         this.noRegister = noRegister;
     }
 
@@ -55,29 +48,17 @@ public class KasBonKaryawan extends BaseClass{
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     
-    public int getPelunasan() { return pelunasan; }
-    public void setPelunasan(int pelunasan) { this.pelunasan = pelunasan; }   
     
-
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
 
-    public String getNamaKaryawan() { return namaKaryawan; }
-    public void setNamaKaryawan(String namaKaryawan) { this.namaKaryawan = namaKaryawan; }
-    
     public String getNoRegister() { return noRegister; }
     public void setNoRegister(String noRegister) { this.noRegister = noRegister; }
     
-    public String getStatusLunas() { return statusLunas; }
-    public void setStatuLunas(String statuLunas) { this.statusLunas = statuLunas; }
-    
-    public String getAlamatKaryawan() { return alamatKaryawan; }
-    public void setAlamatKaryawan(String alamatKaryawan) { this.alamatKaryawan = alamatKaryawan; }
-
-    public int getPerkiraanPinjamanId() { return perkiraanPinjamanId; }
-    public void setPerkiraanPinjamanId(int perkiraanPinjamanId) { 
-        this.perkiraanPinjamanId = perkiraanPinjamanId; 
-        this.perkiraanPinjaman = null;
+    public int getKasBonKaryawanId() { return kasBonKaryawanId; }
+    public void setKasBonKaryawanId(int kasBonKaryawanId) { 
+        this.kasBonKaryawanId = kasBonKaryawanId; 
+        this.kasBonKaryawan = null;
     }
     
     public int getPerkiraanKasId() { return perkiraanKasId; }
@@ -86,8 +67,6 @@ public class KasBonKaryawan extends BaseClass{
         this.perkiraanKas = null; 
     }
 
-    public int getSaldo() { return nominal - pelunasan; }
-    
     public int getNominal() { return nominal; }
     public void setNominal(int nominal) { this.nominal = nominal; }
 
@@ -104,12 +83,12 @@ public class KasBonKaryawan extends BaseClass{
     }
 
     // Lazy Loading PerkiraanPinjaman
-    public Perkiraan getPerkiraanPinjaman() throws SQLException {
-        if (perkiraanPinjaman == null) {
-            PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            perkiraanPinjaman = perkiraanDAO.getPerkiraanById(this.perkiraanPinjamanId);
+    public KasBonKaryawan getKasBonKaryawan() throws SQLException {
+        if (kasBonKaryawan == null) {
+            KasBonKaryawanDAO kasBonKaryawanDAO = new KasBonKaryawanDAO();
+            kasBonKaryawan = kasBonKaryawanDAO.getById(this.kasBonKaryawanId);
         }
-        return perkiraanPinjaman;
+        return kasBonKaryawan;
     }
     
     public Perkiraan getPerkiraanKas() throws SQLException {

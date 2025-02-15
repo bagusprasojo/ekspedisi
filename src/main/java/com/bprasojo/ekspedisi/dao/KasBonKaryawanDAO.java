@@ -112,6 +112,33 @@ public class KasBonKaryawanDAO {
         }
         return null;
     }
+    
+    public KasBonKaryawan getByNoRegister(String no_register) throws SQLException {
+        String sql = "SELECT * FROM kas_bon_karyawan WHERE no_register = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, no_register);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new KasBonKaryawan(
+                        rs.getInt("id"),
+                        rs.getDate("tanggal"),
+                        rs.getString("nama_karyawan"),
+                        rs.getString("alamat_karyawan"),
+                        rs.getInt("perkiraan_pinjaman_id"),
+                        rs.getInt("perkiraan_kas_id"),
+                        rs.getInt("nominal"),
+                        rs.getString("keterangan"),
+                        rs.getInt("bank_id"),
+                        rs.getString("sumber_dana"),
+                        rs.getInt("pelunasan"),
+                        rs.getString("status_lunas"),
+                        rs.getString("no_register")
+                    );
+                }
+            }
+        }
+        return null;
+    }
 
     public List<KasBonKaryawan> getAll() throws SQLException {
         List<KasBonKaryawan> list = new ArrayList<>();
@@ -208,7 +235,7 @@ public class KasBonKaryawanDAO {
         String yearMonth = sdf.format(inputDate);
 
         // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
-        String sql = "SELECT MAX(SUBSTRING(no_register, 9)) AS last_number " +
+        String sql = "SELECT MAX(SUBSTRING(no_register, 11)) AS last_number " +
                      "FROM kas_bon_karyawan " +
                      "WHERE no_register LIKE 'BON-" + yearMonth + "%'";
 

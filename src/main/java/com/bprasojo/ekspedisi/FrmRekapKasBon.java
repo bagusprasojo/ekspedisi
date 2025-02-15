@@ -18,12 +18,12 @@ import net.sf.jasperreports.engine.JRException;
  *
  * @author USER
  */
-public class FrmRptRekapTransaksiKas extends javax.swing.JInternalFrame {
+public class FrmRekapKasBon extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
-    public FrmRptRekapTransaksiKas() {
+    public FrmRekapKasBon() {
         initComponents();
         
         edTglAkhir.setDate(new Date());
@@ -50,7 +50,7 @@ public class FrmRptRekapTransaksiKas extends javax.swing.JInternalFrame {
         btnTampilkan = new javax.swing.JButton();
 
         setClosable(true);
-        setTitle("Rekap Transaksi Kas");
+        setTitle("Rekap Kas Bon");
 
         jLabel1.setText("Periode");
 
@@ -101,7 +101,7 @@ public class FrmRptRekapTransaksiKas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/RekapTransaksiKas.jasper";
+        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/RekapTramsaksiKasBon.jasper";
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String tglAwalFormatted = dateFormat.format(edTglAwal.getDate());
@@ -118,7 +118,7 @@ public class FrmRptRekapTransaksiKas extends javax.swing.JInternalFrame {
         try {
             AppUtils.showReport(reportPath, params);
         } catch (JRException ex) {
-            Logger.getLogger(FrmRptRekapTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FrmRekapKasBon.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnTampilkanActionPerformed
 
