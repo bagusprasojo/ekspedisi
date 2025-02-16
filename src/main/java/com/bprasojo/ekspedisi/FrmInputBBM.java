@@ -654,6 +654,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(false);
             pnlInput.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
         } else if (mode == "tambah"){
             btnNew.setEnabled(false);
             btnEdit.setEnabled(false);
@@ -661,6 +663,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(false);
             pnlInput.setEnabled(true);
+            
+            SetEnableKomponenInput(true);
         } else if (mode == "edit"){
             btnNew.setEnabled(false);
             btnEdit.setEnabled(false);
@@ -668,6 +672,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(true);
             pnlInput.setEnabled(true);
+            
+            SetEnableKomponenInput(true);
         } else if (mode == "selected"){
             btnNew.setEnabled(true);
             btnEdit.setEnabled(true);
@@ -675,6 +681,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(true);
             pnlInput.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
         }
     }
     
@@ -784,5 +792,15 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         AppUtils.SetTableAligmentRight(tblInputBBM, 7);
         
         tblInputBBM.removeColumn(tblInputBBM.getColumnModel().getColumn(0));
+    }
+    
+    private void SetEnableKomponenInput(boolean enable) {
+        edNopol.setEnabled(enable);
+        edKendaraan.setEnabled(enable);
+        edTanggal.setEnabled(enable);
+        edKMSekarang.setEnabled(enable);
+        edKMTerakhir.setEnabled(enable);
+        edPembelianBBM.setEnabled(enable);
+        edKeterangan.setEnabled(enable);
     }
 }

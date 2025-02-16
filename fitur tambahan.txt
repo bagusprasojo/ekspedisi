@@ -1,0 +1,24 @@
+1. Tambahkan Driver di armada, transaksi BBM, laporan rekap BBM
+
+2. Tambahkan master data karyawan
+   - Nama
+   - no ktp
+   - Lokasi kerja
+   - Alamat karyawan
+
+3. lookup form kasbon ditampilkan sisa hutang
+4. Semua transak opsi tunai dihilangkan
+5. Invoice
+   - INput nominal 
+   - Pilih cutomer
+   - keterangan, dll ( Piutang usaha)
+6. Pembayaran Piutang 
+7. Kartu Piutang
+
+
+Piutang (D) 1000.000
+Pendapatan (K)
+
+Kas/Bank 900.0000 (D)
+Biaya PPH 100.000 (D)
+Piutang 1000.000 (K)

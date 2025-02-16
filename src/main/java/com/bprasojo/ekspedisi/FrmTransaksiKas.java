@@ -64,14 +64,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         LoadBank();
         LoadArmada();
         
-        Calendar calendar = Calendar.getInstance();
-        Date today = calendar.getTime(); 
-        edTglAwal.setDate(today);
-        
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Set ke hari terakhir bulan
-        Date lastDayOfMonth = calendar.getTime();
-        edTglAkhir.setDate(lastDayOfMonth);
-        
+        AppUtils.SetTanggalAwalBulan(edTglAwal);
+        AppUtils.SetTanggalToday(edTglAkhir);        
         edFilter.setText("");
         
         InisialisasitblTransaksiKas();
@@ -728,6 +722,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(false);
             pnlInput.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
         } else if (mode == "tambah"){
             btnNew.setEnabled(false);
             btnEdit.setEnabled(false);
@@ -735,6 +731,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(false);
             pnlInput.setEnabled(true);
+            
+            SetEnableKomponenInput(true);
         } else if (mode == "edit"){
             btnNew.setEnabled(false);
             btnEdit.setEnabled(false);
@@ -742,6 +740,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(true);
             pnlInput.setEnabled(true);
+            
+            SetEnableKomponenInput(true);
         } else if (mode == "selected"){
             btnNew.setEnabled(true);
             btnEdit.setEnabled(true);
@@ -749,6 +749,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(true);
             pnlInput.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
         }
     }
     
@@ -814,7 +816,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                     int selectedRow = tblTransaksiKas.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
                         
-                        Integer id = (Integer) tblTransaksiKas.getValueAt(selectedRow, 0);
+                        Integer id = (Integer) tblTransaksiKas.getModel().getValueAt(selectedRow, 0);
                         LoadTransaksiKas(id);
                         setStatusTombol("selected");
                     }
@@ -893,5 +895,18 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         AppUtils.SetTableAligmentRight(tblTransaksiKas, 7);
         AppUtils.SetTableAligmentRight(tblTransaksiKas, 8);
         tblTransaksiKas.removeColumn(tblTransaksiKas.getColumnModel().getColumn(0));
+    }
+    
+    private void SetEnableKomponenInput(boolean enable) {
+        edNamaAkun.setEnabled(enable);
+        btnAkunTransaksi.setEnabled(enable);
+        cbBank.setEnabled(enable);
+        btnHapusBank.setEnabled(enable);
+        cbArmada.setEnabled(enable);
+        btnHapusArmada.setEnabled(enable);
+        edTanggal.setEnabled(enable);
+        edUangKeluar.setEnabled(enable);
+        edUangMasuk.setEnabled(enable);
+        edKeterangan.setEnabled(enable);
     }
 }
