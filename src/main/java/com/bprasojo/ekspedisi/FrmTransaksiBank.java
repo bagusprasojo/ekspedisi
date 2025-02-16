@@ -47,7 +47,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     
     private int currentPage = 1;
     private boolean SilakanLoadData = false;
-    private final DefaultTableModel tableModel;
+    private DefaultTableModel tableModel;
     private String frmMode = "";
     
     public FrmTransaksiBank() {
@@ -70,9 +70,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         LoadBankTujuan();
         cbBankTujuan.setSelectedIndex(-1);
         
-        tableModel = new DefaultTableModel(new String[]{"ID","Tanggal", "No Rek", "Nama Bank","Atas Nama", "Kode","Transaksi", "Debet", "Kredit","Adm. Bank", "Keterangan","User"}, 0);
-        tblTransaksiBank.setModel(tableModel);
-//        tblTransaksiBank.setEnabled(false);
+        InisialisasiTableTransaksiBank();
         
         SilakanLoadData = true;
         LoadDataTransaksiBank(currentPage);
@@ -863,7 +861,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                     int selectedRow = tblTransaksiBank.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
                         
-                        Integer id = (Integer) tblTransaksiBank.getValueAt(selectedRow, 0);
+                        Integer id = (Integer) tblTransaksiBank.getModel().getValueAt(selectedRow, 0);
                         LoadTransaksiBank(id);
                         setStatusTombol("selected");
                     }
@@ -1080,15 +1078,15 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         for (Map<String, Object> row : result) {
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
-                        (Date) row.get("tanggal"),
+                        AppUtils.DateFormatShort((Date) row.get("tanggal")),
                         (String) row.get("no_rekening"),
                         (String) row.get("nama_bank"),
                         (String) row.get("atas_nama"),
                         (String) row.get("kode"),
                         (String) row.get("nama"),
-                        (String) row.get("debet").toString(),
-                        (String) row.get("kredit").toString(),
-                        (String) row.get("biaya_adm_bank").toString(),
+                        AppUtils.NumericFormat((Integer) row.get("debet")),
+                        AppUtils.NumericFormat((Integer) row.get("kredit")),
+                        AppUtils.NumericFormat((Integer) row.get("biaya_adm_bank")),
                         (String) row.get("uraian"),
                         (String) row.get("pc")
                 });
@@ -1110,5 +1108,14 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         } catch (SQLException ex) {
             Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void InisialisasiTableTransaksiBank() {
+        tableModel = new DefaultTableModel(new String[]{"ID","Tanggal", "No Rek", "Nama Bank","Atas Nama", "Kode","Transaksi", "Debet", "Kredit","Adm. Bank", "Keterangan","User"}, 0);
+        tblTransaksiBank.setModel(tableModel);
+        AppUtils.SetTableAligmentRight(tblTransaksiBank, 7);
+        AppUtils.SetTableAligmentRight(tblTransaksiBank, 8);
+        AppUtils.SetTableAligmentRight(tblTransaksiBank, 9);
+        tblTransaksiBank.removeColumn(tblTransaksiBank.getColumnModel().getColumn(0));
     }
 }

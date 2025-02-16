@@ -9,12 +9,18 @@ import com.bprasojo.ekspedisi.model.BaseClass;
 import com.toedter.calendar.JDateChooser;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -102,5 +108,27 @@ public class AppUtils {
         
         return nilaiInt;
         
+    }
+    
+    public static String DateFormatShort(java.util.Date date){
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        return df.format(date);
+    }
+    
+    public static String NumericFormat(Object angka){
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        return df.format(angka);
+    }
+    
+    public static void SetTableAligmentRight(JTable table, int column) {
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        table.getColumnModel().getColumn(column).setCellRenderer(rightRenderer);
+    }
+    
+    public static void SetTableAligmentCenter(JTable table, int column) {
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        table.getColumnModel().getColumn(column).setCellRenderer(rightRenderer);
     }
 }

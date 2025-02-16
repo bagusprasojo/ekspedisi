@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ArmadaDAO {
         return this.conn;
     
     }
-    public List<Armada> getArmadaByPage(int page, int pageSize, String filter) throws SQLException {
+    public List<Armada> getArmadaByPage(int page, String filter) throws SQLException {
         List<Armada> armadaList = new ArrayList<>();
         
         // Query dengan WHERE jika ada filter
@@ -54,7 +55,8 @@ public class ArmadaDAO {
                     stmt.setString(paramIndex++, "%" + filter + "%");
                 }
             }
-
+            
+            int pageSize = 20;
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 
@@ -77,11 +79,16 @@ public class ArmadaDAO {
         return armadaList;
     }
     
-    public boolean saveArmada(Armada armada) {
-        String sql = "INSERT INTO armada (nopol, kendaraan, pemilik, alamat, kota, telp) VALUES (?, ?, ?, ?, ?, ?)";
+    public void save(Armada armada) throws SQLException {
+        String sql;
+        
+        if (armada.getId() <= 0){
+            sql = "INSERT INTO armada (nopol, kendaraan, pemilik, alamat, kota, telp) VALUES (?, ?, ?, ?, ?, ?)";
+        } else {
+            sql = "update armada set nopol = ?, kendaraan=?, pemilik=?, alamat=?, kota=?, telp=? where id=?";
+        }
 
-        try (
-             PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // Mengatur nilai parameter
             stmt.setString(1, armada.getNopol());
@@ -90,13 +97,21 @@ public class ArmadaDAO {
             stmt.setString(4, armada.getAlamat());
             stmt.setString(5, armada.getKota());
             stmt.setString(6, armada.getTelp());
+            
+            if (armada.getId() > 0) {
+                stmt.setInt(7, armada.getId());
+            }
+            
+            stmt.executeUpdate();
 
-            // Eksekusi query
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
-        } catch (SQLException e) {
-            System.err.println("Gagal menyimpan armada: " + e.getMessage());
-            return false;
+            // Jika insert, ambil ID yang dihasilkan
+            if (armada.getId() <= 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        armada.setId(generatedKeys.getInt(1));
+                    }
+                }
+            }
         }
     }
 
@@ -127,6 +142,14 @@ public class ArmadaDAO {
             }
         }
         return null;
+    }
+    
+    public void delete(int id) throws SQLException {
+        String sql = "DELETE FROM armada WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
     }
 }
 

@@ -23,8 +23,10 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -47,7 +49,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     private int currentPage = 1;
     private boolean SilakanLoadData = false;
     
-    private final DefaultTableModel tableModel;
+    private DefaultTableModel tableModel;
     private boolean showLoopUpBank = false;
     
     public FrmKasBonKaryawan() {
@@ -70,8 +72,8 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         AppUtils.SetTanggalToday(edTglAkhir);
         edFilter.setText("");
         
-        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status Lunas", "Keterangan",  "Pc"}, 0);
-        tblKasBon.setModel(tableModel);
+        InisialisasiTableKasBon();
+        
         
         SilakanLoadData = true;
         LoadDataKasBon(currentPage);
@@ -552,7 +554,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             LoadDataKasBon(currentPage);
 
         } catch (SQLException ex) {
-            AppUtils.showErrorDialog("Gagal menyimpan data dengan error " + ex.getMessage());
+            AppUtils.showErrorDialog("Gagal menyimpan data dengan error :\n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -561,6 +563,16 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        if (kasBonKaryawan == null){
+            AppUtils.showWarningDialog("Tidak ada data yang dihapus");
+            return;
+        }
+        
+        if (kasBonKaryawan.getPelunasan() > 0){
+            AppUtils.showWarningDialog("Data sudah dibayar, tidak bisa dihapus/ubah");
+            return;
+        }
+        
         boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
 
         if (userConfirmed) {
@@ -569,7 +581,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                 setStatusTombol("awal");
                 LoadDataKasBon(currentPage);
             } catch (SQLException ex) {
-                Logger.getLogger(FrmKasBonKaryawan.class.getName()).log(Level.SEVERE, null, ex);
+                AppUtils.showErrorDialog("Ada kesalahan hapus data dengan error :\n" + ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
@@ -779,6 +791,13 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             return false;
         }
         
+        if (kasBonKaryawan.getPelunasan() > 0){
+            AppUtils.showWarningDialog("Data sudah dibayar, tidak bisa dihapus/ubah");
+            return false;
+        }
+        
+        
+        
         return true;
         
     }
@@ -792,7 +811,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                     int selectedRow = tblKasBon.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
                         
-                        Integer id = (Integer) tblKasBon.getValueAt(selectedRow, 0);
+                        Integer id = (Integer) tblKasBon.getModel().getValueAt(selectedRow, 0);
                         LoadKasBon(id);
                         setStatusTombol("selected");
                     }
@@ -825,7 +844,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(FrmKasBonKaryawan.class.getName()).log(Level.SEVERE, null, ex);
+                    AppUtils.showErrorDialog("Ada kesalahan load data dengan error :\n" + ex.getMessage());
                 }
             }
         });
@@ -833,10 +852,8 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     
     private void LoadDataKasBon(int currentPage) {
         tableModel.setRowCount(0); // Bersihkan tabel
-        
         List<Map<String, Object>> result = kasBonKaryawanDAO.getKasBonByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
         for (Map<String, Object> row : result) {
-//            {"ID","Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status", "Keterangan",  "Pc"}
             
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
@@ -844,10 +861,10 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         (String) row.get("kode") + "-" + row.get("nama"),
                         (String) row.get("nama_karyawan"),
                         (String) row.get("alamat_karyawan"),
-                        (Date) row.get("tanggal"),
+                        AppUtils.DateFormatShort((Date) row.get("tanggal")),                        
                         (String) row.get("sumber_dana"),
-                        (Integer) row.get("nominal"),
-                        (Integer) row.get("pelunasan"),
+                        AppUtils.NumericFormat((Integer) row.get("nominal")),
+                        AppUtils.NumericFormat((Integer) row.get("pelunasan")),
                         (String) row.get("status_lunas"),
                         (String) row.get("keterangan"),
                         "Lia"
@@ -866,5 +883,13 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         cbViaBank.setEnabled(enable);
         edNominal.setEnabled(enable);
         edKeterangan.setEnabled(enable);
+    }
+
+    private void InisialisasiTableKasBon() {
+        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status Lunas", "Keterangan",  "Pc"}, 0);
+        tblKasBon.setModel(tableModel);
+        AppUtils.SetTableAligmentRight(tblKasBon, 7);
+        AppUtils.SetTableAligmentRight(tblKasBon, 8);
+        tblKasBon.removeColumn(tblKasBon.getColumnModel().getColumn(0));
     }
 }

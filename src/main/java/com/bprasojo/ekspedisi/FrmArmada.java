@@ -6,10 +6,15 @@ package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.model.Armada;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.awt.Component;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,29 +28,36 @@ public class FrmArmada extends javax.swing.JInternalFrame {
      */
     
     private int currentPage = 1;
-    private final int pageSize = 3;
-    private final ArmadaDAO dao = new ArmadaDAO();
+    
+    private Armada armada = null;
+    private final ArmadaDAO armadaDAO = new ArmadaDAO();
     private DefaultTableModel tableModel;
+    private boolean SilakanLoadData = false;
     
     
     public FrmArmada() {
         initComponents();
         
-        tableModel = new DefaultTableModel(new String[]{"Nopol", "Kendaraan", "Pemilik", "Alamat", "Kota", "Telp"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"Id","Nopol", "Kendaraan", "Pemilik", "Alamat", "Kota", "Telp"}, 0);
         tblArmada.setModel(tableModel);
+        tblArmada.removeColumn(tblArmada.getColumnModel().getColumn(0));
         
+        loadDataArmada(currentPage);
+        setStatusTombol("awal");
+        SilakanLoadData = true;
         
-        btnNewActionPerformed(null);
+        inisialisasiEventTableModel();
         
     }
 
-    private void loadData(int page) {
+    private void loadDataArmada(int page) {
         try {
-            List<Armada> armadaList = dao.getArmadaByPage(page, pageSize, edSearch.getText());
+            List<Armada> armadaList = armadaDAO.getArmadaByPage(page, edSearch.getText());
             tableModel.setRowCount(0); // Bersihkan tabel
 
             for (Armada armada : armadaList) {
                 tableModel.addRow(new Object[]{
+                        armada.getId(),
                         armada.getNopol(),
                         armada.getKendaraan(),
                         armada.getPemilik(),
@@ -54,24 +66,12 @@ public class FrmArmada extends javax.swing.JInternalFrame {
                         armada.getTelp()
                 });
             }
-
-            // Periksa tombol prev/next
-            btnPrev.setEnabled(page > 1);
-            btnNext.setEnabled(armadaList.size() == pageSize); // Hanya enable next jika data penuh
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error loading data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    public void populateData(){
-        String colums[] = {"No Polisi","Kendaraan","Pemilik"};
-        String data[][] = {{"AD 5656 KS", "Grand Max 01", "Bagus Prasojo"}, 
-                           {"AB 5667 KF", "Suzuki Carry 01", "Bagus"},
-                           {"AE 5673 KY", "Mitsubishi Truck 01", "Prasojo"}};
-        
-        DefaultTableModel model = new DefaultTableModel(data, colums);
-        
-    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,12 +84,21 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         jToolBar1 = new javax.swing.JToolBar();
         btnNew = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
-        btnHapus = new javax.swing.JButton();
-        Simpan = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
+        pnlDua = new javax.swing.JPanel();
+        pnlData = new javax.swing.JPanel();
+        pnlSearch = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        edSearch = new javax.swing.JTextField();
+        pnlButton = new javax.swing.JPanel();
+        btnPrev = new javax.swing.JButton();
+        btnNext = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblArmada = new javax.swing.JTable();
         pnlInput = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         edNoPolisi = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         edKendaraan = new javax.swing.JTextField();
@@ -100,17 +109,8 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         edKota = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         edTelp = new javax.swing.JTextField();
-        pnlData = new javax.swing.JPanel();
-        pnlSearch = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        edSearch = new javax.swing.JTextField();
-        pnlTable = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblArmada = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        btnPrev = new javax.swing.JButton();
-        btnNext = new javax.swing.JButton();
 
         setClosable(true);
         setMaximizable(true);
@@ -120,6 +120,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         jToolBar1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jToolBar1.setRollover(true);
 
+        btnNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Add32.png"))); // NOI18N
         btnNew.setText("Tambah");
         btnNew.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         btnNew.setFocusable(false);
@@ -149,30 +150,20 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(btnEdit);
 
-        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Delete32.png"))); // NOI18N
-        btnHapus.setText("Hapus");
-        btnHapus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        btnHapus.setFocusable(false);
-        btnHapus.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnHapus.setMaximumSize(new java.awt.Dimension(60, 70));
-        btnHapus.setMinimumSize(new java.awt.Dimension(60, 70));
-        btnHapus.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnHapus);
-
-        Simpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Save32.png"))); // NOI18N
-        Simpan.setText("Simpan");
-        Simpan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Simpan.setFocusable(false);
-        Simpan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        Simpan.setMaximumSize(new java.awt.Dimension(60, 70));
-        Simpan.setMinimumSize(new java.awt.Dimension(60, 70));
-        Simpan.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        Simpan.addActionListener(new java.awt.event.ActionListener() {
+        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Save32.png"))); // NOI18N
+        btnSimpan.setText("Simpan");
+        btnSimpan.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnSimpan.setFocusable(false);
+        btnSimpan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSimpan.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnSimpan.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnSimpan.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SimpanActionPerformed(evt);
+                btnSimpanActionPerformed(evt);
             }
         });
-        jToolBar1.add(Simpan);
+        jToolBar1.add(btnSimpan);
 
         btnBatal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Undo32.png"))); // NOI18N
         btnBatal.setText("Batal");
@@ -182,7 +173,27 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         btnBatal.setMaximumSize(new java.awt.Dimension(60, 70));
         btnBatal.setMinimumSize(new java.awt.Dimension(60, 70));
         btnBatal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnBatal);
+
+        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Delete32.png"))); // NOI18N
+        btnHapus.setText("Hapus");
+        btnHapus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnHapus.setFocusable(false);
+        btnHapus.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnHapus.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnHapus.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnHapus.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnHapus);
 
         btnKeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Close32.png"))); // NOI18N
         btnKeluar.setText("Keluar");
@@ -192,12 +203,113 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         btnKeluar.setMaximumSize(new java.awt.Dimension(60, 70));
         btnKeluar.setMinimumSize(new java.awt.Dimension(60, 70));
         btnKeluar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKeluarActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnKeluar);
 
-        pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("No Polisi");
+        pnlDua.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlDua.setLayout(new java.awt.BorderLayout());
+
+        pnlData.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlData.setLayout(new java.awt.BorderLayout());
+
+        pnlSearch.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel7.setText("Search Data");
+
+        edSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                edSearchKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlSearchLayout = new javax.swing.GroupLayout(pnlSearch);
+        pnlSearch.setLayout(pnlSearchLayout);
+        pnlSearchLayout.setHorizontalGroup(
+            pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSearchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(430, Short.MAX_VALUE))
+        );
+        pnlSearchLayout.setVerticalGroup(
+            pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSearchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pnlData.add(pnlSearch, java.awt.BorderLayout.NORTH);
+
+        pnlButton.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        btnPrev.setText("<< Prev");
+        btnPrev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrevActionPerformed(evt);
+            }
+        });
+
+        btnNext.setText("Next >>");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlButtonLayout = new javax.swing.GroupLayout(pnlButton);
+        pnlButton.setLayout(pnlButtonLayout);
+        pnlButtonLayout.setHorizontalGroup(
+            pnlButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlButtonLayout.createSequentialGroup()
+                .addContainerGap(529, Short.MAX_VALUE)
+                .addComponent(btnPrev)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnNext)
+                .addContainerGap())
+        );
+        pnlButtonLayout.setVerticalGroup(
+            pnlButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlButtonLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNext)
+                    .addComponent(btnPrev))
+                .addContainerGap())
+        );
+
+        pnlData.add(pnlButton, java.awt.BorderLayout.SOUTH);
+        pnlButton.getAccessibleContext().setAccessibleParent(tblArmada);
+
+        tblArmada.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tblArmada);
+        tblArmada.getAccessibleContext().setAccessibleParent(tblArmada);
+
+        pnlData.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        pnlDua.add(pnlData, java.awt.BorderLayout.CENTER);
+
+        pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Kendaraan");
@@ -226,6 +338,9 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel6.setText("Telp");
 
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText("No Polisi");
+
         edTelp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 edTelpActionPerformed(evt);
@@ -237,189 +352,71 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         pnlInputLayout.setHorizontalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(19, 19, 19)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(edPemilik, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(edKendaraan, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(edNoPolisi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(edKota, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(edTelp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(edPemilik, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(edKendaraan, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(edNoPolisi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(edTelp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(edNoPolisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(edPemilik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(edKota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(edTelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(edKota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(edTelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(edNoPolisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(edPemilik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        pnlData.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlData.setLayout(new java.awt.BorderLayout());
+        pnlDua.add(pnlInput, java.awt.BorderLayout.NORTH);
 
-        jLabel7.setText("Search Data");
-
-        edSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edSearchActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout pnlSearchLayout = new javax.swing.GroupLayout(pnlSearch);
-        pnlSearch.setLayout(pnlSearchLayout);
-        pnlSearchLayout.setHorizontalGroup(
-            pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        pnlSearchLayout.setVerticalGroup(
-            pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlData.add(pnlSearch, java.awt.BorderLayout.CENTER);
-
-        tblArmada.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(tblArmada);
-        tblArmada.getAccessibleContext().setAccessibleParent(tblArmada);
-
-        btnPrev.setText("<< Prev");
-        btnPrev.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrevActionPerformed(evt);
-            }
-        });
-
-        btnNext.setText("Next >>");
-        btnNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNextActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnPrev)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnNext)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnNext)
-                    .addComponent(btnPrev))
-                .addContainerGap())
-        );
-
-        javax.swing.GroupLayout pnlTableLayout = new javax.swing.GroupLayout(pnlTable);
-        pnlTable.setLayout(pnlTableLayout);
-        pnlTableLayout.setHorizontalGroup(
-            pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlTableLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        pnlTableLayout.setVerticalGroup(
-            pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTableLayout.createSequentialGroup()
-                .addContainerGap(203, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(pnlTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlTableLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(43, Short.MAX_VALUE)))
-        );
-
-        jPanel1.getAccessibleContext().setAccessibleParent(tblArmada);
-
-        pnlData.add(pnlTable, java.awt.BorderLayout.PAGE_START);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pnlInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pnlData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        getContentPane().add(pnlDua, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        armada = new Armada();
+        
         edNoPolisi.setText("");
         edKendaraan.setText("");
         edPemilik.setText("");
@@ -427,30 +424,75 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         edKota.setText("");
         edTelp.setText("");
         
-        loadData(1);
+        setStatusTombol("tambah");
+        loadDataArmada(currentPage);
     }//GEN-LAST:event_btnNewActionPerformed
 
-    private void SimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SimpanActionPerformed
-        String nopol = edNoPolisi.getText();
-        String kendaraan = edKendaraan.getText();
-        String pemilik = edPemilik.getText();
-        String alamat = edAlamat.getText();
-        String kota = edKota.getText();
-        String telp = edTelp.getText();
-
-        // Buat objek Armada
-        Armada armada = new Armada(nopol, kendaraan, pemilik, alamat, kota, telp, 0);
-
-        // Simpan ke database
-        
-        Component frame = null;
-
-        if (dao.saveArmada(armada)) {
-            JOptionPane.showMessageDialog(frame, "Data berhasil disimpan!");
-        } else {
-            JOptionPane.showMessageDialog(frame, "Gagal menyimpan data.");
+    private void setStatusTombol(String mode){
+        if (mode == "awal"){
+            btnNew.setEnabled(true);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(false);
+            btnBatal.setEnabled(false);
+            btnHapus.setEnabled(false);
+            pnlInput.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
+        } else if (mode == "tambah"){
+            btnNew.setEnabled(false);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(true);
+            btnBatal.setEnabled(true);
+            btnHapus.setEnabled(false);
+            pnlInput.setEnabled(true);
+            
+            SetEnableKomponenInput(true);
+        } else if (mode == "edit"){
+            btnNew.setEnabled(false);
+            btnEdit.setEnabled(false);
+            btnSimpan.setEnabled(true);
+            btnBatal.setEnabled(true);
+            btnHapus.setEnabled(true);
+            pnlInput.setEnabled(true);
+            
+            SetEnableKomponenInput(true);
+        } else if (mode == "selected"){
+            btnNew.setEnabled(true);
+            btnEdit.setEnabled(true);
+            btnSimpan.setEnabled(false);
+            btnBatal.setEnabled(false);
+            btnHapus.setEnabled(true);
+            pnlInput.setEnabled(false);
+            
+            SetEnableKomponenInput(false);
         }
-    }//GEN-LAST:event_SimpanActionPerformed
+    }
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        if (validasiInput() == false){
+            return;
+        }
+        try {
+            String nopol = edNoPolisi.getText();
+            String kendaraan = edKendaraan.getText();
+            String pemilik = edPemilik.getText();
+            String alamat = edAlamat.getText();
+            String kota = edKota.getText();
+            String telp = edTelp.getText();
+
+            armada.setNopol(nopol);
+            armada.setKendaraan(kendaraan);
+            armada.setPemilik(pemilik);
+            armada.setAlamat(alamat);
+            armada.setKota(kota);
+            armada.setTelp(telp);
+
+            armadaDAO.save(armada);
+            AppUtils.showInfoDialog("Data berhasil disimpan");
+            loadDataArmada(currentPage);
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void edAlamatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edAlamatActionPerformed
         // TODO add your handling code here:
@@ -464,29 +506,55 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_edTelpActionPerformed
 
-    private void edSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edSearchActionPerformed
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        setStatusTombol("edit");
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        currentPage++;
+        loadDataArmada(currentPage);
+    }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
         if (currentPage > 1) {
             currentPage--;
-            loadData(currentPage);
+            loadDataArmada(currentPage);
         }
     }//GEN-LAST:event_btnPrevActionPerformed
 
-    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        currentPage++;
-        loadData(currentPage);
-    }//GEN-LAST:event_btnNextActionPerformed
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        setStatusTombol("awal");
+    }//GEN-LAST:event_btnBatalActionPerformed
 
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-//        setT
-    }//GEN-LAST:event_btnEditActionPerformed
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
+
+        if (userConfirmed) {
+            try {
+                armadaDAO.delete(armada.getId());
+                setStatusTombol("awal");
+                loadDataArmada(currentPage);
+            } catch (SQLException ex) {
+                AppUtils.showWarningDialog("Ada kesalahan dengan error : \n" + ex.getMessage());
+            }
+        }
+        
+        
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnKeluarActionPerformed
+
+    private void edSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edSearchKeyReleased
+        if (SilakanLoadData){
+            currentPage = 1;
+            loadDataArmada(currentPage);
+        }
+    }//GEN-LAST:event_edSearchKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Simpan;
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
@@ -494,6 +562,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
+    private javax.swing.JButton btnSimpan;
     private javax.swing.JTextField edAlamat;
     private javax.swing.JTextField edKendaraan;
     private javax.swing.JTextField edKota;
@@ -508,13 +577,81 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JPanel pnlButton;
     private javax.swing.JPanel pnlData;
+    private javax.swing.JPanel pnlDua;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlSearch;
-    private javax.swing.JPanel pnlTable;
     private javax.swing.JTable tblArmada;
     // End of variables declaration//GEN-END:variables
+    
+    private void SetEnableKomponenInput(boolean enable){
+        edNoPolisi.setEnabled(enable);
+        edKendaraan.setEnabled(enable);
+        edKendaraan.setEnabled(enable);
+        edKota.setEnabled(enable);
+        edPemilik.setEnabled(enable);
+        edTelp.setEnabled(enable);
+        edAlamat.setEnabled(enable);
+    }
+    
+    private void inisialisasiEventTableModel() {
+        tblArmada.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // Memeriksa apakah ada baris yang dipilih
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = tblArmada.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    if (selectedRow != -1) {
+                        
+                        int id = (Integer) tblArmada.getModel().getValueAt(tblArmada.getSelectedRow(),0);
+//                        Integer id = (Integer) tblArmada.getValueAt(selectedRow, 0);
+                        LoadArmada(id);
+                        setStatusTombol("selected");
+                    }
+                }
+            }
+
+            private void LoadArmada(Integer id) {
+                try {
+                    armada = armadaDAO.getArmadaById(id);
+                    if (armada != null){
+                        edAlamat.setText(armada.getAlamat());
+                        edKendaraan.setText(armada.getKendaraan());
+                        edKota.setText(armada.getKota());
+                        edNoPolisi.setText(armada.getNopol());
+                        edPemilik.setText(armada.getPemilik());
+                        edTelp.setText(armada.getTelp());                        
+                    }
+                } catch (SQLException ex) {
+                    AppUtils.showWarningDialog("Ada kesalahan load data dengan pesan : \n" + ex.getMessage());
+                }
+            }
+        });
+    }
+
+    private boolean validasiInput() {
+        if (edNoPolisi.getText().equals("")){
+            AppUtils.showWarningDialog("No Polisi belum diisi");
+            edNoPolisi.requestFocus();
+            return false;
+        }
+        
+        if (edKendaraan.getText().equals("")){
+            AppUtils.showWarningDialog("Kendaraan belum diisi");
+            edKendaraan.requestFocus();
+            return false;
+        }
+        
+        if (edPemilik.getText().equals("")){
+            AppUtils.showWarningDialog("Pemilik belum diisi");
+            edPemilik.requestFocus();
+            return false;
+        }
+        
+        return true;
+    }
+
 }

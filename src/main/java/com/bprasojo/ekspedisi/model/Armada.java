@@ -15,9 +15,11 @@ public class Armada extends BaseClass{
     private String alamat;
     private String kota;
     private String telp;
-    private Integer id;
+    private int id;
 
     // Constructor
+    public Armada(){}
+    
     public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp, Integer id) {
         this.nopol = nopol;
         this.kendaraan = kendaraan;

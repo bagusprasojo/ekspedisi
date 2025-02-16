@@ -39,7 +39,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private ArmadaDAO armadaDAO = null;
     
     
-    private final DefaultTableModel tableModel;
+    private DefaultTableModel tableModel;
             
     
     private int currentPage = 1;
@@ -63,8 +63,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         
         edFilter.setText("");
         
-        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","KM Terakhir","KM Sekarang","Pembelian BBM","Keterangan", "Pc"}, 0);
-        tblTransaksiKas.setModel(tableModel);
+        InisialisasiTableInputBBM();
+        
         
         SilakanLoadData = true;
         LoadDataTransaksiPembelianBBM(currentPage);
@@ -122,7 +122,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         jLabel10 = new javax.swing.JLabel();
         edFilter = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTransaksiKas = new javax.swing.JTable();
+        tblInputBBM = new javax.swing.JTable();
 
         setClosable(true);
         setMaximizable(true);
@@ -436,7 +436,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
 
         jPanel4.add(pnlFilter, java.awt.BorderLayout.NORTH);
 
-        tblTransaksiKas.setModel(new javax.swing.table.DefaultTableModel(
+        tblInputBBM.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -447,12 +447,12 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblTransaksiKas.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblInputBBM.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tblTransaksiKasFocusGained(evt);
+                tblInputBBMFocusGained(evt);
             }
         });
-        jScrollPane1.setViewportView(tblTransaksiKas);
+        jScrollPane1.setViewportView(tblInputBBM);
 
         jPanel4.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -531,7 +531,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             
 
         } catch (SQLException ex) {
-            Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
+            AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -584,9 +584,9 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         setStatusTombol("awal");
     }//GEN-LAST:event_btnBatalActionPerformed
 
-    private void tblTransaksiKasFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblTransaksiKasFocusGained
+    private void tblInputBBMFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblInputBBMFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_tblTransaksiKasFocusGained
+    }//GEN-LAST:event_tblInputBBMFocusGained
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
@@ -597,7 +597,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                 setStatusTombol("awal");
                 LoadDataTransaksiPembelianBBM(currentPage);
             } catch (SQLException ex) {
-                Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
+                AppUtils.showErrorDialog("Gagal hapus data dengan error :\n" + ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
@@ -643,7 +643,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlNextPrev;
-    private javax.swing.JTable tblTransaksiKas;
+    private javax.swing.JTable tblInputBBM;
     // End of variables declaration//GEN-END:variables
 
     private void setStatusTombol(String mode){
@@ -685,17 +685,15 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         
         List<Map<String, Object>> result = transaksiPembelianBBMDAO.getTransaksiPembelianBBMByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
         for (Map<String, Object> row : result) {
-//            "Tanggal", "No. Act", "Nama Act", "Uraian", "Bank","No Polisi", "Pengeluaran", "Penerimaan", "Pc"}, 0
-            
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
                         (String) row.get("nopol"),
                         (String) row.get("kendaraan"),
                         (String) row.get("pemilik"),
                         (Date) row.get("tanggal"),
-                        (Integer) row.get("km_terakhir"),
-                        (Integer) row.get("km_sekarang"),
-                        (Integer) row.get("nominal_BBM"),
+                        AppUtils.NumericFormat((Integer) row.get("km_terakhir")),
+                        AppUtils.NumericFormat((Integer) row.get("km_sekarang")),
+                        AppUtils.NumericFormat((Integer) row.get("nominal_BBM")),
                         (String) row.get("keterangan"),                        
                         "Lia"
                 });
@@ -704,15 +702,15 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     }
 
     private void inisialisasiEventTableModel() {
-        tblTransaksiKas.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        tblInputBBM.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 // Memeriksa apakah ada baris yang dipilih
                 if (!e.getValueIsAdjusting()) {
-                    int selectedRow = tblTransaksiKas.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    int selectedRow = tblInputBBM.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
                         
-                        Integer id = (Integer) tblTransaksiKas.getValueAt(selectedRow, 0);
+                        Integer id = (Integer) tblInputBBM.getModel().getValueAt(selectedRow, 0);
                         LoadTransaksiPembelianBBM(id);
                         setStatusTombol("selected");
                     }
@@ -733,7 +731,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                         edKeterangan.setText(transBeliBBM.getKeterangan());
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
+                    AppUtils.showErrorDialog("Ada kesalahan load data dengan error :\n" + ex.getMessage());
                 }
             }
         });
@@ -775,5 +773,16 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
 
         return true;
         
+    }
+
+    private void InisialisasiTableInputBBM() {
+        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","Tanggal","KM Terakhir","KM Sekarang","Pembelian BBM","Keterangan", "Pc"}, 0);
+        tblInputBBM.setModel(tableModel);
+        
+        AppUtils.SetTableAligmentRight(tblInputBBM, 5);
+        AppUtils.SetTableAligmentRight(tblInputBBM, 6);
+        AppUtils.SetTableAligmentRight(tblInputBBM, 7);
+        
+        tblInputBBM.removeColumn(tblInputBBM.getColumnModel().getColumn(0));
     }
 }

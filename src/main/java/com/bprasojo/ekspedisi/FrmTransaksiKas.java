@@ -47,7 +47,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     private final BankDAO bankDAO = new BankDAO();
     private final TransaksiKasDAO transaksiKasDAO = new TransaksiKasDAO();
     
-    private final DefaultTableModel tableModel;
+    private DefaultTableModel tableModel;
             
     
     private int currentPage = 1;
@@ -74,8 +74,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         
         edFilter.setText("");
         
-        tableModel = new DefaultTableModel(new String[]{"ID","Tanggal", "No. Act", "Nama Act", "Uraian", "Bank","No Polisi", "Pengeluaran", "Penerimaan", "Pc"}, 0);
-        tblTransaksiKas.setModel(tableModel);
+        InisialisasitblTransaksiKas();
         
         SilakanLoadData = true;
         LoadDataTransaksiKas(currentPage);
@@ -770,7 +769,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
 
     private void LoadArmada() {
         try {
-            List<Armada> armadas = armadaDAO.getArmadaByPage(1,1000,"");
+            List<Armada> armadas = armadaDAO.getArmadaByPage(1,"");
             
             // Masukkan data ke JComboBox
             DefaultComboBoxModel<Armada> model = new DefaultComboBoxModel<>();
@@ -792,14 +791,14 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
-                        (Date) row.get("tanggal"),
+                        AppUtils.DateFormatShort((Date) row.get("tanggal")),
                         (String) row.get("kode"),
                         (String) row.get("nama"),
                         (String) row.get("keterangan"),
                         (String) row.get("no_rekening"),
                         (String) row.get("nopol"),
-                        (Integer) row.get("nominal_keluar"),
-                        (Integer) row.get("nominal_masuk"),
+                        AppUtils.NumericFormat((Integer) row.get("nominal_keluar")),
+                        AppUtils.NumericFormat((Integer) row.get("nominal_masuk")),
                         "Lia"
                 });
         }
@@ -886,5 +885,13 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
 
         return true;
         
+    }
+
+    private void InisialisasitblTransaksiKas() {
+        tableModel = new DefaultTableModel(new String[]{"ID","Tanggal", "No. Act", "Nama Act", "Uraian", "Bank","No Polisi", "Pengeluaran", "Penerimaan", "Pc"}, 0);
+        tblTransaksiKas.setModel(tableModel);
+        AppUtils.SetTableAligmentRight(tblTransaksiKas, 7);
+        AppUtils.SetTableAligmentRight(tblTransaksiKas, 8);
+        tblTransaksiKas.removeColumn(tblTransaksiKas.getColumnModel().getColumn(0));
     }
 }

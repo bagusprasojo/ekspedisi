@@ -7,11 +7,9 @@ package com.bprasojo.ekspedisi;
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.KasBonKaryawanDAO;
 import com.bprasojo.ekspedisi.dao.PembayaranKasBonDAO;
-import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import com.bprasojo.ekspedisi.model.PembayaranKasBon;
-import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.awt.event.ItemEvent;
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -51,7 +48,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     private int currentPage = 1;
     private boolean SilakanLoadData = false;
     
-    private final DefaultTableModel tableModel;
+    private DefaultTableModel tableModel;
     private boolean showLoopUpBank = false;
     
     public FrmPembayaranKasBon() {
@@ -72,8 +69,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         AppUtils.SetTanggalToday(edTglAkhir);
         edFilter.setText("");
         
-        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "No Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Keterangan",  "Pc"}, 0);
-        tblPembayaranKasBon.setModel(tableModel);
+        InisialisasiTablePembayaranKasBon();
         
         SilakanLoadData = true;
         LoadDataPembayaranKasBon(currentPage);
@@ -348,11 +344,11 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(eNoRegister, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(eNoRegister, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel6)))
                 .addGap(3, 3, 3)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -581,7 +577,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                 setStatusTombol("awal");
                 LoadDataPembayaranKasBon(currentPage);
             } catch (SQLException ex) {
-                Logger.getLogger(FrmPembayaranKasBon.class.getName()).log(Level.SEVERE, null, ex);
+                AppUtils.showErrorDialog("Gagal menghapus data dengan error: \n" + ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
@@ -804,8 +800,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                 if (!e.getValueIsAdjusting()) {
                     int selectedRow = tblPembayaranKasBon.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
-                        
-                        Integer id = (Integer) tblPembayaranKasBon.getValueAt(selectedRow, 0);
+                        Integer id = (Integer) tblPembayaranKasBon.getModel().getValueAt(selectedRow, 0);
                         LoadPembayaranKasBon(id);
                         setStatusTombol("selected");
                     }
@@ -860,9 +855,9 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                         (String) row.get("no_kas_bon"),    
                         (String) row.get("nama_karyawan"),
                         (String) row.get("alamat_karyawan"),
-                        (Date) row.get("tanggal"),
+                        AppUtils.DateFormatShort((Date) row.get("tanggal")),
                         (String) row.get("sumber_dana"),
-                        (Integer) row.get("nominal"),
+                        AppUtils.NumericFormat((Integer) row.get("nominal")),
                         (String) row.get("keterangan"),
                         "Lia"
                 });
@@ -882,5 +877,13 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         cbViaBank.setEnabled(enable);
         edNominal.setEnabled(enable);
         edKeterangan.setEnabled(enable);
+    }
+
+    private void InisialisasiTablePembayaranKasBon() {
+        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "No Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Keterangan",  "Pc"}, 0);
+        tblPembayaranKasBon.setModel(tableModel);
+        AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 7);
+        tblPembayaranKasBon.removeColumn(tblPembayaranKasBon.getColumnModel().getColumn(0));
+        
     }
 }
