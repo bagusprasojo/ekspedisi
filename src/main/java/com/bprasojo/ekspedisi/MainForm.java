@@ -42,6 +42,7 @@ public class MainForm extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         miCustomer = new javax.swing.JMenuItem();
         miArmada = new javax.swing.JMenuItem();
+        jMenuItem14 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenu5 = new javax.swing.JMenu();
         miTransaksiKas = new javax.swing.JMenuItem();
@@ -108,6 +109,14 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu2.add(miArmada);
+
+        jMenuItem14.setText("Karyawan");
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem14ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem14);
 
         jMenuBar1.add(jMenu2);
 
@@ -265,9 +274,13 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_miTransaksiKasActionPerformed
 
     private void miCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCustomerActionPerformed
-        FrmDefault frmDefault = new FrmDefault();
-        desktopPane.add(frmDefault);
-        frmDefault.setVisible(true);
+        FrmCustomer frmCustomer = new FrmCustomer();
+        frmCustomer.setTitle("Customer");
+        frmCustomer.setJenis("Customer");
+        frmCustomer.loadDataStakeHolder(1);
+        frmCustomer.KonfigurasiForm();
+        desktopPane.add(frmCustomer);        
+        frmCustomer.setVisible(true);
     }//GEN-LAST:event_miCustomerActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -337,6 +350,16 @@ public class MainForm extends javax.swing.JFrame {
         frmRekapKasBon.setVisible(true);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
+    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
+        FrmCustomer frmCustomer = new FrmCustomer();
+        frmCustomer.setTitle("Karyawan");
+        frmCustomer.setJenis("Karyawan");
+        frmCustomer.KonfigurasiForm();
+        frmCustomer.loadDataStakeHolder(1);
+        desktopPane.add(frmCustomer);        
+        frmCustomer.setVisible(true);
+    }//GEN-LAST:event_jMenuItem14ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -387,6 +410,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
+    private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

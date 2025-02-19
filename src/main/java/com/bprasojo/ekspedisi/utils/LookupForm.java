@@ -30,7 +30,7 @@ public class LookupForm extends javax.swing.JDialog {
         try {
             this.conn = DatabaseConnection.getConnection();
         } catch (SQLException ex) {
-            Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            AppUtils.showErrorDialog("Gagal Load Data di LookUpForm dengan error \n" + ex.getMessage());
         }
 
         setLayout(new BorderLayout());

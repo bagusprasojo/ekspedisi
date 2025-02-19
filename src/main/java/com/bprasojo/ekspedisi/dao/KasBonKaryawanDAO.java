@@ -31,139 +31,90 @@ public class KasBonKaryawanDAO {
     }
 
     public void save(KasBonKaryawan kasBonKaryawan) throws SQLException {
-        
-        if (kasBonKaryawan.getNominal() > kasBonKaryawan.getPelunasan()){
-            kasBonKaryawan.setStatuLunas("Belum");
-        } else {
-            kasBonKaryawan.setStatuLunas("Lunas");
-        }
+        // Tentukan status lunas
+        kasBonKaryawan.setStatuLunas(kasBonKaryawan.getNominal() > kasBonKaryawan.getPelunasan() ? "Belum" : "Lunas");
+
         Date tanggal = new Date(kasBonKaryawan.getTanggal().getTime());
-        if (kasBonKaryawan.getId() <= 0) {
-            
-            String noRegister = generateNoRegister(kasBonKaryawan.getTanggal());
-            kasBonKaryawan.setNoRegister(noRegister);
-            
-            String sql = "INSERT INTO kas_bon_karyawan (tanggal, nama_karyawan, alamat_karyawan, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
-            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                stmt.setDate(1, tanggal);
-                stmt.setString(2, kasBonKaryawan.getNamaKaryawan());
-                stmt.setString(3, kasBonKaryawan.getAlamatKaryawan());
-                stmt.setInt(4, kasBonKaryawan.getPerkiraanPinjamanId());
-                stmt.setInt(5, kasBonKaryawan.getPerkiraanKasId());
-                stmt.setInt(6, kasBonKaryawan.getNominal());
-                stmt.setString(7, kasBonKaryawan.getKeterangan());
-                stmt.setInt(8, kasBonKaryawan.getBankId());
-                stmt.setString(9, kasBonKaryawan.getSumberDana());
-                stmt.setInt(10, kasBonKaryawan.getPelunasan());
-                stmt.setString(11, kasBonKaryawan.getStatusLunas());
-                stmt.setString(12, kasBonKaryawan.getNoRegister());
-                stmt.executeUpdate();
-                
+        boolean isInsert = kasBonKaryawan.getId() <= 0;
+
+        if (isInsert) {
+            kasBonKaryawan.setNoRegister(generateNoRegister(kasBonKaryawan.getTanggal()));
+        }
+
+        String sql;
+        if (isInsert){ 
+            sql = "INSERT INTO kas_bon_karyawan (tanggal, karyawan_id, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        } else {    
+            sql = "UPDATE kas_bon_karyawan SET tanggal = ?, karyawan_id = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register = ? WHERE id = ?";            
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
+            stmt.setDate(1, tanggal);
+            stmt.setInt(2, kasBonKaryawan.getKaryawanId());
+            stmt.setInt(3, kasBonKaryawan.getPerkiraanPinjamanId());
+            stmt.setInt(4, kasBonKaryawan.getPerkiraanKasId());
+            stmt.setInt(5, kasBonKaryawan.getNominal());
+            stmt.setString(6, kasBonKaryawan.getKeterangan());
+            stmt.setInt(7, kasBonKaryawan.getBankId());
+            stmt.setString(8, kasBonKaryawan.getSumberDana());
+            stmt.setInt(9, kasBonKaryawan.getPelunasan());
+            stmt.setString(10, kasBonKaryawan.getStatusLunas());
+            stmt.setString(11, kasBonKaryawan.getNoRegister());
+
+            if (!isInsert) {
+                stmt.setInt(12, kasBonKaryawan.getId());
+            }
+
+            stmt.executeUpdate();
+
+            if (isInsert) {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         kasBonKaryawan.setId(generatedKeys.getInt(1));
                     }
                 }
             }
-        } else {
-            String sql = "UPDATE kas_bon_karyawan SET tanggal = ?, nama_karyawan = ?,alamat_karyawan = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register=? WHERE id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setDate(1, tanggal);
-                stmt.setString(2, kasBonKaryawan.getNamaKaryawan());
-                stmt.setString(3, kasBonKaryawan.getAlamatKaryawan());
-                stmt.setInt(4, kasBonKaryawan.getPerkiraanPinjamanId());
-                stmt.setInt(5, kasBonKaryawan.getPerkiraanKasId());
-                stmt.setInt(6, kasBonKaryawan.getNominal());
-                stmt.setString(7, kasBonKaryawan.getKeterangan());
-                stmt.setInt(8, kasBonKaryawan.getBankId());
-                stmt.setString(9, kasBonKaryawan.getSumberDana());
-                stmt.setInt(10, kasBonKaryawan.getPelunasan());
-                stmt.setString(11, kasBonKaryawan.getStatusLunas());
-                stmt.setString(12, kasBonKaryawan.getNoRegister());
-                stmt.setInt(13, kasBonKaryawan.getId());
-                stmt.executeUpdate();
+        }
+    }
+    
+    private KasBonKaryawan getByField(String fieldName, Object value) throws SQLException {
+        String sql = "SELECT * FROM kas_bon_karyawan WHERE " + fieldName + " = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            if (value instanceof Integer) {
+                stmt.setInt(1, (Integer) value);
+            } else if (value instanceof String) {
+                stmt.setString(1, (String) value);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new KasBonKaryawan(
+                        rs.getInt("id"),
+                        rs.getDate("tanggal"),
+                        rs.getInt("karyawan_id"),
+                        rs.getInt("perkiraan_pinjaman_id"),
+                        rs.getInt("perkiraan_kas_id"),
+                        rs.getInt("nominal"),
+                        rs.getString("keterangan"),
+                        rs.getInt("bank_id"),
+                        rs.getString("sumber_dana"),
+                        rs.getInt("pelunasan"),
+                        rs.getString("status_lunas"),
+                        rs.getString("no_register")
+                    );
+                }
             }
         }
+        return null;
     }
 
     public KasBonKaryawan getById(int id) throws SQLException {
-        String sql = "SELECT * FROM kas_bon_karyawan WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new KasBonKaryawan(
-                        rs.getInt("id"),
-                        rs.getDate("tanggal"),
-                        rs.getString("nama_karyawan"),
-                        rs.getString("alamat_karyawan"),
-                        rs.getInt("perkiraan_pinjaman_id"),
-                        rs.getInt("perkiraan_kas_id"),
-                        rs.getInt("nominal"),
-                        rs.getString("keterangan"),
-                        rs.getInt("bank_id"),
-                        rs.getString("sumber_dana"),
-                        rs.getInt("pelunasan"),
-                        rs.getString("status_lunas"),
-                        rs.getString("no_register")
-                    );
-                }
-            }
-        }
-        return null;
+        return getByField("id", id);
     }
     
     public KasBonKaryawan getByNoRegister(String no_register) throws SQLException {
-        String sql = "SELECT * FROM kas_bon_karyawan WHERE no_register = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, no_register);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new KasBonKaryawan(
-                        rs.getInt("id"),
-                        rs.getDate("tanggal"),
-                        rs.getString("nama_karyawan"),
-                        rs.getString("alamat_karyawan"),
-                        rs.getInt("perkiraan_pinjaman_id"),
-                        rs.getInt("perkiraan_kas_id"),
-                        rs.getInt("nominal"),
-                        rs.getString("keterangan"),
-                        rs.getInt("bank_id"),
-                        rs.getString("sumber_dana"),
-                        rs.getInt("pelunasan"),
-                        rs.getString("status_lunas"),
-                        rs.getString("no_register")
-                    );
-                }
-            }
-        }
-        return null;
-    }
-
-    public List<KasBonKaryawan> getAll() throws SQLException {
-        List<KasBonKaryawan> list = new ArrayList<>();
-        String sql = "SELECT * FROM kas_bon_karyawan";
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                list.add(new KasBonKaryawan(
-                    rs.getInt("id"),
-                    rs.getDate("tanggal"),
-                    rs.getString("nama_karyawan"),
-                    rs.getString("alamat_karyawan"),
-                    rs.getInt("perkiraan_pinjaman_id"),
-                    rs.getInt("perkiraan_kas_id"),
-                    rs.getInt("nominal"),
-                    rs.getString("keterangan"),
-                    rs.getInt("bank_id"),
-                    rs.getString("sumber_dana"),
-                    rs.getInt("pelunasan"),
-                    rs.getString("status_lunas"),
-                    rs.getString("no_register")
-                ));
-            }
-        }
-        return list;
-    }
+        return getByField("no_register", no_register);
+    }    
 
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM kas_bon_karyawan WHERE id = ?";
@@ -176,12 +127,13 @@ public class KasBonKaryawanDAO {
     public List<Map<String, Object>> getKasBonByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
         List<Map<String, Object>> resultList = new ArrayList<>();
 
-        String sql = "select a.*, b.kode, b.nama from kas_bon_karyawan a "
+        String sql = "select a.*, b.kode, b.nama, c.nama as nama_karyawan, c.alamat as alamat_karyawan from kas_bon_karyawan a "
                     + " inner join perkiraan b on a.perkiraan_pinjaman_id = b.id "
-                    + " WHERE a.tanggal BETWEEN ? AND ?"; 
+                    + " inner join stake_holder c on a.karyawan_id = c.id "
+                    + " WHERE a.tanggal BETWEEN ? AND ? "; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.status_lunas like ?, a.nama_karyawan like ? or a.alamat_karyawan like ? or a.sumber_dana like ? or a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ?)";
+            sql += " AND (a.status_lunas like ? or c.nama like ? or c.alamat like ? or a.sumber_dana like ? or a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";

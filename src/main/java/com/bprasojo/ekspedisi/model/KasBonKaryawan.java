@@ -10,14 +10,13 @@ package com.bprasojo.ekspedisi.model;
  */
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
+import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import java.util.Date;
 import java.sql.SQLException;
 
 public class KasBonKaryawan extends BaseClass{
     private int id;
     private Date tanggal;
-    private String namaKaryawan;
-    private String alamatKaryawan;
     private int perkiraanPinjamanId;
     private int perkiraanKasId;
     private int nominal;
@@ -27,18 +26,18 @@ public class KasBonKaryawan extends BaseClass{
     private int pelunasan;
     private String statusLunas;
     private String noRegister;
+    private int karyawanID;
 
     private transient Perkiraan perkiraanPinjaman; // Lazy loading
     private transient Perkiraan perkiraanKas; // Lazy loading
     private transient Bank bank; // Lazy loading
+    private transient StakeHolder karyawan;
 
     public KasBonKaryawan() {}
 
-    public KasBonKaryawan(int id, Date tanggal, String namaKaryawan,String alamatKaryawan, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas, String noRegister) {
+    public KasBonKaryawan(int id, Date tanggal, int karyawanId, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas, String noRegister) {
         this.id = id;
         this.tanggal = tanggal;
-        this.namaKaryawan = namaKaryawan;
-        this.alamatKaryawan = alamatKaryawan;
         this.perkiraanPinjamanId = perkiraanPinjamanId;
         this.perkiraanKasId = perkiraanKasId;
         this.nominal = nominal;
@@ -48,12 +47,19 @@ public class KasBonKaryawan extends BaseClass{
         this.pelunasan = pelunasan;
         this.statusLunas = statusLunas;
         this.noRegister = noRegister;
+        this.karyawanID = karyawanId;
     }
 
     // Getter & Setter
     @Override
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+    
+    public int getKaryawanId() { return karyawanID; }
+    public void setKaryawanId(int karyawanId) {
+        this.karyawanID = karyawanId; 
+        this.karyawan = null;
+    }
     
     public int getPelunasan() { return pelunasan; }
     public void setPelunasan(int pelunasan) { this.pelunasan = pelunasan; }   
@@ -62,8 +68,6 @@ public class KasBonKaryawan extends BaseClass{
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
 
-    public String getNamaKaryawan() { return namaKaryawan; }
-    public void setNamaKaryawan(String namaKaryawan) { this.namaKaryawan = namaKaryawan; }
     
     public String getNoRegister() { return noRegister; }
     public void setNoRegister(String noRegister) { this.noRegister = noRegister; }
@@ -71,9 +75,7 @@ public class KasBonKaryawan extends BaseClass{
     public String getStatusLunas() { return statusLunas; }
     public void setStatuLunas(String statuLunas) { this.statusLunas = statuLunas; }
     
-    public String getAlamatKaryawan() { return alamatKaryawan; }
-    public void setAlamatKaryawan(String alamatKaryawan) { this.alamatKaryawan = alamatKaryawan; }
-
+    
     public int getPerkiraanPinjamanId() { return perkiraanPinjamanId; }
     public void setPerkiraanPinjamanId(int perkiraanPinjamanId) { 
         this.perkiraanPinjamanId = perkiraanPinjamanId; 
@@ -127,6 +129,14 @@ public class KasBonKaryawan extends BaseClass{
             bank = bankDAO.getBankById(this.bankId);
         }
         return bank;
+    }
+    
+    public StakeHolder getKaryawan() throws SQLException {
+        if (karyawan == null) {
+            StakeHolderDAO karyawanDAO = new StakeHolderDAO();
+            karyawan = karyawanDAO.getById(this.karyawanID);
+        }
+        return karyawan;
     }
 }
 

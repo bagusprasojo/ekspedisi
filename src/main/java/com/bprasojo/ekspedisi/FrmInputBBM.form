@@ -230,9 +230,10 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="1" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel9" alignment="1" min="-2" pref="82" max="-2" attributes="0"/>
                           <Component id="jLabel5" alignment="1" min="-2" pref="82" max="-2" attributes="0"/>
@@ -242,7 +243,6 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="edKendaraan" alignment="0" min="-2" pref="201" max="-2" attributes="0"/>
                           <Component id="edTanggal" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="edKMTerakhir" min="-2" pref="140" max="-2" attributes="0"/>
@@ -254,6 +254,12 @@
                           <Component id="edPembelianBBM" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
                           <Component id="edKeterangan" alignment="0" max="32767" attributes="0"/>
                           <Component id="edNopol" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="edDriver" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnDriver" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="edKendaraan" alignment="0" min="-2" pref="201" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="234" max="32767" attributes="0"/>
                   </Group>
@@ -272,10 +278,18 @@
                           <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="edKendaraan" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="edDriver" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnDriver" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="edTanggal" max="32767" attributes="0"/>
-                          <Component id="jLabel5" max="32767" attributes="0"/>
+                          <Component id="jLabel5" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -294,16 +308,13 @@
                           <Component id="edKeterangan" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JTextField" name="edNopol">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jTextField1"/>
-              </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="edNopolActionPerformed"/>
               </Events>
@@ -339,9 +350,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edKeterangan">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jTextField3"/>
-              </Properties>
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="edTanggal">
             </Component>
@@ -350,6 +358,7 @@
                 <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
                   <Format subtype="1" type="0"/>
                 </Property>
+                <Property name="horizontalAlignment" type="int" value="4"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="edKMTerakhir">
@@ -357,7 +366,12 @@
                 <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
                   <Format subtype="1" type="0"/>
                 </Property>
+                <Property name="horizontalAlignment" type="int" value="4"/>
               </Properties>
+              <Events>
+                <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="edKMTerakhirFocusGained"/>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="edKMTerakhirFocusLost"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="FrmTransaksiKas_edUangKeluar"/>
               </AuxValues>
@@ -369,9 +383,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edKendaraan">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jTextField1"/>
-              </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="edKendaraanActionPerformed"/>
               </Events>
@@ -387,10 +398,26 @@
                 <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
                   <Format subtype="1" type="0"/>
                 </Property>
+                <Property name="horizontalAlignment" type="int" value="4"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="FrmTransaksiKas_edUangKeluar"/>
               </AuxValues>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Driver"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="edDriver">
+            </Component>
+            <Component class="javax.swing.JButton" name="btnDriver">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDriverActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

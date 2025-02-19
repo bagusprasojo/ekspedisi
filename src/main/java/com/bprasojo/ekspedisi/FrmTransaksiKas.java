@@ -770,18 +770,18 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     }
 
     private void LoadArmada() {
-        try {
-            List<Armada> armadas = armadaDAO.getArmadaByPage(1,"");
-            
-            // Masukkan data ke JComboBox
-            DefaultComboBoxModel<Armada> model = new DefaultComboBoxModel<>();
-            for (Armada a : armadas) {
-                model.addElement(a); // Menambahkan objek Perkiraan ke model
-            }
-            cbArmada.setModel(model);
-        } catch (SQLException ex) {
-            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            List<Armada> armadas = armadaDAO.getArmadaByPage(1,"");
+//            
+//            // Masukkan data ke JComboBox
+//            DefaultComboBoxModel<Armada> model = new DefaultComboBoxModel<>();
+//            for (Armada a : armadas) {
+//                model.addElement(a); // Menambahkan objek Perkiraan ke model
+//            }
+//            cbArmada.setModel(model);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     private void LoadDataTransaksiKas(int currentPage) {

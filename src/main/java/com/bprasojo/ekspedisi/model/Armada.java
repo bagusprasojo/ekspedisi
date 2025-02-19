@@ -4,6 +4,10 @@
  */
 package com.bprasojo.ekspedisi.model;
 
+import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
+import com.bprasojo.ekspedisi.model.StakeHolder;
+import java.sql.SQLException;
+
 /**
  *
  * @author USER
@@ -15,22 +19,46 @@ public class Armada extends BaseClass{
     private String alamat;
     private String kota;
     private String telp;
+    private int driver_id;
     private int id;
+    
+    private transient StakeHolder driver;
 
     // Constructor
     public Armada(){}
     
-    public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp, Integer id) {
+    public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp, int driver_id, int id) {
         this.nopol = nopol;
         this.kendaraan = kendaraan;
         this.pemilik = pemilik;
         this.alamat = alamat;
         this.kota = kota;
         this.telp = telp;
+        this.driver_id = driver_id;
         this.id = id;
+        
+        
+        
     }
 
     // Getters and Setters
+    public int getDriverId() {
+        return driver_id;
+    }
+
+    public void setDriverId(int driver_id) {
+        this.driver_id = driver_id;
+        this.driver = null;
+    }
+    
+    public StakeHolder getDriver() throws SQLException{
+        if (driver == null) {
+            StakeHolderDAO stakeHolderDAO = new StakeHolderDAO();
+            driver = stakeHolderDAO.getById(this.driver_id);
+        }
+        return driver;
+    }
+    
     public String getNopol() {
         return nopol;
     }

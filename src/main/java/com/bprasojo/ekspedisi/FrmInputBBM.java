@@ -5,8 +5,10 @@
 package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
+import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.dao.TransaksiPembelianBBMDAO;
 import com.bprasojo.ekspedisi.model.Armada;
+import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -34,9 +35,11 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     
     private Armada armada = null;
     private TransaksiPembelianBBM transBeliBBM = null;
+    private StakeHolder driver = null;
     
     private TransaksiPembelianBBMDAO transaksiPembelianBBMDAO = null;
     private ArmadaDAO armadaDAO = null;
+    private StakeHolderDAO stakeHolderDAO = null;
     
     
     private DefaultTableModel tableModel;
@@ -50,6 +53,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         
         transaksiPembelianBBMDAO = new TransaksiPembelianBBMDAO();
         armadaDAO = new ArmadaDAO();
+        stakeHolderDAO = new StakeHolderDAO();
         
         try {
             setMaximum(true);
@@ -110,6 +114,9 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         edKendaraan = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         edPembelianBBM = new javax.swing.JFormattedTextField();
+        jLabel4 = new javax.swing.JLabel();
+        edDriver = new javax.swing.JTextField();
+        btnDriver = new javax.swing.JButton();
         pnlNextPrev = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -230,7 +237,6 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
 
         pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        edNopol.setText("jTextField1");
         edNopol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 edNopolActionPerformed(evt);
@@ -252,16 +258,23 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Keterangan");
 
-        edKeterangan.setText("jTextField3");
-
         edKMSekarang.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        edKMSekarang.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         edKMTerakhir.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        edKMTerakhir.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edKMTerakhir.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                edKMTerakhirFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                edKMTerakhirFocusLost(evt);
+            }
+        });
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Kendaraan");
 
-        edKendaraan.setText("jTextField1");
         edKendaraan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 edKendaraanActionPerformed(evt);
@@ -272,6 +285,16 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         jLabel11.setText("Jml Pembelian BBM");
 
         edPembelianBBM.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        edPembelianBBM.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel4.setText("Driver");
+
+        btnDriver.setText("...");
+        btnDriver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDriverActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
@@ -279,16 +302,16 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
                 .addGap(38, 38, 38)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlInputLayout.createSequentialGroup()
                         .addComponent(edKMTerakhir, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -298,7 +321,12 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                         .addComponent(edKMSekarang, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(edPembelianBBM, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(edKeterangan)
-                    .addComponent(edNopol))
+                    .addComponent(edNopol)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInputLayout.createSequentialGroup()
+                        .addComponent(edDriver)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDriver))
+                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 234, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
@@ -312,10 +340,16 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(7, 7, 7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(edDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDriver)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(edKMSekarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -330,7 +364,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(pnlInput, java.awt.BorderLayout.NORTH);
@@ -476,17 +510,19 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                 if (armada != null){
                     edNopol.setText(armada.getNopol());
                     edKendaraan.setText(armada.getKendaraan());
+                    LoadDriver(armada.getDriverId());
+                } else {
+                    edNopol.setText("");
+                    edKendaraan.setText("");
+                    driver = null;
+                    edDriver.setText("");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-        } else {
-            JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
         }
         
-//        LoadDataTransaksiPembelianBBM(currentPage);
-                
         transBeliBBM = new TransaksiPembelianBBM();
             
         AppUtils.SetTanggalToday(edTanggal);
@@ -520,6 +556,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             transBeliBBM.setKmSekarang(AppUtils.getIntValue(edKMSekarang));
             transBeliBBM.setNominalBBM(AppUtils.getIntValue(edPembelianBBM));
             transBeliBBM.setKeterangan(edKeterangan.getText());
+            transBeliBBM.setDriverId(driver.getId());
             
             
             
@@ -606,9 +643,31 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_edKendaraanActionPerformed
 
+    private void btnDriverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDriverActionPerformed
+        String sqlQuery = "select a.kode, a.nama, a.alamat, a.no_ktp, a.id from stake_holder a " 
+                          + " where a.jenis = 'Karyawan'";
+        
+        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+        if (selectedRecord != null) {
+            int id = Integer.parseInt(selectedRecord.get("id").toString());
+            LoadDriver(id);
+            
+        }
+    }//GEN-LAST:event_btnDriverActionPerformed
+
+    private void edKMTerakhirFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_edKMTerakhirFocusGained
+        
+    }//GEN-LAST:event_edKMTerakhirFocusGained
+
+    private void edKMTerakhirFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_edKMTerakhirFocusLost
+        
+    }//GEN-LAST:event_edKMTerakhirFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnDriver;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnKeluar;
@@ -616,6 +675,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JTextField edDriver;
     private javax.swing.JTextField edFilter;
     private javax.swing.JFormattedTextField edKMSekarang;
     private javax.swing.JFormattedTextField edKMTerakhir;
@@ -631,6 +691,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -693,14 +754,21 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         
         List<Map<String, Object>> result = transaksiPembelianBBMDAO.getTransaksiPembelianBBMByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
         for (Map<String, Object> row : result) {
+            
+            Integer kmTerakhir = (Integer) row.get("km_terakhir");
+            Integer kmSekarang = (Integer) row.get("km_sekarang");
+            Integer jarakTempuh = kmSekarang - kmTerakhir;
+            
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
                         (String) row.get("nopol"),
                         (String) row.get("kendaraan"),
                         (String) row.get("pemilik"),
+                        (String) row.get("driver"),
                         (Date) row.get("tanggal"),
-                        AppUtils.NumericFormat((Integer) row.get("km_terakhir")),
-                        AppUtils.NumericFormat((Integer) row.get("km_sekarang")),
+                        AppUtils.NumericFormat(kmTerakhir),
+                        AppUtils.NumericFormat(kmSekarang),
+                        AppUtils.NumericFormat(jarakTempuh),
                         AppUtils.NumericFormat((Integer) row.get("nominal_BBM")),
                         (String) row.get("keterangan"),                        
                         "Lia"
@@ -737,6 +805,13 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                         edKMSekarang.setValue(transBeliBBM.getKmSekarang());
                         edPembelianBBM.setValue(transBeliBBM.getNominalBBM());
                         edKeterangan.setText(transBeliBBM.getKeterangan());
+                        
+                        if (transBeliBBM.getDriverId() > 0){
+                            LoadDriver(transBeliBBM.getDriverId());
+                        } else {
+                            driver = null;
+                            edDriver.setText("");
+                        }
                     }
                 } catch (SQLException ex) {
                     AppUtils.showErrorDialog("Ada kesalahan load data dengan error :\n" + ex.getMessage());
@@ -749,6 +824,12 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         if (armada == null){
             AppUtils.showWarningDialog("Kendaraan belum dipilih");
             edNopol.requestFocusInWindow();
+            return false;
+        }
+        
+        if (driver == null){
+            AppUtils.showWarningDialog("Driver belum diisi");
+            edDriver.requestFocusInWindow();
             return false;
         }
         
@@ -784,12 +865,13 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     }
 
     private void InisialisasiTableInputBBM() {
-        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","Tanggal","KM Terakhir","KM Sekarang","Pembelian BBM","Keterangan", "Pc"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","Driver","Tanggal","KM Terakhir","KM Sekarang","Jarak Tempuh","Pembelian BBM","Keterangan", "Pc"}, 0);
         tblInputBBM.setModel(tableModel);
         
-        AppUtils.SetTableAligmentRight(tblInputBBM, 5);
         AppUtils.SetTableAligmentRight(tblInputBBM, 6);
         AppUtils.SetTableAligmentRight(tblInputBBM, 7);
+        AppUtils.SetTableAligmentRight(tblInputBBM, 8);
+        AppUtils.SetTableAligmentRight(tblInputBBM, 9);
         
         tblInputBBM.removeColumn(tblInputBBM.getColumnModel().getColumn(0));
     }
@@ -802,5 +884,21 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         edKMTerakhir.setEnabled(enable);
         edPembelianBBM.setEnabled(enable);
         edKeterangan.setEnabled(enable);
+        
+        edDriver.setEnabled(enable);
+        btnDriver.setEnabled(enable);
+    }
+
+    private void LoadDriver(int driverId) {
+        try {
+            driver = stakeHolderDAO.getById(driverId);
+            if (driver != null){
+                edDriver.setText(driver.getNama());
+            } else {
+                edDriver.setText("");
+            }
+        } catch (SQLException ex) {
+            AppUtils.showWarningDialog("Driver tidak ditemukan");
+        }
     }
 }

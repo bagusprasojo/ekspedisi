@@ -5,6 +5,7 @@
 package com.bprasojo.ekspedisi.model;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
+import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -20,12 +21,14 @@ public class TransaksiPembelianBBM extends BaseClass{
     private int kmSekarang;
     private int nominalBBM;
     private String keterangan;
+    private int driverId;
     
     private transient Armada armada; // Lazy loading
+    private transient StakeHolder driver;
 
     public TransaksiPembelianBBM() {}
 
-    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan) {
+    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId) {
         this.id = id;
         this.armadaId = armadaId;
         this.tanggal = tanggal;
@@ -33,6 +36,7 @@ public class TransaksiPembelianBBM extends BaseClass{
         this.kmSekarang = kmSekarang;
         this.nominalBBM = nominalBBM;
         this.keterangan = keterangan;
+        this.driverId = driverId;
     }
 
     // Getter & Setter
@@ -44,6 +48,12 @@ public class TransaksiPembelianBBM extends BaseClass{
     public void setArmadaId(int armadaId) { 
         this.armadaId = armadaId; 
         this.armada  = null; 
+    }
+    
+    public int getDriverId() { return driverId; }
+    public void setDriverId(int driverId) { 
+        this.driverId = driverId; 
+        this.driver  = null; 
     }
 
     public Date getTanggal() { return tanggal; }
@@ -68,6 +78,14 @@ public class TransaksiPembelianBBM extends BaseClass{
             armada = armadaDAO.getArmadaById(this.armadaId);
         }
         return armada;
+    }
+    
+    public StakeHolder getDriver() throws SQLException {
+        if (driver == null) {
+            StakeHolderDAO driverDAO = new StakeHolderDAO();
+            driver = driverDAO.getById(this.driverId);
+        }
+        return driver;
     }
 }
 

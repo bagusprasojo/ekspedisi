@@ -7,9 +7,11 @@ package com.bprasojo.ekspedisi;
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.KasBonKaryawanDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
+import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import com.bprasojo.ekspedisi.model.Perkiraan;
+import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.awt.event.ItemEvent;
@@ -23,10 +25,8 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -41,8 +41,11 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     
     Perkiraan jenisKasBon = null;
     Bank bank = null;
+    StakeHolder karyawan = null;
+    
     PerkiraanDAO perkiraanDAO = null;
     BankDAO bankDAO = null;
+    StakeHolderDAO karyawanDAO = null;
     KasBonKaryawan kasBonKaryawan = null;
     KasBonKaryawanDAO kasBonKaryawanDAO = null;
     
@@ -65,6 +68,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         bankDAO = new BankDAO();
         perkiraanDAO = new PerkiraanDAO();
         kasBonKaryawanDAO = new KasBonKaryawanDAO();
+        karyawanDAO = new StakeHolderDAO();
         
         LoadJenisKasbon();
         
@@ -118,6 +122,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         lblBank = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         eNoRegister = new javax.swing.JTextField();
+        btnKaryawan = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -295,6 +300,13 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         eNoRegister.setEnabled(false);
         eNoRegister.setNextFocusableComponent(edAlamat);
 
+        btnKaryawan.setText("...");
+        btnKaryawan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKaryawanActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -309,13 +321,15 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(cbJenisKasBon, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(edAlamat, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                        .addComponent(eNoRegister))
-                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cbJenisKasBon, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(edAlamat, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                    .addComponent(eNoRegister)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(edNama)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnKaryawan)))
+                .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
@@ -330,7 +344,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblBank))
                     .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -366,7 +380,8 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel8)
                                     .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11))
+                                    .addComponent(jLabel11)
+                                    .addComponent(btnKaryawan))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel9)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -533,8 +548,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         try {
             Perkiraan perkiraan = (Perkiraan) cbJenisKasBon.getSelectedItem();
             kasBonKaryawan.setPerkiraanPinjamanId(perkiraan.getId());
-            kasBonKaryawan.setNamaKaryawan(edNama.getText());
-            kasBonKaryawan.setAlamatKaryawan(edAlamat.getText());
+            kasBonKaryawan.setKaryawanId(karyawan.getId());            
             kasBonKaryawan.setSumberDana(cbViaBank.getSelectedItem().toString());
             kasBonKaryawan.setTanggal(edTanggal.getDate());
             
@@ -662,11 +676,29 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_cbViaBankItemStateChanged
 
+    private void btnKaryawanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKaryawanActionPerformed
+        String sqlQuery = "select kode, nama, alamat, no_ktp from " 
+                     + " stake_holder where jenis = 'karyawan'";
+        
+        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+        if (selectedRecord != null) {
+            try {
+                String kode = selectedRecord.get("kode").toString();
+                LoadKaryawan(kode);
+            } catch (SQLException ex) {
+                AppUtils.showWarningDialog("Ada kesalahan load data karyawan dengan error \n" + ex.getMessage());
+            }
+
+        }
+    }//GEN-LAST:event_btnKaryawanActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnKaryawan;
     private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnNext;
@@ -761,18 +793,18 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             return false;
         }
         
-        if (edNama.getText().equals("")){
-            AppUtils.showWarningDialog("Nama karyawan belum diisi");
+        if (karyawan == null){
+            AppUtils.showWarningDialog("Karyawan belum diisi");
             edNama.requestFocus();
             return false;
         }
         
-        if (edAlamat.getText().equals("")){
-            AppUtils.showWarningDialog("Alamat karyawan belum diisi");
-            edAlamat.requestFocus();
-            return false;
-        }
-        
+//        if (edAlamat.getText().equals("")){
+//            AppUtils.showWarningDialog("Alamat karyawan belum diisi");
+//            edAlamat.requestFocus();
+//            return false;
+//        }
+//        
         if (cbViaBank.getSelectedIndex() < 0){
             AppUtils.showWarningDialog("Via bank belum dipilih");
             cbViaBank.requestFocus();
@@ -824,8 +856,9 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                     if (kasBonKaryawan != null){
                         AppUtils.setSelectedIndexById(cbJenisKasBon, kasBonKaryawan.getPerkiraanPinjamanId());
                         eNoRegister.setText(kasBonKaryawan.getNoRegister());
-                        edNama.setText(kasBonKaryawan.getNamaKaryawan());
-                        edAlamat.setText(kasBonKaryawan.getAlamatKaryawan());
+                        
+                        LoadKaryawan(kasBonKaryawan.getKaryawan().getKode());
+                        
                         edTanggal.setDate(kasBonKaryawan.getTanggal());
                         
                         showLoopUpBank = false;
@@ -847,6 +880,22 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                     AppUtils.showErrorDialog("Ada kesalahan load data dengan error :\n" + ex.getMessage());
                 }
             }
+
+//            private void LoadDataKaryawan(String kode) {
+//                try {
+//                    karyawan = karyawanDAO.getByKode(kode);
+//                    if (karyawan != null){
+//                        edNama.setText(karyawan.getNama());
+//                        edAlamat.setText(karyawan.getAlamat());                        
+//                    } else {
+//                        edNama.setText("");
+//                        edAlamat.setText("");                        
+//                    }
+//                } catch (SQLException ex) {
+//                    AppUtils.showWarningDialog("Gagal load data karyawan");
+//                }
+//                
+//            }
         });
     }
     
@@ -854,6 +903,10 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         tableModel.setRowCount(0); // Bersihkan tabel
         List<Map<String, Object>> result = kasBonKaryawanDAO.getKasBonByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
         for (Map<String, Object> row : result) {
+            
+            Integer nominal = (Integer) row.get("nominal");
+            Integer pelunasan = (Integer) row.get("pelunasan");
+            Integer saldo = nominal - pelunasan;
             
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
@@ -863,8 +916,9 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         (String) row.get("alamat_karyawan"),
                         AppUtils.DateFormatShort((Date) row.get("tanggal")),                        
                         (String) row.get("sumber_dana"),
-                        AppUtils.NumericFormat((Integer) row.get("nominal")),
-                        AppUtils.NumericFormat((Integer) row.get("pelunasan")),
+                        AppUtils.NumericFormat(nominal),
+                        AppUtils.NumericFormat(pelunasan),
+                        AppUtils.NumericFormat(saldo),
                         (String) row.get("status_lunas"),
                         (String) row.get("keterangan"),
                         "Lia"
@@ -883,13 +937,25 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         cbViaBank.setEnabled(enable);
         edNominal.setEnabled(enable);
         edKeterangan.setEnabled(enable);
+        btnKaryawan.setEnabled(enable);
     }
 
     private void InisialisasiTableKasBon() {
-        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status Lunas", "Keterangan",  "Pc"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Saldo","Status Lunas", "Keterangan",  "Pc"}, 0);
         tblKasBon.setModel(tableModel);
         AppUtils.SetTableAligmentRight(tblKasBon, 7);
         AppUtils.SetTableAligmentRight(tblKasBon, 8);
         tblKasBon.removeColumn(tblKasBon.getColumnModel().getColumn(0));
+    }
+
+    private void LoadKaryawan(String kode) throws SQLException {
+        karyawan = karyawanDAO.getByKode(kode);
+        if (karyawan != null){
+            edNama.setText(karyawan.getNama());
+            edAlamat.setText(karyawan.getAlamat());
+        } else {
+            edNama.setText("");
+            edAlamat.setText("");
+        }
     }
 }

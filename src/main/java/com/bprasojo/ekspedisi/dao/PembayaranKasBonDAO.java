@@ -199,13 +199,14 @@ public class PembayaranKasBonDAO {
     public List<Map<String, Object>> getPembayaranKasBonByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
         List<Map<String, Object>> resultList = new ArrayList<>();
 
-        String sql = "select a.*, b.nama_karyawan, b.alamat_karyawan, b.no_register as no_kas_bon "
+        String sql = "select a.*, c.nama as nama_karyawan, c.alamat as alamat_karyawan, b.no_register as no_kas_bon, b.nominal as hutang, b.pelunasan "
                     + " from pembayaran_kas_bon a "
                     + " inner join kas_bon_karyawan b on a.kas_bon_karyawan_id = b.id "
+                    + " inner join stake_holder c on b.karyawan_id = c.id "
                     + " WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.no_register like ?, b.nama_karyawan like ? or b.alamat_karyawan like ? or b.sumber_dana like ? or b.keterangan LIKE ?)";
+            sql += " AND (a.no_register like ?, c.nama like ? or c.alamat like ? or b.sumber_dana like ? or b.keterangan LIKE ? or b.no_register LIKE ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
@@ -225,7 +226,7 @@ public class PembayaranKasBonDAO {
             }
 
             // Set limit and offset for pagination
-            int pageSize = 10; // Sesuaikan dengan kebutuhan Anda
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 

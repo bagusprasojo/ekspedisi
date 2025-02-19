@@ -233,15 +233,17 @@
                           <Component id="jLabel11" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="cbJenisKasBon" max="32767" attributes="0"/>
-                              <Component id="edAlamat" alignment="0" pref="198" max="32767" attributes="0"/>
-                              <Component id="eNoRegister" alignment="0" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="cbJenisKasBon" max="32767" attributes="0"/>
+                          <Component id="edAlamat" alignment="0" pref="198" max="32767" attributes="0"/>
+                          <Component id="eNoRegister" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="edNama" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnKaryawan" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="edNama" min="-2" pref="198" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jLabel8" alignment="0" max="32767" attributes="0"/>
                           <Component id="jLabel9" alignment="0" pref="85" max="32767" attributes="0"/>
@@ -259,7 +261,7 @@
                           </Group>
                           <Component id="edTanggal" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="111" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -304,6 +306,7 @@
                                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="edNama" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="btnKaryawan" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
@@ -451,6 +454,14 @@
                   <ComponentRef name="edAlamat"/>
                 </Property>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnKaryawan">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKaryawanActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

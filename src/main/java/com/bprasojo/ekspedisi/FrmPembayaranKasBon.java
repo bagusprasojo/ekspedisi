@@ -115,6 +115,8 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         jLabel12 = new javax.swing.JLabel();
         edKasBon = new javax.swing.JTextField();
         btnKasBon = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        edSaldo = new javax.swing.JFormattedTextField();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -237,12 +239,14 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("No Reguster");
 
+        edNama.setEditable(false);
         edNama.setEnabled(false);
         edNama.setNextFocusableComponent(edAlamat);
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Alamat");
 
+        edAlamat.setEditable(false);
         edAlamat.setEnabled(false);
         edAlamat.setNextFocusableComponent(edTanggal);
 
@@ -301,17 +305,25 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel3.setText("Saldo Hutang");
+
+        edSaldo.setEditable(false);
+        edSaldo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edSaldo.setEnabled(false);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(edAlamat, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
@@ -320,7 +332,8 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(edKasBon, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnKasBon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnKasBon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(edSaldo))
                 .addGap(45, 45, 45)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -352,31 +365,37 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                 .addGap(3, 3, 3)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel7)
-                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblBank)
                         .addComponent(jLabel12)
                         .addComponent(edKasBon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnKasBon))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblBank))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGap(1, 1, 1)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel3)
+                                            .addComponent(edSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5)))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel8)
-                                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel9)))))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGap(28, 28, 28)
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel5)))
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel11))))
+                            .addComponent(jLabel8))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -659,8 +678,10 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_cbViaBankItemStateChanged
 
     private void btnKasBonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKasBonActionPerformed
-        String sqlQuery = "select no_register, nama_karyawan, alamat_karyawan, nominal, pelunasan, status_lunas "
-                          + " from kas_bon_karyawan "
+        String sqlQuery = "select no_register, b.kode, b.nama , b.alamat , b.no_ktp, nominal, pelunasan, "
+                          + " (nominal - pelunasan) as saldo, status_lunas "
+                          + " from kas_bon_karyawan a "
+                          + " inner join stake_holder b on a.karyawan_id = b.id"
                           + " where status_lunas = 'belum'";
         
         LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
@@ -673,16 +694,15 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
 
                 if (kasBonKaryawan != null){
                     edKasBon.setText(kasBonKaryawan.getNoRegister());
-                    edNama.setText(kasBonKaryawan.getNamaKaryawan());
-                    edAlamat.setText(kasBonKaryawan.getAlamatKaryawan());
+                    edNama.setText(kasBonKaryawan.getKaryawan().getNama());
+                    edAlamat.setText(kasBonKaryawan.getKaryawan().getAlamat());
+                    edSaldo.setValue(kasBonKaryawan.getSaldo());
 
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+                AppUtils.showWarningDialog("Ada kesalahan load data kasbon dengan error \n" + ex.getMessage());
             }
 
-        } else {
-            JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
         }
     }//GEN-LAST:event_btnKasBonActionPerformed
 
@@ -705,6 +725,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     private javax.swing.JTextField edKeterangan;
     private javax.swing.JTextField edNama;
     private javax.swing.JFormattedTextField edNominal;
+    private javax.swing.JFormattedTextField edSaldo;
     private com.toedter.calendar.JDateChooser edTanggal;
     private com.toedter.calendar.JDateChooser edTglAkhir;
     private com.toedter.calendar.JDateChooser edTglAwal;
@@ -713,6 +734,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -788,6 +810,15 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
             return false;
         }
         
+        int saldo = ((Number) edSaldo.getValue()).intValue();
+        int pembayaran = ((Number) edNominal.getValue()).intValue();
+        if (saldo < pembayaran){
+            AppUtils.showWarningDialog("Pembayaran melebihi saldo hutang");
+            edNominal.requestFocus();
+            return false;
+        }
+        
+        
         return true;
         
     }
@@ -815,8 +846,12 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                         eNoRegister.setText(pembayaranKasBon.getNoRegister());
                         
                         edKasBon.setText(kasBonKaryawan.getNoRegister());
-                        edNama.setText(kasBonKaryawan.getNamaKaryawan());
-                        edAlamat.setText(kasBonKaryawan.getAlamatKaryawan());
+                        
+                        edNama.setText(kasBonKaryawan.getKaryawan().getNama());
+                        edAlamat.setText(kasBonKaryawan.getKaryawan().getAlamat());
+                        
+                        Integer saldo = kasBonKaryawan.getSaldo() + pembayaranKasBon.getNominal();
+                        edSaldo.setValue(saldo);
                         
                         edTanggal.setDate(pembayaranKasBon.getTanggal());
                         
@@ -849,6 +884,9 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         for (Map<String, Object> row : result) {
 //            {"ID","Jenis Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Pelunasan","Status", "Keterangan",  "Pc"}
             
+            Integer hutang = (Integer) row.get("hutang");
+            Integer pembayaran = (Integer) row.get("nominal");
+            Integer saldo = hutang - pembayaran;
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
                         (String) row.get("no_register"),
@@ -857,7 +895,9 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                         (String) row.get("alamat_karyawan"),
                         AppUtils.DateFormatShort((Date) row.get("tanggal")),
                         (String) row.get("sumber_dana"),
-                        AppUtils.NumericFormat((Integer) row.get("nominal")),
+                        AppUtils.NumericFormat(hutang),
+                        AppUtils.NumericFormat(pembayaran),
+                        AppUtils.NumericFormat(saldo),
                         (String) row.get("keterangan"),
                         "Lia"
                 });
@@ -871,8 +911,8 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         edKasBon.setEnabled(enable);
         btnKasBon.setEnabled(enable);
         
-        edNama.setEnabled(enable);
-        edAlamat.setEnabled(enable);
+//        edNama.setEnabled(enable);
+//        edAlamat.setEnabled(enable);
         edTanggal.setEnabled(enable);
         cbViaBank.setEnabled(enable);
         edNominal.setEnabled(enable);
@@ -880,7 +920,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     }
 
     private void InisialisasiTablePembayaranKasBon() {
-        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "No Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal", "Keterangan",  "Pc"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "No Kas Bon", "Nama", "Alamat", "Tanggal", "Suber Dana","Hutang","Pembayaran","Saldo Hutang", "Keterangan",  "Pc"}, 0);
         tblPembayaranKasBon.setModel(tableModel);
         AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 7);
         tblPembayaranKasBon.removeColumn(tblPembayaranKasBon.getColumnModel().getColumn(0));

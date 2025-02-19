@@ -4,17 +4,12 @@
  */
 package com.bprasojo.ekspedisi;
 
-import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
-import com.bprasojo.ekspedisi.model.Armada;
 import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.utils.AppUtils;
-import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -23,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author USER
  */
-public class FrmArmada extends javax.swing.JInternalFrame {
+public class FrmCustomer extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmArmada
@@ -31,52 +26,56 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     
     private int currentPage = 1;
     
-    private StakeHolder driver;
-    private final StakeHolderDAO driverDAO= new StakeHolderDAO();
-    private Armada armada = null;
-    private final ArmadaDAO armadaDAO = new ArmadaDAO();
+    private StakeHolder stakeHolder = null;
+    private final StakeHolderDAO stakeHolderDAO = new StakeHolderDAO();
     private DefaultTableModel tableModel;
     private boolean SilakanLoadData = false;
+    private String jenis;
     
     
-    public FrmArmada() {
+    public FrmCustomer() {
         initComponents();
         
-        tableModel = new DefaultTableModel(new String[]{"Id","Nopol", "Kendaraan", "Pemilik", "Alamat", "Kota", "Telp","Driver"}, 0);
-        tblArmada.setModel(tableModel);
-        tblArmada.removeColumn(tblArmada.getColumnModel().getColumn(0));
+        tableModel = new DefaultTableModel(new String[]{"Id","Kode","Nama","Alamat","No KTP","Lokasi Kerja"}, 0);
+        tblStakeHolder.setModel(tableModel);
+        tblStakeHolder.removeColumn(tblStakeHolder.getColumnModel().getColumn(0));
         
-        loadDataArmada(currentPage);
         setStatusTombol("awal");
         SilakanLoadData = true;
         
         inisialisasiEventTableModel();
         
+        
+        
     }
 
-    private void loadDataArmada(int page) {
-        tableModel.setRowCount(0);
-        
-        List<Map<String, Object>> result;
+    public void KonfigurasiForm(){
+        if (this.jenis != null && this.jenis.equals("Customer")){
+            edLokasiKerja.setVisible(false);
+            lblLokasiKerja.setVisible(false);
+        }
+    }
+    public void setJenis(String jenis){
+        this.jenis = jenis;
+    }
+    public void loadDataStakeHolder(int page) {
         try {
-            result = armadaDAO.getArmadaByPage(currentPage, edSearch.getText());
-            for (Map<String, Object> row : result) {
-            
-            tableModel.addRow(new Object[]{
-                        (Integer) row.get("id"),
-                        (String) row.get("nopol"),
-                        (String) row.get("kendaraan"),
-                        (String) row.get("pemilik"),
-                        (String) row.get("alamat"),
-                        (String) row.get("kota"),
-                        (String) row.get("telp"),
-                        (String) row.get("driver")
+            List<StakeHolder> stakeHolderList = stakeHolderDAO.getStakeHolderByPage(page, edSearch.getText(), this.jenis);
+            tableModel.setRowCount(0); // Bersihkan tabel
+
+            for (StakeHolder stakeHolder : stakeHolderList) {
+                tableModel.addRow(new Object[]{
+                        stakeHolder.getId(),
+                        stakeHolder.getKode(),
+                        stakeHolder.getNama(),
+                        stakeHolder.getAlamat(),
+                        stakeHolder.getNoKtp(),
+                        stakeHolder.getLokasiKerja()
                 });
-        }
+            }
         } catch (SQLException ex) {
-            AppUtils.showErrorDialog("Gagal load data armada dengan error : \n" + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
     }
     
     
@@ -105,27 +104,16 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblArmada = new javax.swing.JTable();
+        tblStakeHolder = new javax.swing.JTable();
         pnlInput = new javax.swing.JPanel();
-        edNoPolisi = new javax.swing.JTextField();
+        edNama = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        edKendaraan = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        edPemilik = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         edAlamat = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        edKota = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        edNoKTP = new javax.swing.JTextField();
+        lblLokasiKerja = new javax.swing.JLabel();
+        edLokasiKerja = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        edTelp = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        edNamaDriver = new javax.swing.JTextField();
-        btnDriver = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        edAlamatDriver = new javax.swing.JTextField();
-        edNoKTPDriver = new javax.swing.JTextField();
 
         setClosable(true);
         setMaximizable(true);
@@ -252,7 +240,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(452, Short.MAX_VALUE))
+                .addContainerGap(430, Short.MAX_VALUE))
         );
         pnlSearchLayout.setVerticalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -287,7 +275,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         pnlButtonLayout.setHorizontalGroup(
             pnlButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlButtonLayout.createSequentialGroup()
-                .addContainerGap(551, Short.MAX_VALUE)
+                .addContainerGap(529, Short.MAX_VALUE)
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext)
@@ -305,7 +293,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
 
         pnlData.add(pnlButton, java.awt.BorderLayout.SOUTH);
 
-        tblArmada.setModel(new javax.swing.table.DefaultTableModel(
+        tblStakeHolder.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -316,8 +304,8 @@ public class FrmArmada extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(tblArmada);
-        tblArmada.getAccessibleContext().setAccessibleParent(tblArmada);
+        jScrollPane2.setViewportView(tblStakeHolder);
+        tblStakeHolder.getAccessibleContext().setAccessibleParent(tblStakeHolder);
 
         pnlData.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
@@ -326,99 +314,45 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Kendaraan");
+        jLabel2.setText("Alamat");
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel3.setText("Pemilik");
+        jLabel3.setText("No KTP");
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Alamat");
+        lblLokasiKerja.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblLokasiKerja.setText("Lokasi Kerja");
 
-        edAlamat.addActionListener(new java.awt.event.ActionListener() {
+        edLokasiKerja.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edAlamatActionPerformed(evt);
+                edLokasiKerjaActionPerformed(evt);
             }
         });
-
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText("Kota");
-
-        edKota.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edKotaActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel6.setText("Telp");
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("No Polisi");
-
-        edTelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edTelpActionPerformed(evt);
-            }
-        });
-
-        jLabel8.setText("Driver");
-
-        btnDriver.setText("...");
-        btnDriver.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDriverActionPerformed(evt);
-            }
-        });
-
-        jLabel9.setText("Alamat");
-
-        jLabel10.setText("No KTP");
-
-        edAlamatDriver.setEnabled(false);
-
-        edNoKTPDriver.setEnabled(false);
+        jLabel1.setText("Nama");
 
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
         pnlInputLayout.setHorizontalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(19, 19, 19)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lblLokasiKerja, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(edKota, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edTelp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(edAlamat, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(edLokasiKerja, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlInputLayout.createSequentialGroup()
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(edPemilik, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edKendaraan, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edNoPolisi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(143, 143, 143)
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel10))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInputLayout.createSequentialGroup()
-                                .addComponent(edNamaDriver, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDriver, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(edAlamatDriver)
-                            .addComponent(edNoKTPDriver))))
-                .addContainerGap(34, Short.MAX_VALUE))
+                            .addComponent(edNama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(edAlamat, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(edNoKTP, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(290, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -426,35 +360,20 @@ public class FrmArmada extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(edNoPolisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(edNamaDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDriver))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel9)
-                    .addComponent(edAlamatDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(edPemilik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(edNoKTPDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(edKota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3)
+                    .addComponent(edNoKTP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(edTelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(edLokasiKerja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblLokasiKerja))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlDua.add(pnlInput, java.awt.BorderLayout.NORTH);
@@ -465,17 +384,17 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        armada = new Armada();
+        stakeHolder = new StakeHolder();
         
-        edNoPolisi.setText("");
-        edKendaraan.setText("");
-        edPemilik.setText("");
+        edNama.setText("");
         edAlamat.setText("");
-        edKota.setText("");
-        edTelp.setText("");
+        edNoKTP.setText("");
+        edLokasiKerja.setText("");
+//        edKota.setText("");
+//        edTelp.setText("");
         
         setStatusTombol("tambah");
-        loadDataArmada(currentPage);
+        loadDataStakeHolder(currentPage);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void setStatusTombol(String mode){
@@ -522,40 +441,24 @@ public class FrmArmada extends javax.swing.JInternalFrame {
             return;
         }
         try {
-            String nopol = edNoPolisi.getText();
-            String kendaraan = edKendaraan.getText();
-            String pemilik = edPemilik.getText();
-            String alamat = edAlamat.getText();
-            String kota = edKota.getText();
-            String telp = edTelp.getText();
+            stakeHolder.setNama(edNama.getText());
+            stakeHolder.setAlamat(edAlamat.getText());
+            stakeHolder.setLokasiKerja(edLokasiKerja.getText());
+            stakeHolder.setJenis(this.jenis);
+            stakeHolder.setNoKtp(edNoKTP.getText());
+//            stakeHolder.setTelp(telp);
 
-            armada.setNopol(nopol);
-            armada.setKendaraan(kendaraan);
-            armada.setPemilik(pemilik);
-            armada.setAlamat(alamat);
-            armada.setKota(kota);
-            armada.setTelp(telp);
-            armada.setDriverId(driver.getId());
-
-            armadaDAO.save(armada);
+            stakeHolderDAO.save(stakeHolder);
             AppUtils.showInfoDialog("Data berhasil disimpan");
-            loadDataArmada(currentPage);
+            loadDataStakeHolder(currentPage);
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
-    private void edAlamatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edAlamatActionPerformed
+    private void edLokasiKerjaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edLokasiKerjaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_edAlamatActionPerformed
-
-    private void edKotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edKotaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edKotaActionPerformed
-
-    private void edTelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edTelpActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edTelpActionPerformed
+    }//GEN-LAST:event_edLokasiKerjaActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         setStatusTombol("edit");
@@ -563,13 +466,13 @@ public class FrmArmada extends javax.swing.JInternalFrame {
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
         currentPage++;
-        loadDataArmada(currentPage);
+        loadDataStakeHolder(currentPage);
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
         if (currentPage > 1) {
             currentPage--;
-            loadDataArmada(currentPage);
+            loadDataStakeHolder(currentPage);
         }
     }//GEN-LAST:event_btnPrevActionPerformed
 
@@ -582,9 +485,9 @@ public class FrmArmada extends javax.swing.JInternalFrame {
 
         if (userConfirmed) {
             try {
-                armadaDAO.delete(armada.getId());
+                stakeHolderDAO.delete(stakeHolder.getId());
                 setStatusTombol("awal");
-                loadDataArmada(currentPage);
+                loadDataStakeHolder(currentPage);
             } catch (SQLException ex) {
                 AppUtils.showWarningDialog("Ada kesalahan dengan error : \n" + ex.getMessage());
             }
@@ -600,42 +503,13 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     private void edSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edSearchKeyReleased
         if (SilakanLoadData){
             currentPage = 1;
-            loadDataArmada(currentPage);
+            loadDataStakeHolder(currentPage);
         }
     }//GEN-LAST:event_edSearchKeyReleased
-
-    private void btnDriverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDriverActionPerformed
-        String sqlQuery = "select a.kode, a.nama, a.alamat, a.lokasi_kerja from stake_holder a " +
-                          " where a.jenis = 'Karyawan'";
-        
-        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
-        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
-        if (selectedRecord != null) {
-            try {
-                // Mengambil nilai dengan nama kolom
-                String kode = selectedRecord.get("kode").toString();
-                driver = driverDAO.getByKode(kode);
-
-                if (driver != null){
-                    edNamaDriver.setText(driver.getNama());
-                    edAlamatDriver.setText(driver.getAlamat());
-                    edNoKTPDriver.setText(driver.getNoKtp());
-                } else {
-                    edNamaDriver.setText("");
-                    edAlamatDriver.setText("");
-                    edNoKTPDriver.setText("");
-                }
-            } catch (SQLException ex) {
-                AppUtils.showErrorDialog("Ada kesalahan dengan pesan \n" + ex.getMessage());
-            }
-
-        }
-    }//GEN-LAST:event_btnDriverActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
-    private javax.swing.JButton btnDriver;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnKeluar;
@@ -644,86 +518,61 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JTextField edAlamat;
-    private javax.swing.JTextField edAlamatDriver;
-    private javax.swing.JTextField edKendaraan;
-    private javax.swing.JTextField edKota;
-    private javax.swing.JTextField edNamaDriver;
-    private javax.swing.JTextField edNoKTPDriver;
-    private javax.swing.JTextField edNoPolisi;
-    private javax.swing.JTextField edPemilik;
+    private javax.swing.JTextField edLokasiKerja;
+    private javax.swing.JTextField edNama;
+    private javax.swing.JTextField edNoKTP;
     private javax.swing.JTextField edSearch;
-    private javax.swing.JTextField edTelp;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lblLokasiKerja;
     private javax.swing.JPanel pnlButton;
     private javax.swing.JPanel pnlData;
     private javax.swing.JPanel pnlDua;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlSearch;
-    private javax.swing.JTable tblArmada;
+    private javax.swing.JTable tblStakeHolder;
     // End of variables declaration//GEN-END:variables
     
     private void SetEnableKomponenInput(boolean enable){
-        edNoPolisi.setEnabled(enable);
-        edKendaraan.setEnabled(enable);
-        edKendaraan.setEnabled(enable);
-        edKota.setEnabled(enable);
-        edPemilik.setEnabled(enable);
-        edTelp.setEnabled(enable);
+        edNama.setEnabled(enable);
         edAlamat.setEnabled(enable);
-        
-        edNamaDriver.setEnabled(enable);
-        btnDriver.setEnabled(enable);
+        edAlamat.setEnabled(enable);
+//        edKota.setEnabled(enable);
+        edNoKTP.setEnabled(enable);
+//        edTelp.setEnabled(enable);
+        edLokasiKerja.setEnabled(enable);
     }
     
     private void inisialisasiEventTableModel() {
-        tblArmada.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        tblStakeHolder.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 // Memeriksa apakah ada baris yang dipilih
                 if (!e.getValueIsAdjusting()) {
-                    int selectedRow = tblArmada.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    int selectedRow = tblStakeHolder.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
                         
-                        int id = (Integer) tblArmada.getModel().getValueAt(tblArmada.getSelectedRow(),0);
-//                        Integer id = (Integer) tblArmada.getValueAt(selectedRow, 0);
-                        LoadArmada(id);
+                        int id = (Integer) tblStakeHolder.getModel().getValueAt(tblStakeHolder.getSelectedRow(),0);
+//                        Integer id = (Integer) tblStakeHolder.getValueAt(selectedRow, 0);
+                        LoadStakeHolder(id);
                         setStatusTombol("selected");
                     }
                 }
             }
 
-            private void LoadArmada(Integer id) {
+            private void LoadStakeHolder(Integer id) {
                 try {
-                    armada = armadaDAO.getArmadaById(id);
-                    if (armada != null){
-                        edAlamat.setText(armada.getAlamat());
-                        edKendaraan.setText(armada.getKendaraan());
-                        edKota.setText(armada.getKota());
-                        edNoPolisi.setText(armada.getNopol());
-                        edPemilik.setText(armada.getPemilik());
-                        edTelp.setText(armada.getTelp());   
-                        
-                        driver = armada.getDriver();
-                        if (driver != null){
-                            edNamaDriver.setText(driver.getNama());
-                            edAlamatDriver.setText(driver.getAlamat());
-                            edNoKTPDriver.setText(driver.getNoKtp());
-                        } else {
-                            edNamaDriver.setText("");
-                            edAlamatDriver.setText("");
-                            edNoKTPDriver.setText("");
-                        }
+                    stakeHolder = stakeHolderDAO.getById(id);
+                    if (stakeHolder != null){
+                        edLokasiKerja.setText(stakeHolder.getLokasiKerja());
+                        edAlamat.setText(stakeHolder.getAlamat());
+                        edNama.setText(stakeHolder.getNama());
+                        edNoKTP.setText(stakeHolder.getNoKtp());
+//                        edTelp.setText(stakeHolder.getTelp());                        
                     }
                 } catch (SQLException ex) {
                     AppUtils.showWarningDialog("Ada kesalahan load data dengan pesan : \n" + ex.getMessage());
@@ -733,27 +582,21 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     }
 
     private boolean validasiInput() {
-        if (edNoPolisi.getText().equals("")){
+        if (edNama.getText().equals("")){
             AppUtils.showWarningDialog("No Polisi belum diisi");
-            edNoPolisi.requestFocus();
+            edNama.requestFocus();
             return false;
         }
         
-        if (edKendaraan.getText().equals("")){
+        if (edAlamat.getText().equals("")){
             AppUtils.showWarningDialog("Kendaraan belum diisi");
-            edKendaraan.requestFocus();
+            edAlamat.requestFocus();
             return false;
         }
         
-        if (edPemilik.getText().equals("")){
+        if (edNoKTP.getText().equals("")){
             AppUtils.showWarningDialog("Pemilik belum diisi");
-            edPemilik.requestFocus();
-            return false;
-        }
-        
-        if (driver == null){
-            AppUtils.showWarningDialog("Driver belum diisi");
-            edNamaDriver.requestFocus();
+            edNoKTP.requestFocus();
             return false;
         }
         
