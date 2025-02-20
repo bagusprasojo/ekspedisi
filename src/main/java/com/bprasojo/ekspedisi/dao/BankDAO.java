@@ -28,13 +28,19 @@ public class BankDAO {
     // Tambah Bank
     public void addBank(Bank bank) throws SQLException {
         String query = "INSERT INTO bank (no_rekening, nama_bank, atas_nama, keterangan, akun_id) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, bank.getNoRekening());
             stmt.setString(2, bank.getNamaBank());
             stmt.setString(3, bank.getAtasNama());
             stmt.setString(4, bank.getKeterangan());
             stmt.setInt(5, bank.getAkun().getId());
             stmt.executeUpdate();
+            
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    bank.setId(rs.getInt(1));
+                }
+            }
         }
     }
 
@@ -92,12 +98,13 @@ public class BankDAO {
 
     // Update Bank
     public void updateBank(Bank bank) throws SQLException {
-        String query = "UPDATE bank SET nama_bank = ?, atas_nama = ?, keterangan = ? WHERE no_rekening = ?";
+        String query = "UPDATE bank SET nama_bank = ?, atas_nama = ?, keterangan = ? , no_rekening = ? where id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, bank.getNamaBank());
             stmt.setString(2, bank.getAtasNama());
             stmt.setString(3, bank.getKeterangan());
             stmt.setString(4, bank.getNoRekening());
+            stmt.setInt(5, bank.getId());
             stmt.executeUpdate();
         }
     }

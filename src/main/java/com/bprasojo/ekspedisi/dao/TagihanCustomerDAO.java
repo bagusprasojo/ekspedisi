@@ -35,7 +35,7 @@ public class TagihanCustomerDAO {
         // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
         String sql = "SELECT MAX(SUBSTRING(no_invoice, 11)) AS last_number " +
                      "FROM tagihan_customer " +
-                     "WHERE no_invoice LIKE 'BON-" + yearMonth + "%'";
+                     "WHERE no_invoice LIKE 'INVs-" + yearMonth + "%'";
 
         try (Statement stmt = conn.createStatement(); 
             ResultSet rs = stmt.executeQuery(sql)) {
@@ -67,6 +67,12 @@ public class TagihanCustomerDAO {
     // Simpan atau Update
     public void save(TagihanCustomer tagihan) throws SQLException {
         String sql;
+        
+        if (tagihan.getNilaiPekerjaan() <= tagihan.getPelunasan()){
+            tagihan.setStatusLunas("lunas");
+        } else {
+            tagihan.setStatusLunas("belum");
+        }
         
         boolean isInsert = tagihan.getId() == 0; 
         if (isInsert) {

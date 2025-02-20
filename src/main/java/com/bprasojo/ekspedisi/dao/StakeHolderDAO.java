@@ -41,7 +41,7 @@ public class StakeHolderDAO {
         boolean isInsert = stakeholder.getId() == 0;
 
         if (isInsert) {            
-            stakeholder.setKode(generateKode(stakeholder.getJenis()));
+//            stakeholder.setKode(generateKode(stakeholder.getJenis()));
             sql = "INSERT INTO stake_holder (kode, nama, alamat, no_ktp, lokasi_kerja, jenis) VALUES (?, ?, ?, ?, ?, ?)";
         } else {
             sql = "UPDATE stake_holder SET kode = ?, nama = ?, alamat = ?, no_ktp = ?, lokasi_kerja = ?, jenis = ? WHERE id = ?";
