@@ -11,8 +11,20 @@ import com.bprasojo.ekspedisi.model.TagihanCustomer;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.beans.PropertyVetoException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  *
@@ -29,19 +41,42 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     
     StakeHolder customer;
     StakeHolderDAO customerDAO;
+    boolean SilakanLoadData = false;
+    int currentPage = 1;
+    
+    private DefaultTableModel tableModel;
     
     public FrmInvoice() {
         initComponents();
+        
+        try {
+            setMaximum(true);
+        } catch (PropertyVetoException ex) {
+            Logger.getLogger(FrmInvoice.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         invoiceDAO = new TagihanCustomerDAO();
         customerDAO = new StakeHolderDAO();
         
         invoice = null;
         customer = null;
+        
+        AppUtils.SetTanggalAwalBulan(edTglAwal);
+        AppUtils.SetTanggalToday(edTglAkhir);
+        edFilter.setText("");
+        
         setStatusTombol("awal");
         
         pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edCustomer, btnCustomer, edTanggal, edPekerjaan, edNilaiPekerjaan, edPPN, edKeterangan));
-//        edPekerjaan.setFocusTraversalPolicyEnabled(true);
+        
+        InisialisasiTableInvoice();
+                
+        SilakanLoadData = true;
+        LoadDataInvoice(currentPage);
+        setStatusTombol("awal");
+        
+        
+        inisialisasiEventTableModel();
 
     }
 
@@ -61,6 +96,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         btnSimpan = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        btnPrint = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
         pnlInput = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -94,7 +130,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblPembayaranKasBon = new javax.swing.JTable();
+        tblInvoice = new javax.swing.JTable();
 
         setClosable(true);
         setIconifiable(true);
@@ -182,6 +218,19 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         });
         jToolBar1.add(btnHapus);
 
+        btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Print.32.png"))); // NOI18N
+        btnPrint.setText("Cetak");
+        btnPrint.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnPrint.setFocusable(false);
+        btnPrint.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPrint.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnPrint);
+
         btnKeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Close32.png"))); // NOI18N
         btnKeluar.setText("Keluar");
         btnKeluar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -246,12 +295,16 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             }
         });
 
+        edPekerjaan.setLineWrap(true);
         jScrollPane2.setViewportView(edPekerjaan);
 
+        edKeterangan.setLineWrap(true);
         jScrollPane3.setViewportView(edKeterangan);
 
+        edPPN.setEditable(false);
         edPPN.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edPPN.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edPPN.setEnabled(false);
         edPPN.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 edPPNPropertyChange(evt);
@@ -291,11 +344,11 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(edNilaiPekerjaan, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                    .addComponent(edNilaiPekerjaan)
                     .addComponent(jScrollPane3)
-                    .addComponent(edPPN, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                    .addComponent(edTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
-                .addGap(0, 82, Short.MAX_VALUE))
+                    .addComponent(edPPN)
+                    .addComponent(edTotal))
+                .addGap(0, 126, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,7 +477,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         pnlNextPrevLayout.setHorizontalGroup(
             pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNextPrevLayout.createSequentialGroup()
-                .addContainerGap(542, Short.MAX_VALUE)
+                .addContainerGap(586, Short.MAX_VALUE)
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext)
@@ -442,7 +495,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
 
         jPanel3.add(pnlNextPrev, java.awt.BorderLayout.PAGE_END);
 
-        tblPembayaranKasBon.setModel(new javax.swing.table.DefaultTableModel(
+        tblInvoice.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -453,12 +506,12 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblPembayaranKasBon.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblInvoice.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tblPembayaranKasBonFocusGained(evt);
+                tblInvoiceFocusGained(evt);
             }
         });
-        jScrollPane1.setViewportView(tblPembayaranKasBon);
+        jScrollPane1.setViewportView(tblInvoice);
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -473,6 +526,8 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         invoice = new TagihanCustomer();
         
         customer = null;
+        
+        edNoInvoice.setText("Otomatis");
         edCustomer.setText("");
         
         AppUtils.SetTanggalToday(edTanggal);
@@ -497,19 +552,21 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             invoice.setCustomerId(customer.getId());
             invoice.setNilaiPekerjaan(((Number) edNilaiPekerjaan.getValue()).intValue());
             invoice.setPpn(((Number) edPPN.getValue()).intValue());
+            invoice.setPpnPersen(12);
             invoice.setTotal(((Number) edTotal.getValue()).intValue());
             invoice.setTanggal(edTanggal.getDate());
             invoice.setPekerjaan(edPekerjaan.getText().trim());
+            invoice.setKeterangan(edKeterangan.getText());
             
-            String terbilang = AppUtils.terbilang(invoice.getTotal());
+            String terbilang = AppUtils.terbilang(invoice.getTotal()) + " Rupiah";
             invoice.setTerbilang(terbilang);
             
             invoiceDAO.save(invoice);
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + invoice.getNoInvoice());
-//            LoadDataPembayaranKasBon(currentPage);
+            LoadDataInvoice(currentPage);
 
         } catch (SQLException ex) {
-            AppUtils.showErrorDialog("Gagal menyimpan data dengan error " + ex.getMessage());
+            AppUtils.showErrorDialog("Gagal menyimpan data dengan error \n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -518,17 +575,17 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-//        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
-//
-//        if (userConfirmed) {
-//            try {
-//                pembayaranKasBonDAO.delete(pembayaranKasBon.getId());
-//                setStatusTombol("awal");
-//                LoadDataPembayaranKasBon(currentPage);
-//            } catch (SQLException ex) {
-//                AppUtils.showErrorDialog("Gagal menghapus data dengan error: \n" + ex.getMessage());
-//            }
-//        }
+        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
+
+        if (userConfirmed) {
+            try {
+                invoiceDAO.delete(invoice.getId());
+                setStatusTombol("awal");
+                LoadDataInvoice(currentPage);
+            } catch (SQLException ex) {
+                AppUtils.showErrorDialog("Gagal menghapus data dengan error: \n" + ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
@@ -536,41 +593,41 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnKeluarActionPerformed
 
     private void edTglAwalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwalPropertyChange
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataPembayaranKasBon(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataInvoice(currentPage);
+        }
     }//GEN-LAST:event_edTglAwalPropertyChange
 
     private void edTglAkhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAkhirPropertyChange
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataPembayaranKasBon(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataInvoice(currentPage);
+        }
     }//GEN-LAST:event_edTglAkhirPropertyChange
 
     private void edFilterKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edFilterKeyReleased
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataPembayaranKasBon(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataInvoice(currentPage);
+        }
     }//GEN-LAST:event_edFilterKeyReleased
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
-//        if (currentPage > 1) {
-//            currentPage--;
-//            LoadDataPembayaranKasBon(currentPage);
-//        }
+        if (currentPage > 1) {
+            currentPage--;
+            LoadDataInvoice(currentPage);
+        }
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-//        currentPage++;
-//        LoadDataPembayaranKasBon(currentPage);
+        currentPage++;
+        LoadDataInvoice(currentPage);
     }//GEN-LAST:event_btnNextActionPerformed
 
-    private void tblPembayaranKasBonFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblPembayaranKasBonFocusGained
+    private void tblInvoiceFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblInvoiceFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_tblPembayaranKasBonFocusGained
+    }//GEN-LAST:event_tblInvoiceFocusGained
 
     private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
         String sqlQuery = "select kode, nama, alamat from stake_holder "
@@ -601,8 +658,22 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_edNilaiPekerjaanPropertyChange
 
     private void edPPNPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edPPNPropertyChange
-        hitungTotalPekerjaan();
+        
     }//GEN-LAST:event_edPPNPropertyChange
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SlipInvoice.jasper";
+
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("p_tglawal", invoice.getTanggal());
+            params.put("p_tglakhir", invoice.getTanggal());
+            params.put("p_no_invoice", invoice.getNoInvoice());
+            AppUtils.showReport(reportPath, params);
+        } catch (JRException ex) {
+            AppUtils.showErrorDialog("Ada kesalahan dengan error \n" + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnPrintActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -614,6 +685,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
+    private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JTextField edCustomer;
     private javax.swing.JTextField edFilter;
@@ -646,7 +718,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlNextPrev;
-    private javax.swing.JTable tblPembayaranKasBon;
+    private javax.swing.JTable tblInvoice;
     // End of variables declaration//GEN-END:variables
     
     private void setStatusTombol(String mode){
@@ -656,6 +728,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(false);
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(false);
+            btnPrint.setEnabled(false);
             
             SetEnableKomponenInput(false);
         } else if (mode == "tambah"){
@@ -664,6 +737,8 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(true);
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(false);
+            btnPrint.setEnabled(false);
+            
             SetEnableKomponenInput(true);
         } else if (mode == "edit"){
             btnNew.setEnabled(false);
@@ -671,6 +746,8 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(true);
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(true);
+            btnPrint.setEnabled(true);
+            
             SetEnableKomponenInput(true);
         } else if (mode == "selected"){
             btnNew.setEnabled(true);
@@ -678,6 +755,8 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(false);
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(true);
+            btnPrint.setEnabled(true);
+            
             SetEnableKomponenInput(false);
         }
     }
@@ -725,21 +804,106 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
 
     private void hitungTotalPekerjaan() {
         int nilaiPekerjaan = 0;
-        int ppn = 0;
+        
         
         if (edNilaiPekerjaan.getValue() != null){
-            ((Number) edNilaiPekerjaan.getValue()).intValue();
+            nilaiPekerjaan = ((Number) edNilaiPekerjaan.getValue()).intValue();
         }
         
-        if (edPPN.getValue() != null){
-            ((Number) edPPN.getValue()).intValue();
-        }
+        int ppn = (int) (0.11 * nilaiPekerjaan);
+        
+        edPPN.setValue(ppn);
         
         edTotal.setValue(nilaiPekerjaan + ppn);
     }
 
-    private void seturutanFocus() {
-//        edCustomer.setNe
+    private void inisialisasiEventTableModel() {
+        tblInvoice.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // Memeriksa apakah ada baris yang dipilih
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = tblInvoice.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    if (selectedRow != -1) {
+                        
+                        Integer id = (Integer) tblInvoice.getModel().getValueAt(selectedRow, 0);
+                        LoadInvoice(id);
+                        setStatusTombol("selected");
+                    }
+                }
+            }
+
+            private void LoadInvoice(Integer id) {
+                try {
+                    invoice = invoiceDAO.getById(id);
+                    if (invoice != null){
+                        customer = invoice.getCustomer();
+                        edNoInvoice.setText(invoice.getNoInvoice());
+                        edCustomer.setText(customer.getNama());
+                        edPekerjaan.setText(invoice.getPekerjaan());
+                        edTanggal.setDate(invoice.getTanggal());
+                        edNilaiPekerjaan.setValue(invoice.getNilaiPekerjaan());
+                        edPPN.setValue(invoice.getPpn());
+                        edTotal.setValue(invoice.getTotal());
+                        edKeterangan.setText(invoice.getKeterangan());
+                        
+                        
+                    }
+                } catch (SQLException ex) {
+                    AppUtils.showErrorDialog("Ada kesalahan load data dengan error :\n" + ex.getMessage());
+                }
+            }
+        });
+    }
+
+    private void LoadDataInvoice(int currentPage) {
+        try {
+            tableModel.setRowCount(0); // Bersihkan tabel
+            List<Map<String, Object>> result = invoiceDAO.getTagihanCustomerByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
+            for (Map<String, Object> row : result) {
+
+                Integer nilai_pekerjaan = (Integer) row.get("nilai_pekerjaan");
+                Integer ppn_persen = (Integer) row.get("ppn_persen");
+                Integer ppn = (Integer) row.get("ppn");
+                Integer total = (Integer) row.get("total");
+                Integer pelunasan = (Integer) row.get("pelunasan");
+                Integer saldo = total - pelunasan;
+
+                tableModel.addRow(new Object[]{
+                    (Integer) row.get("id"),
+                    (String) row.get("no_invoice"),
+                    (String) row.get("nama_customer"),
+                    AppUtils.DateFormatShort((Date) row.get("tanggal")),
+                    (String) row.get("pekerjaan"),
+                    AppUtils.NumericFormat(nilai_pekerjaan),
+                    AppUtils.NumericFormat(ppn_persen),
+                    AppUtils.NumericFormat(ppn),
+                    AppUtils.NumericFormat(total),
+                    AppUtils.NumericFormat(pelunasan),
+                    AppUtils.NumericFormat(saldo),
+                    (String) row.get("status_lunas"),
+                    (String) row.get("keterangan"),
+                    (String) row.get("pc")
+                });
+            }
+            
+            tblInvoice.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        } catch (SQLException ex) {
+            AppUtils.showWarningDialog("Gagal load data invoice dengan error \n" + ex.getMessage());
+        }
+    }
+    
+    private void InisialisasiTableInvoice() {
+        tableModel = new DefaultTableModel(new String[]{"ID","No Invoice", "Customer", "Tanggal", "Pekerjaan","Nilai Pekerjaan", "PPN %","PPN","Total","Pelunasan","Saldo","Status Lunas","Keterangan", "Pc"}, 0);
+        tblInvoice.setModel(tableModel);
+        AppUtils.SetTableAligmentRight(tblInvoice, 5);
+        AppUtils.SetTableAligmentRight(tblInvoice, 6);
+        AppUtils.SetTableAligmentRight(tblInvoice, 7);
+        AppUtils.SetTableAligmentRight(tblInvoice, 8);
+        AppUtils.SetTableAligmentRight(tblInvoice, 9);
+        AppUtils.SetTableAligmentRight(tblInvoice, 10);
+        
+        tblInvoice.removeColumn(tblInvoice.getColumnModel().getColumn(0));
     }
 }
 

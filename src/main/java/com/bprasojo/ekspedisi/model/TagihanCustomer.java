@@ -25,6 +25,7 @@ public class TagihanCustomer {
     private String terbilang;
     private int pelunasan;
     private String statusLunas;
+    private String keterangan;
     
     private transient StakeHolder customer;
 
@@ -33,7 +34,7 @@ public class TagihanCustomer {
 
     public TagihanCustomer(int id, int customerId, String noInvoice, Date tanggal, String pekerjaan,
                            int nilaiPekerjaan, int ppnPersen, int ppn, int total,
-                           String terbilang, int pelunasan, String statusLunas) {
+                           String terbilang, int pelunasan, String statusLunas, String keterangan) {
         this.id = id;
         this.customerId = customerId;
         this.noInvoice = noInvoice;
@@ -46,6 +47,7 @@ public class TagihanCustomer {
         this.terbilang = terbilang;
         this.pelunasan = pelunasan;
         this.statusLunas = statusLunas;
+        this.keterangan = keterangan;
     }
 
     // Getter & Setter
@@ -57,6 +59,9 @@ public class TagihanCustomer {
 
     public String getNoInvoice() { return noInvoice; }
     public void setNoInvoice(String noInvoice) { this.noInvoice = noInvoice; }
+    
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
 
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }

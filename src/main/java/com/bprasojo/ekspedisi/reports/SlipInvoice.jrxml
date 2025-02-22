@@ -1,0 +1,315 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Laporan" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Ekspedisi"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="302"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="687"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50.0" bold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18.0" bold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14.0" bold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle mode="Opaque" backcolor="#EEEFF0">
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#CACED0">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle backcolor="#D8D8D8">
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<dataset name="tableDataset" uuid="f13e6d36-5148-4ecc-bbe3-3035def80980">
+		<query language="sql"><![CDATA[]]></query>
+	</dataset>
+	<parameter name="p_tglawal" class="java.util.Date"/>
+	<parameter name="p_tglakhir" class="java.util.Date"/>
+	<parameter name="p_no_invoice" class="java.lang.String"/>
+	<query language="SQL"><![CDATA[select a.*, b.nama, b.alamat from tagihan_customer a
+inner join stake_holder b on a.customer_id = b.id
+where a.tanggal BETWEEN  $P{p_tglawal}  and $P{p_tglakhir}
+and a.no_invoice like $P{p_no_invoice}
+ORDER BY a.no_invoice]]></query>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="customer_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="customer_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="customer_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="no_invoice" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="no_invoice"/>
+		<property name="com.jaspersoft.studio.field.label" value="no_invoice"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="tanggal" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="tanggal"/>
+		<property name="com.jaspersoft.studio.field.label" value="tanggal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="pekerjaan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="pekerjaan"/>
+		<property name="com.jaspersoft.studio.field.label" value="pekerjaan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="nilai_pekerjaan" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="nilai_pekerjaan"/>
+		<property name="com.jaspersoft.studio.field.label" value="nilai_pekerjaan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="ppn_persen" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="ppn_persen"/>
+		<property name="com.jaspersoft.studio.field.label" value="ppn_persen"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="ppn" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="ppn"/>
+		<property name="com.jaspersoft.studio.field.label" value="ppn"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="total" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="terbilang" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="terbilang"/>
+		<property name="com.jaspersoft.studio.field.label" value="terbilang"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="pelunasan" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pelunasan"/>
+		<property name="com.jaspersoft.studio.field.label" value="pelunasan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="status_lunas" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status_lunas"/>
+		<property name="com.jaspersoft.studio.field.label" value="status_lunas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="created_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="updated_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="keterangan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="keterangan"/>
+		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="nama" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="stake_holder"/>
+	</field>
+	<field name="alamat" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="alamat"/>
+		<property name="com.jaspersoft.studio.field.label" value="alamat"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="stake_holder"/>
+	</field>
+	<group name="GroupInvoice" startNewPage="true">
+		<expression><![CDATA[$F{no_invoice}]]></expression>
+		<groupHeader>
+			<band height="139">
+				<element kind="rectangle" uuid="fbee430e-ed65-4a2f-81b2-8e41d66caf1b" x="0" y="70" width="350" height="65"/>
+				<element kind="textField" uuid="b994678b-6b27-4ae1-97c6-dd2b5042921f" x="10" y="97" width="335" height="19" bold="true">
+					<expression><![CDATA[$F{nama}]]></expression>
+				</element>
+				<element kind="staticText" uuid="2b17744a-c28a-4d97-b73e-199cc4b9d81d" x="10" y="80" width="100" height="15">
+					<text><![CDATA[Kepada]]></text>
+				</element>
+				<element kind="textField" uuid="e3ccb503-3d07-44fd-be47-9825fd3b5c52" x="10" y="116" width="335" height="19" bold="false">
+					<expression><![CDATA[$F{alamat}]]></expression>
+				</element>
+				<element kind="rectangle" uuid="099911cb-e06f-4715-b5b3-11c930589095" x="360" y="70" width="196" height="65"/>
+				<element kind="staticText" uuid="bbbb970f-d43e-4481-add2-01109418f84a" x="370" y="99" width="50" height="17">
+					<text><![CDATA[No Invoice]]></text>
+				</element>
+				<element kind="staticText" uuid="cc1ee0f8-3c1b-4287-a3cc-12514e8393cd" x="420" y="99" width="10" height="17" hTextAlign="Center">
+					<text><![CDATA[:]]></text>
+				</element>
+				<element kind="textField" uuid="412ac73f-5272-411c-87b4-11072c2457cb" x="440" y="100" width="114" height="17">
+					<expression><![CDATA[$F{no_invoice}]]></expression>
+				</element>
+				<element kind="staticText" uuid="89be9241-c548-47e0-88e0-4efff8b01fc1" x="420" y="117" width="10" height="17" hTextAlign="Center">
+					<text><![CDATA[:]]></text>
+				</element>
+				<element kind="textField" uuid="09a41759-7797-4140-9786-2986043cd4a7" x="440" y="118" width="114" height="17" pattern="d MMMM yyyy">
+					<expression><![CDATA[$F{tanggal}]]></expression>
+				</element>
+				<element kind="staticText" uuid="f4a155fa-949c-41b3-a524-2c52c0499979" x="370" y="117" width="50" height="17">
+					<text><![CDATA[Tanggal]]></text>
+				</element>
+				<element kind="staticText" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8" x="420" y="0" width="50" height="20" hTextAlign="Right">
+					<text><![CDATA[Date:]]></text>
+					<box rightPadding="4"/>
+				</element>
+				<element kind="textField" uuid="bb10dbe1-0a4f-4722-9953-c163b63cf979" x="470" y="0" width="84" height="20" pattern="MMM d, yyyy h:mm:ss a" hTextAlign="Right">
+					<expression><![CDATA[new java.util.Date()]]></expression>
+				</element>
+				<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
+					<expression><![CDATA["invoice_logo.png"]]></expression>
+				</element>
+				<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
+					<text><![CDATA[PT. Tampir Baru Logistik]]></text>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</element>
+				<element kind="staticText" uuid="c226e44d-3bb5-4145-b0b3-903bf1d79fde" x="70" y="25" width="275" height="15">
+					<text><![CDATA[Office : Jl. Sakura Raya no 33, RT 003 RW 005, Mantung]]></text>
+				</element>
+				<element kind="staticText" uuid="b96f7183-44f8-43ad-ba60-43d8fbf50b6e" x="70" y="40" width="205" height="15">
+					<text><![CDATA[Kab. Sukoharjo, Jawa Tengah]]></text>
+				</element>
+				<element kind="staticText" uuid="d4e5d93a-5fd5-4bc2-a141-a1292878f645" x="360" y="65" width="196" height="30" fontName="Verdana" fontSize="20.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Invoice]]></text>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="399" splitType="Stretch">
+			<element kind="rectangle" uuid="db119e08-d978-45fe-8647-0d3077af3fcd" x="0" y="0" width="556" height="370"/>
+			<element kind="textField" uuid="602c58e0-bd70-48bc-9558-faf5c7f3b146" x="10" y="10" width="335" height="30">
+				<expression><![CDATA[$F{pekerjaan}]]></expression>
+			</element>
+			<element kind="rectangle" uuid="6f28311e-9dff-486c-8d99-9f490efd4282" x="410" y="0" width="146" height="189"/>
+			<element kind="staticText" uuid="27b33399-68e1-48f3-95de-9ae241efc95d" x="415" y="10" width="20" height="20">
+				<text><![CDATA[Rp]]></text>
+			</element>
+			<element kind="textField" uuid="626e8e06-2d90-4bf8-b12e-85d0b48a49fa" x="450" y="10" width="100" height="20" pattern="#,##0.###;#,##0.###-" hTextAlign="Right">
+				<expression><![CDATA[$F{nilai_pekerjaan}]]></expression>
+			</element>
+			<element kind="line" uuid="ba6cf34c-a2e1-4b30-827d-d6cf090dcfdd" x="413" y="76" width="141" height="1"/>
+			<element kind="textField" uuid="8ef71bf5-ec5d-471f-b654-56d5b85baf4c" x="450" y="80" width="100" height="20" pattern="#,##0.###;#,##0.###-" hTextAlign="Right">
+				<expression><![CDATA[$F{nilai_pekerjaan}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="750bed5d-7226-47f6-b39c-5ab092f5c044" x="416" y="80" width="18" height="20">
+				<text><![CDATA[Rp]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="944290ea-9393-42ab-94b4-d7cd751b2a87" x="416" y="100" width="18" height="20">
+				<text><![CDATA[Rp]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="textField" uuid="3bfa0911-e48f-4595-b24e-cf31cdfdb98c" x="450" y="100" width="100" height="20" pattern="#,##0.###;#,##0.###-" hTextAlign="Right">
+				<expression><![CDATA[$F{nilai_pekerjaan} * 11/12]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="90b04027-51df-42f9-b099-7b93efbac090" x="416" y="121" width="18" height="20">
+				<text><![CDATA[Rp]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="textField" uuid="926a21fd-df2f-4191-8a28-84f2b4d10ee8" x="450" y="121" width="100" height="20" pattern="#,##0.###;#,##0.###-" hTextAlign="Right">
+				<expression><![CDATA[$F{ppn}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="f0bf8248-6cbb-4501-9ddd-7fc9e2f1d60b" x="416" y="162" width="18" height="20">
+				<text><![CDATA[Rp]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="textField" uuid="03dcfe0f-0252-4d0a-b570-bf3161c78218" x="450" y="162" width="100" height="20" pattern="#,##0.###;#,##0.###-" hTextAlign="Right">
+				<expression><![CDATA[$F{total}]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="line" uuid="015a383b-f7c3-4d6b-bd22-a3737343d2b7" x="410" y="186" width="146" height="1"/>
+			<element kind="staticText" uuid="2f84ea29-57dc-4697-b7de-7bd591657d81" x="260" y="121" width="148" height="20" hTextAlign="Left">
+				<text><![CDATA[PPN 12%]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="cbfbf2a9-9036-4086-aa35-d5307b3dda62" x="260" y="80" width="148" height="20" hTextAlign="Left">
+				<text><![CDATA[Sub Total]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="7d6d59e6-7f0c-4090-991c-f89c5b08b30b" x="260" y="100" width="148" height="20" hTextAlign="Left">
+				<text><![CDATA[DPP]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="5722071b-e60b-446c-91fd-75e5ca9bd293" x="260" y="162" width="148" height="20" hTextAlign="Left">
+				<text><![CDATA[Total]]></text>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+			<element kind="staticText" uuid="a1d4ea9c-3d94-435f-bc8b-da3aac9ae312" x="10" y="189" width="90" height="20">
+				<text><![CDATA[Terbilag :]]></text>
+			</element>
+			<element kind="textField" uuid="61c8ff89-93e8-4d34-a9b0-dbb53be7aed2" x="10" y="210" width="299" height="39" bold="true" italic="true">
+				<expression><![CDATA[$F{terbilang}]]></expression>
+			</element>
+			<element kind="staticText" uuid="5a899bb4-a7b7-4efc-afcd-ba831ad8ad66" x="10" y="319" width="179" height="20">
+				<text><![CDATA[Pembayaran Melalui :]]></text>
+			</element>
+			<element kind="textField" uuid="fb39d283-2cd4-4ed5-9413-80d531579e60" x="330" y="250" width="214" height="19" hTextAlign="Center">
+				<expression><![CDATA["Sukoharjo, " + DATEFORMAT($F{tanggal},"dd MMMM yyyy")]]></expression>
+			</element>
+			<element kind="textField" uuid="485b7453-a55a-4d2c-acfa-5f72ba99675b" x="330" y="270" width="214" height="19" hTextAlign="Center">
+				<expression><![CDATA["PT. Tampir Baru Logistik"]]></expression>
+			</element>
+			<element kind="textField" uuid="226ee722-5041-492e-a87a-051b2b1cc296" x="390" y="320" width="99" height="19" hTextAlign="Center">
+				<expression><![CDATA["Lia Wahyuningsih"]]></expression>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="2ce7ed17-1d08-4d63-8388-94057b1818bf" x="330" y="340" width="214" height="19" hTextAlign="Center">
+				<expression><![CDATA["Admin"]]></expression>
+			</element>
+			<element kind="textField" uuid="374d56da-691f-460f-9301-441d57020ea9" x="10" y="340" width="309" height="30" hTextAlign="Left">
+				<expression><![CDATA["Transfer Bank Mandiri No Rek. 138.001.7272456\nPT. Tampir Baru Logistik"]]></expression>
+			</element>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</detail>
+	<summary height="173"/>
+</jasperReport>
