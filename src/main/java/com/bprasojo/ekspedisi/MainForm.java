@@ -66,6 +66,8 @@ public class MainForm extends javax.swing.JFrame {
         jMenu8 = new javax.swing.JMenu();
         jMenuItem15 = new javax.swing.JMenuItem();
         jMenuItem16 = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem17 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -256,6 +258,15 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu8.add(jMenuItem16);
+        jMenu8.add(jSeparator4);
+
+        jMenuItem17.setText("Rekap Invoice Customer");
+        jMenuItem17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem17ActionPerformed(evt);
+            }
+        });
+        jMenu8.add(jMenuItem17);
 
         jMenu3.add(jMenu8);
 
@@ -396,6 +407,12 @@ public class MainForm extends javax.swing.JFrame {
                 
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
+    private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
+        FrmRptRekapInvoiceCustomer frmRptRekapInvoiceCustomer = new FrmRptRekapInvoiceCustomer();
+        desktopPane.add(frmRptRekapInvoiceCustomer);
+        frmRptRekapInvoiceCustomer.setVisible(true);
+    }//GEN-LAST:event_jMenuItem17ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -450,6 +467,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem16;
+    private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -461,6 +479,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
     private javax.swing.JMenuItem miTransaksiKas;

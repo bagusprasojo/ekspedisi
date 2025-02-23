@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -35,16 +36,18 @@ import net.sf.jasperreports.view.JasperViewer;
 public class AppUtils {
     public static void setDefaultValues(JComponent... components) {
         for (JComponent component : components) {
-            if (component instanceof JTextField) {
+            if (component instanceof JFormattedTextField) {
+                ((JFormattedTextField) component).setValue(0);
+            } else if (component instanceof JTextField) {
                 ((JTextField) component).setText("");
             } else if (component instanceof JTextArea) {
                 ((JTextArea) component).setText("");
             } else if (component instanceof JDateChooser) {
                 ((JDateChooser) component).setDate(new Date());
-            } else if (component instanceof JFormattedTextField) {
-                ((JFormattedTextField) component).setValue(0);
             } else if (component instanceof JComboBox) {
                 ((JComboBox<?>) component).setSelectedIndex(-1);
+            } else if (component instanceof JLabel) {
+                ((JLabel) component).setText("");
             }
         }
     }

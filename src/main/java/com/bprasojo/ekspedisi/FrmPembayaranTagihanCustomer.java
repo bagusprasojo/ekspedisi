@@ -290,7 +290,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             }
         });
 
-        edNominal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edNominal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         edNominal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         edNominal.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -355,16 +355,16 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel16.setText("PPH %");
 
-        edPPHPersen.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edPPHPersen.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         edPPHPersen.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel17.setText("Total");
 
-        edTotal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edTotal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         edTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
-        edPPH.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+        edPPH.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
         edPPH.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         edPPH.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -666,7 +666,13 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                                     edTanggal,
                                     edNominal,
                                     edKeterangan,
-                                    cbViaBank);  
+                                    cbViaBank,
+                                    edPPH,
+                                    edPPHPersen,
+                                    edTotal,
+                                    lblBank);  
+        
+        
         showLoopUpBank = true;
         
         setStatusTombol("tambah");
@@ -1075,11 +1081,11 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                 edInvoice.setText(tagihanCustomer.getNoInvoice());
                 edNilaiPekerjaan.setValue(tagihanCustomer.getNilaiPekerjaan());
                 edPPN.setValue(tagihanCustomer.getPpn());
-                edPelunasan.setValue(tagihanCustomer.getPelunasan());
+                edPelunasan.setValue(tagihanCustomer.getPelunasan()- pembayaranTagihanCustomer.getTotal());
                 edSaldo.setValue(tagihanCustomer.getSaldo() + pembayaranTagihanCustomer.getTotal());
                 edNama.setText(tagihanCustomer.getCustomer().getNama());
                 edAlamat.setText(tagihanCustomer.getCustomer().getAlamat());
-                edSaldo.setValue(tagihanCustomer.getSaldo());
+//                edSaldo.setValue(tagihanCustomer.getSaldo());
             } else {
                 AppUtils.setDefaultValues(edInvoice, 
                                           edNilaiPekerjaan, 
