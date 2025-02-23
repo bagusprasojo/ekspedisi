@@ -97,5 +97,9 @@ public class TagihanCustomer {
         }
         return customer;
     }
+    
+    public Integer getSaldo(){
+        return total - pelunasan;
+    }
 }
 

@@ -75,9 +75,9 @@ public class TagihanCustomerDAO {
         }
         
         if (tagihan.getNilaiPekerjaan() <= tagihan.getPelunasan()){
-            tagihan.setStatusLunas("lunas");
+            tagihan.setStatusLunas("Lunas");
         } else {
-            tagihan.setStatusLunas("belum");
+            tagihan.setStatusLunas("Belum");
         }
         
         boolean isInsert = tagihan.getId() == 0; 

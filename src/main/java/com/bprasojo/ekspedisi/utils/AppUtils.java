@@ -15,9 +15,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import net.sf.jasperreports.engine.JRException;
@@ -30,6 +33,22 @@ import net.sf.jasperreports.view.JasperViewer;
  * @author USER
  */
 public class AppUtils {
+    public static void setDefaultValues(JComponent... components) {
+        for (JComponent component : components) {
+            if (component instanceof JTextField) {
+                ((JTextField) component).setText("");
+            } else if (component instanceof JTextArea) {
+                ((JTextArea) component).setText("");
+            } else if (component instanceof JDateChooser) {
+                ((JDateChooser) component).setDate(new Date());
+            } else if (component instanceof JFormattedTextField) {
+                ((JFormattedTextField) component).setValue(0);
+            } else if (component instanceof JComboBox) {
+                ((JComboBox<?>) component).setSelectedIndex(-1);
+            }
+        }
+    }
+    
     public static void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

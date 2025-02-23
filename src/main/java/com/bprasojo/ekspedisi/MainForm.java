@@ -384,7 +384,9 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem16ActionPerformed
-        // TODO add your handling code here:
+        FrmPembayaranTagihanCustomer frmPembayaranTagihanCustomer = new FrmPembayaranTagihanCustomer();
+        desktopPane.add(frmPembayaranTagihanCustomer);
+        frmPembayaranTagihanCustomer.setVisible(true);
     }//GEN-LAST:event_jMenuItem16ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
