@@ -171,6 +171,7 @@ public class PembayaranTagihanCustomerDAO {
                     pembayaran.setPerkiraanPphId(rs.getInt("perkiraan_pph_id"));
                     pembayaran.setKeterangan(rs.getString("keterangan"));
                     pembayaran.setSumberDana(rs.getString("sumber_dana"));
+                    pembayaran.setTerbilang(rs.getString("terbilang"));
                 }
             }
         }
@@ -188,10 +189,10 @@ public class PembayaranTagihanCustomerDAO {
                 String no_register = generateNoRegister(pembayaran.getTanggal());
                 pembayaran.setNoRegister(no_register);
                 
-                sql = "INSERT INTO pembayaran_tagihan_customer (no_register, tagihan_customer_id, tanggal, nominal_kas, pph,pph_persen, perkiraan_kas_id, bank_id, perkiraan_pph_id, keterangan, sumber_dana) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                sql = "INSERT INTO pembayaran_tagihan_customer (no_register, tagihan_customer_id, tanggal, nominal_kas, pph,pph_persen, perkiraan_kas_id, bank_id, perkiraan_pph_id, keterangan, sumber_dana, terbilang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
             } else {
                 tagihan_customer_old_id = getById(pembayaran.getId()).getTagihanCustomerId();
-                sql = "UPDATE pembayaran_tagihan_customer SET no_register = ?, tagihan_customer_id = ?, tanggal = ?, nominal_kas = ?, pph = ?,pph_persen = ?, perkiraan_kas_id = ?, bank_id = ?, perkiraan_pph_id = ?, keterangan = ?, sumber_dana = ? WHERE id = ?";
+                sql = "UPDATE pembayaran_tagihan_customer SET no_register = ?, tagihan_customer_id = ?, tanggal = ?, nominal_kas = ?, pph = ?,pph_persen = ?, perkiraan_kas_id = ?, bank_id = ?, perkiraan_pph_id = ?, keterangan = ?, sumber_dana = ?, terbilang = ?  WHERE id = ?";
             }
             
             try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -206,9 +207,10 @@ public class PembayaranTagihanCustomerDAO {
                 stmt.setInt(9, pembayaran.getPerkiraanPphId());
                 stmt.setString(10, pembayaran.getKeterangan());
                 stmt.setString(11, pembayaran.getSumberDana());
+                stmt.setString(12, pembayaran.getTerbilang());
                 
                 if (pembayaran.getId() != 0) {
-                    stmt.setInt(12, pembayaran.getId());
+                    stmt.setInt(13, pembayaran.getId());
                 }
                 
                 int affectedRows = stmt.executeUpdate();

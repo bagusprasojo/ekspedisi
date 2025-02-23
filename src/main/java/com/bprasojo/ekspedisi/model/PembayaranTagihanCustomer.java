@@ -26,9 +26,7 @@ public class PembayaranTagihanCustomer {
     private int perkiraanPphId;
     private String keterangan;
     private String sumberDana; // Tambahan sumber dana
-    private Date createdAt;
-    private Date updatedAt;
-
+    private String terbilang;
     // Lazy Loading untuk objek terkait
     private TagihanCustomer tagihanCustomer;
     private Perkiraan perkiraanKas;
@@ -37,7 +35,7 @@ public class PembayaranTagihanCustomer {
 
     public PembayaranTagihanCustomer() {}
 
-    public PembayaranTagihanCustomer(int id, String noRegister, int tagihanCustomerId, Date tanggal, int nominalKas, int pph,int pphPersen, int perkiraanKasId, int bankId, int perkiraanPphId, String keterangan, String sumberDana, Date createdAt, Date updatedAt) {
+    public PembayaranTagihanCustomer(int id, String noRegister, int tagihanCustomerId, Date tanggal, int nominalKas, int pph,int pphPersen, int perkiraanKasId, int bankId, int perkiraanPphId, String keterangan, String sumberDana, String terbilang) {
         this.id = id;
         this.noRegister = noRegister;
         this.tagihanCustomerId = tagihanCustomerId;
@@ -50,8 +48,7 @@ public class PembayaranTagihanCustomer {
         this.perkiraanPphId = perkiraanPphId;
         this.keterangan = keterangan;
         this.sumberDana = sumberDana;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.terbilang = terbilang;
     }
 
     // Getter dan Setter
@@ -91,12 +88,9 @@ public class PembayaranTagihanCustomer {
     public String getSumberDana() { return sumberDana; }
     public void setSumberDana(String sumberDana) { this.sumberDana = sumberDana; }
 
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public String getTerbilang() { return terbilang; }
+    public void setTerbilang(String terbilang) { this.terbilang = terbilang; }
 
-    public Date getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
-    
     public TagihanCustomer getTagihanCustomer() throws SQLException{
         if (tagihanCustomer == null) {
             TagihanCustomerDAO tagihanCustomerDAO = new TagihanCustomerDAO();

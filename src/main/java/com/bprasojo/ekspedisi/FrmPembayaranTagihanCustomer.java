@@ -17,6 +17,7 @@ import java.awt.event.ItemEvent;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -26,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  *
@@ -98,6 +100,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         btnSimpan = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
+        btnCetak = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
         pnlInput = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -233,6 +236,19 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             }
         });
         jToolBar1.add(btnHapus);
+
+        btnCetak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Print.32.png"))); // NOI18N
+        btnCetak.setText("Cetak");
+        btnCetak.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnCetak.setFocusable(false);
+        btnCetak.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnCetak.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCetakActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnCetak);
 
         btnKeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Close32.png"))); // NOI18N
         btnKeluar.setText("Keluar");
@@ -703,7 +719,11 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             pembayaranTagihanCustomer.setNominalKas(((Number)edNominal.getValue()).intValue());
             pembayaranTagihanCustomer.setPphPersen(((Number)edPPHPersen.getValue()).intValue());
             pembayaranTagihanCustomer.setPph(((Number)edPPH.getValue()).intValue());
-            pembayaranTagihanCustomer.setKeterangan(edKeterangan.getText());
+            pembayaranTagihanCustomer.setKeterangan(edKeterangan.getText());            
+            
+            String terbilang = AppUtils.terbilang(pembayaranTagihanCustomer.getNominalKas()) + " Rupiah";
+            pembayaranTagihanCustomer.setTerbilang(terbilang);
+            
             pembayaranTagihanCustomerDAO.save(pembayaranTagihanCustomer);
 
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + pembayaranTagihanCustomer.getNoRegister());
@@ -835,9 +855,22 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         hitungTotal();
     }//GEN-LAST:event_edPPHPropertyChange
 
+    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
+        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/Kwitansi.jasper";
+
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("p_no_register", pembayaranTagihanCustomer.getNoRegister());
+            AppUtils.showReport(reportPath, params);
+        } catch (JRException ex) {
+            AppUtils.showErrorDialog("Ada kesalahan dengan error \n" + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnCetakActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnCetak;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnInvoice;
@@ -902,6 +935,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(false);
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(false);
+            btnCetak.setEnabled(false);
             
             SetEnableKomponenInput(false);
         } else if (mode == "tambah"){
@@ -910,6 +944,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(true);
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(false);
+            btnCetak.setEnabled(false);
+            
             SetEnableKomponenInput(true);
         } else if (mode == "edit"){
             btnNew.setEnabled(false);
@@ -917,6 +953,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(true);
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(true);
+            btnCetak.setEnabled(true);
+            
             SetEnableKomponenInput(true);
         } else if (mode == "selected"){
             btnNew.setEnabled(true);
@@ -924,6 +962,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             btnSimpan.setEnabled(false);
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(true);
+            btnCetak.setEnabled(true);
+            
             SetEnableKomponenInput(false);
         }
     }
