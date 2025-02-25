@@ -274,6 +274,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         jLabel4.setText("No Reguster");
 
         edNama.setEditable(false);
+        edNama.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edNama.setEnabled(false);
         edNama.setNextFocusableComponent(edAlamat);
 
@@ -345,6 +346,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edSaldo.setEditable(false);
         edSaldo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edSaldo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edSaldo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edSaldo.setEnabled(false);
 
         jLabel13.setText("Nilai Pekerjaan");
@@ -352,6 +354,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edNilaiPekerjaan.setEditable(false);
         edNilaiPekerjaan.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edNilaiPekerjaan.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edNilaiPekerjaan.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edNilaiPekerjaan.setEnabled(false);
 
         jLabel14.setText("PPN");
@@ -359,6 +362,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edPPN.setEditable(false);
         edPPN.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edPPN.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edPPN.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edPPN.setEnabled(false);
 
         jLabel15.setText("Pelunasan");
@@ -366,6 +370,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edPelunasan.setEditable(false);
         edPelunasan.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edPelunasan.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        edPelunasan.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edPelunasan.setEnabled(false);
 
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -395,6 +400,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         jScrollPane3.setViewportView(edKeterangan);
 
         edAlamat.setLineWrap(true);
+        edAlamat.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edAlamat.setEnabled(false);
         jScrollPane2.setViewportView(edAlamat);
 
@@ -794,8 +800,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tblPembayaranKasBonFocusGained
 
     private void btnInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInvoiceActionPerformed
-        String sqlQuery = "select a.no_invoice, a.tanggal,  b.nama, b.alamat, a.pekerjaan, "
-        + " a.nilai_pekerjaan, a.pelunasan, (a.nilai_pekerjaan - a.pelunasan) as Sisa "
+        String sqlQuery = "select a.no_invoice, a.tanggal,  b.nama, b.alamat, a.pekerjaan,"
+        + " a.nilai_pekerjaan, a.ppn, a.total, a.pelunasan, (a.total - a.pelunasan) as Sisa "
         + " from tagihan_customer a "
         + " inner join stake_holder b on a.customer_id = b.id "
         + " where a.status_lunas = 'Belum' ";
@@ -1038,7 +1044,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                             lblBank.setText("");
                         } else {
                             cbViaBank.setSelectedIndex(1);
-                            bank = bankDAO.getBankById(pembayaranTagihanCustomer.getBankId());
+                            bank = bankDAO.getById(pembayaranTagihanCustomer.getBankId());
                             lblBank.setText(pembayaranTagihanCustomer.getBank().toString());
                         }
                         showLoopUpBank = true;
@@ -1121,11 +1127,17 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                 edInvoice.setText(tagihanCustomer.getNoInvoice());
                 edNilaiPekerjaan.setValue(tagihanCustomer.getNilaiPekerjaan());
                 edPPN.setValue(tagihanCustomer.getPpn());
-                edPelunasan.setValue(tagihanCustomer.getPelunasan()- pembayaranTagihanCustomer.getTotal());
-                edSaldo.setValue(tagihanCustomer.getSaldo() + pembayaranTagihanCustomer.getTotal());
+                
+                if (pembayaranTagihanCustomer.getTagihanCustomer() != null && tagihanCustomer.getNoInvoice().equals(pembayaranTagihanCustomer.getTagihanCustomer().getNoInvoice())){
+                    edPelunasan.setValue(tagihanCustomer.getPelunasan()- pembayaranTagihanCustomer.getTotal());
+                    edSaldo.setValue(tagihanCustomer.getSaldo() + pembayaranTagihanCustomer.getTotal());
+                } else {
+                    edPelunasan.setValue(tagihanCustomer.getPelunasan());
+                    edSaldo.setValue(tagihanCustomer.getSaldo());
+                }
+                
                 edNama.setText(tagihanCustomer.getCustomer().getNama());
                 edAlamat.setText(tagihanCustomer.getCustomer().getAlamat());
-//                edSaldo.setValue(tagihanCustomer.getSaldo());
             } else {
                 AppUtils.setDefaultValues(edInvoice, 
                                           edNilaiPekerjaan, 

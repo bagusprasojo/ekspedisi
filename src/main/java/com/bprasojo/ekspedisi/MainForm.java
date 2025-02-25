@@ -68,6 +68,7 @@ public class MainForm extends javax.swing.JFrame {
         jMenuItem16 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenuItem17 = new javax.swing.JMenuItem();
+        jMenuItem18 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -268,6 +269,14 @@ public class MainForm extends javax.swing.JFrame {
         });
         jMenu8.add(jMenuItem17);
 
+        jMenuItem18.setText("Rekap Pembayaran Invoice Customer");
+        jMenuItem18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem18ActionPerformed(evt);
+            }
+        });
+        jMenu8.add(jMenuItem18);
+
         jMenu3.add(jMenu8);
 
         jMenuBar1.add(jMenu3);
@@ -413,6 +422,12 @@ public class MainForm extends javax.swing.JFrame {
         frmRptRekapInvoiceCustomer.setVisible(true);
     }//GEN-LAST:event_jMenuItem17ActionPerformed
 
+    private void jMenuItem18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem18ActionPerformed
+        FrmRptRekapPembayaranInvoiceCustomer frmRptRekapPembayaranInvoiceCustomer = new FrmRptRekapPembayaranInvoiceCustomer();
+        desktopPane.add(frmRptRekapPembayaranInvoiceCustomer);
+        frmRptRekapPembayaranInvoiceCustomer.setVisible(true);
+    }//GEN-LAST:event_jMenuItem18ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -468,6 +483,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem17;
+    private javax.swing.JMenuItem jMenuItem18;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

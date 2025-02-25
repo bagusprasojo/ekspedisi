@@ -4,8 +4,11 @@
  */
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.dao.ConfigDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.dao.TagihanCustomerDAO;
+import com.bprasojo.ekspedisi.model.Config;
+import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
 import com.bprasojo.ekspedisi.utils.AppUtils;
@@ -41,6 +44,10 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     
     StakeHolder customer;
     StakeHolderDAO customerDAO;
+    
+    Config config;
+    ConfigDAO configDAO;
+    
     boolean SilakanLoadData = false;
     int currentPage = 1;
     
@@ -48,6 +55,8 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     
     public FrmInvoice() {
         initComponents();
+        
+        
         
         try {
             setMaximum(true);
@@ -57,6 +66,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         
         invoiceDAO = new TagihanCustomerDAO();
         customerDAO = new StakeHolderDAO();
+        configDAO = new ConfigDAO();
         
         invoice = null;
         customer = null;
@@ -552,6 +562,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         edPPN.setValue(0);
         edKeterangan.setText("");
         
+        
         setStatusTombol("tambah");
     }//GEN-LAST:event_btnNewActionPerformed
 
@@ -573,6 +584,9 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             invoice.setTanggal(edTanggal.getDate());
             invoice.setPekerjaan(edPekerjaan.getText().trim());
             invoice.setKeterangan(edKeterangan.getText());
+            
+            int perkiraanPiutangId = Integer.parseInt(configDAO.getByKode("PIUTANG_JASA_ID").getNilai());
+            invoice.setPerkiraanPiutangId(perkiraanPiutangId);
             
             String terbilang = AppUtils.terbilang(invoice.getTotal()) + " Rupiah";
             invoice.setTerbilang(terbilang);

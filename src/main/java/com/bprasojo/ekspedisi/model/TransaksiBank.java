@@ -104,7 +104,7 @@ public class TransaksiBank extends BaseClass{
     public Bank getBankUtama() throws SQLException {
         if ((bankUtama == null) && (bankUtamaId > 0)) {
             BankDAO bankDAO = new BankDAO();
-            bankUtama = bankDAO.getBankById(this.bankUtamaId);
+            bankUtama = bankDAO.getById(this.bankUtamaId);
         }
         return bankUtama;
     }
@@ -113,7 +113,7 @@ public class TransaksiBank extends BaseClass{
     public Bank getBankTujuan() throws SQLException {
         if (bankTujuan == null && bankTujuanId > 0) {
             BankDAO bankDAO = new BankDAO();
-            bankTujuan = bankDAO.getBankById(this.bankTujuanId);
+            bankTujuan = bankDAO.getById(this.bankTujuanId);
         }
         return bankTujuan;
     }
@@ -122,7 +122,7 @@ public class TransaksiBank extends BaseClass{
     public Perkiraan getAkunUtama() throws SQLException {
         if (akunUtama == null && akunUtamaId > 0) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            akunUtama = perkiraanDAO.getPerkiraanById(this.akunUtamaId);
+            akunUtama = perkiraanDAO.getById(this.akunUtamaId);
         }
         return akunUtama;
     }
@@ -131,7 +131,7 @@ public class TransaksiBank extends BaseClass{
     public Perkiraan getAkunTujuan() throws SQLException {
         if (akunTujuan == null && akunTujuanId > 0) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            akunTujuan = perkiraanDAO.getPerkiraanById(this.akunTujuanId);
+            akunTujuan = perkiraanDAO.getById(this.akunTujuanId);
         }
         return akunTujuan;
     }

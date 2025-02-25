@@ -51,7 +51,7 @@ public class BankDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 PerkiraanDAO perkiraanDao = new PerkiraanDAO();
-                Perkiraan akun = perkiraanDao.getPerkiraanById(rs.getInt("akun_id"));
+                Perkiraan akun = perkiraanDao.getById(rs.getInt("akun_id"));
                 return new Bank(
                         rs.getString("no_rekening"),
                         rs.getString("nama_bank"),
@@ -70,7 +70,7 @@ public class BankDAO {
         return getBank("no_Rekening", noRekening);
     }
     
-    public Bank getBankById(Integer id) throws SQLException {
+    public Bank getById(Integer id) throws SQLException {
         return getBank("id", id);
     }
 
@@ -82,7 +82,7 @@ public class BankDAO {
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 PerkiraanDAO perkiraanDao = new PerkiraanDAO();
-                Perkiraan akun = perkiraanDao.getPerkiraanById(rs.getInt("akun_id"));
+                Perkiraan akun = perkiraanDao.getById(rs.getInt("akun_id"));
                 bankList.add(new Bank(
                         rs.getString("no_rekening"),
                         rs.getString("nama_bank"),

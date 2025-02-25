@@ -125,7 +125,7 @@ where a.no_register =  $P{p_no_register} ]]></query>
 				<expression><![CDATA[$F{nominal_kas}]]></expression>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			</element>
-			<element kind="textField" uuid="343fe8ac-af66-4e8b-81de-7df94e3952a7" x="599" y="270" width="99" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
+			<element kind="textField" uuid="343fe8ac-af66-4e8b-81de-7df94e3952a7" x="580" y="270" width="140" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
 				<expression><![CDATA["Lia Wahyuningsih"]]></expression>
 				<box>
 					<pen lineWidth="1.0"/>

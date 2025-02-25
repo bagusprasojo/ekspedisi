@@ -82,7 +82,7 @@ public class TransaksiKas extends  BaseClass{
     public Perkiraan getAkunKas() {
         if (akunKas == null && akunKasId != 0) {
             try {
-                akunKas = perkiraanDAO.getPerkiraanById(akunKasId);
+                akunKas = perkiraanDAO.getById(akunKasId);
             } catch (SQLException ex) {
                 Logger.getLogger(TransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -94,7 +94,7 @@ public class TransaksiKas extends  BaseClass{
     public Perkiraan getAkunTransaksi() {
         if (akunTransaksi == null && akunTransaksiId != 0) {
             try {
-                akunTransaksi = perkiraanDAO.getPerkiraanById(akunTransaksiId);
+                akunTransaksi = perkiraanDAO.getById(akunTransaksiId);
             } catch (SQLException ex) {
                 Logger.getLogger(TransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -113,7 +113,7 @@ public class TransaksiKas extends  BaseClass{
     // Lazy loading untuk bank
     public Bank getBank() throws SQLException {
         if (bank == null && bankId != 0) {
-            bank = bankDAO.getBankById(bankId);
+            bank = bankDAO.getById(bankId);
         }
         return bank;
     }

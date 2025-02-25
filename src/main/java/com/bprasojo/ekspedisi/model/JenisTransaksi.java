@@ -48,7 +48,7 @@ public class JenisTransaksi extends BaseClass{
     public Perkiraan getAkun() throws SQLException {
         if (akun == null) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            akun = perkiraanDAO.getPerkiraanById(this.akunId);
+            akun = perkiraanDAO.getById(this.akunId);
         }
         return akun;
     }

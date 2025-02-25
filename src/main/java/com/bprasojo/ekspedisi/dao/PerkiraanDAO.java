@@ -71,7 +71,7 @@ public class PerkiraanDAO {
     }
 
     // Mengambil Perkiraan berdasarkan ID
-    public Perkiraan getPerkiraanById(Integer id) throws SQLException {
+    public Perkiraan getById(Integer id) throws SQLException {
         return getPerkiraan("id", id);
     }
 

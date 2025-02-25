@@ -64,84 +64,105 @@
 	</dataset>
 	<parameter name="p_tglawal" class="java.util.Date"/>
 	<parameter name="p_tglakhir" class="java.util.Date"/>
-	<query language="SQL"><![CDATA[select a.*, b.nama, b.alamat from tagihan_customer a
-inner join stake_holder b on a.customer_id = b.id
+	<query language="SQL"><![CDATA[select a.*, (a.nominal_kas + a.pph) as pembayaran, b.no_invoice, b.total as total_piutang, b.pekerjaan, c.nama, c.alamat
+from pembayaran_tagihan_customer a 
+inner join tagihan_customer b on a.tagihan_customer_id = b.id
+inner join stake_holder c on b.customer_id = c.id 
 where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 
 ]]></query>
 	<field name="id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>
 		<property name="com.jaspersoft.studio.field.label" value="id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
 	</field>
-	<field name="customer_id" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="customer_id"/>
-		<property name="com.jaspersoft.studio.field.label" value="customer_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	<field name="no_register" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="no_register"/>
+		<property name="com.jaspersoft.studio.field.label" value="no_register"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="tagihan_customer_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tagihan_customer_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="tagihan_customer_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="tanggal" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="tanggal"/>
+		<property name="com.jaspersoft.studio.field.label" value="tanggal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="nominal_kas" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="nominal_kas"/>
+		<property name="com.jaspersoft.studio.field.label" value="nominal_kas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="pph" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pph"/>
+		<property name="com.jaspersoft.studio.field.label" value="pph"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="pph_persen" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="pph_persen"/>
+		<property name="com.jaspersoft.studio.field.label" value="pph_persen"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="perkiraan_kas_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="perkiraan_kas_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="perkiraan_kas_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="bank_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="bank_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bank_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="perkiraan_pph_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="perkiraan_pph_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="perkiraan_pph_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="sumber_dana" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sumber_dana"/>
+		<property name="com.jaspersoft.studio.field.label" value="sumber_dana"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="terbilang" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="terbilang"/>
+		<property name="com.jaspersoft.studio.field.label" value="terbilang"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="keterangan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="keterangan"/>
+		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="created_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="updated_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="pembayaran" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="pembayaran"/>
+		<property name="com.jaspersoft.studio.field.label" value="pembayaran"/>
 	</field>
 	<field name="no_invoice" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="no_invoice"/>
 		<property name="com.jaspersoft.studio.field.label" value="no_invoice"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
 	</field>
-	<field name="tanggal" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="tanggal"/>
-		<property name="com.jaspersoft.studio.field.label" value="tanggal"/>
+	<field name="total_piutang" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_piutang"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
 	</field>
 	<field name="pekerjaan" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="pekerjaan"/>
 		<property name="com.jaspersoft.studio.field.label" value="pekerjaan"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="nilai_pekerjaan" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="nilai_pekerjaan"/>
-		<property name="com.jaspersoft.studio.field.label" value="nilai_pekerjaan"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="ppn_persen" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="ppn_persen"/>
-		<property name="com.jaspersoft.studio.field.label" value="ppn_persen"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="ppn" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="ppn"/>
-		<property name="com.jaspersoft.studio.field.label" value="ppn"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="total" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="total"/>
-		<property name="com.jaspersoft.studio.field.label" value="total"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="terbilang" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="terbilang"/>
-		<property name="com.jaspersoft.studio.field.label" value="terbilang"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="pelunasan" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="pelunasan"/>
-		<property name="com.jaspersoft.studio.field.label" value="pelunasan"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="status_lunas" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="status_lunas"/>
-		<property name="com.jaspersoft.studio.field.label" value="status_lunas"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="created_at" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
-		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="updated_at" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
-		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
-	</field>
-	<field name="keterangan" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="keterangan"/>
-		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
 	</field>
 	<field name="nama" class="java.lang.String">
@@ -154,24 +175,21 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 		<property name="com.jaspersoft.studio.field.label" value="alamat"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="stake_holder"/>
 	</field>
-	<variable name="sum_nilai_pekerjaan" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{nilai_pekerjaan}]]></expression>
+	<variable name="v_total_piutang" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{total_piutang}]]></expression>
 	</variable>
-	<variable name="sum_ppn" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{ppn}]]></expression>
+	<variable name="v_total_nominal_kas_bank" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{nominal_kas}]]></expression>
 	</variable>
-	<variable name="sum_total" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{total}]]></expression>
+	<variable name="v_total_pph" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{pph}]]></expression>
 	</variable>
-	<variable name="sum_pelunasan" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{pelunasan}]]></expression>
-	</variable>
-	<variable name="sum_saldo" calculation="Sum" class="java.lang.Integer">
-		<expression><![CDATA[$F{total} - $F{pelunasan}]]></expression>
+	<variable name="v_total_total_bayar" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{nominal_kas}+$F{pph}]]></expression>
 	</variable>
 	<title height="134" splitType="Stretch">
 		<element kind="staticText" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a" x="0" y="90" width="802" height="25" fontSize="16.0" bold="true" hTextAlign="Center">
-			<text><![CDATA[Rekap Invoice Customer]]></text>
+			<text><![CDATA[Rekap Pembayaran Invoice Customer]]></text>
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</element>
@@ -218,7 +236,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" mode="Opaque" x="20" y="0" width="88" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[No Invoice]]></text>
+			<text><![CDATA[No Register]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<box padding="1" style="Column header">
@@ -242,7 +260,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="72577e14-faa9-4a25-b1b0-aa86a49a01d6" positionType="Float" mode="Opaque" x="167" y="0" width="93" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Nama Customer]]></text>
+			<text><![CDATA[No Invoice]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<box style="Column header">
@@ -254,7 +272,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="f3e463b7-fab2-48ed-a68a-a2991876ecbe" positionType="Float" mode="Opaque" x="405" y="0" width="70" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Nilai    Pekerjaan]]></text>
+			<text><![CDATA[Nilai Pekerjaan + PPN]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -279,7 +297,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="03d6c6be-bbc5-4842-8b9d-c5f13d717b09" positionType="Float" mode="Opaque" x="475" y="0" width="70" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[PPN]]></text>
+			<text><![CDATA[Nominal Kas/Bank]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -292,7 +310,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="1dea313c-1336-4d8a-8e04-d06a15f66a20" positionType="Float" mode="Opaque" x="545" y="0" width="70" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Total]]></text>
+			<text><![CDATA[PPh %]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -317,7 +335,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="0de03d06-6b8a-4f25-a002-34ce7f0dce90" positionType="Float" mode="Opaque" x="615" y="0" width="70" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Pelunasan]]></text>
+			<text><![CDATA[PPh]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -330,7 +348,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="staticText" uuid="fa81b822-8b2a-4e57-9aaa-eb765f613706" positionType="Float" mode="Opaque" x="685" y="0" width="70" height="40" forecolor="#000000" backcolor="rgba(187, 245, 221, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Saldo]]></text>
+			<text><![CDATA[Total Bayar]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -357,7 +375,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="97b23753-137e-4b1c-a28b-4bff3378ff3c" positionType="Float" x="20" y="0" width="88" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="dd/MM/yy" blankWhenNull="true" bold="false" hTextAlign="Center" style="Detail">
-				<expression><![CDATA[$F{no_invoice}]]></expression>
+				<expression><![CDATA[$F{no_register}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -377,7 +395,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="94674bfa-8196-4cc1-b032-f90550ff4898" positionType="Float" x="167" y="0" width="93" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" hTextAlign="Left" style="Detail">
-				<expression><![CDATA[$F{nama}]]></expression>
+				<expression><![CDATA[$F{no_invoice}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -387,7 +405,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="42ceed78-3b82-4f0a-851c-76168eab3142" positionType="Float" x="405" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{nilai_pekerjaan}]]></expression>
+				<expression><![CDATA[$F{total_piutang}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
@@ -407,7 +425,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="6bd41126-f668-4279-bce3-f7351f79ef3c" positionType="Float" x="475" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{ppn}]]></expression>
+				<expression><![CDATA[$F{nominal_kas}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
@@ -418,7 +436,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="a818ea43-44e6-456e-b9a0-b80fb58a340a" positionType="Float" x="545" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{total}]]></expression>
+				<expression><![CDATA[$F{pph_persen}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
@@ -439,7 +457,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="4483baf3-5f96-4807-81ee-47f29ef76087" positionType="Float" x="615" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{pelunasan}]]></expression>
+				<expression><![CDATA[$F{pph}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
@@ -450,7 +468,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="5b222103-632d-4f31-8fbb-a4c9e2ac3d5e" positionType="Float" x="685" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-				<expression><![CDATA[$F{total}-$F{pelunasan}]]></expression>
+				<expression><![CDATA[$F{nominal_kas}+$F{pph}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
@@ -501,7 +519,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="textField" uuid="b1adb38b-d582-4822-990b-2c80b98b7e1c" positionType="Float" x="615" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-			<expression><![CDATA[$V{sum_pelunasan}]]></expression>
+			<expression><![CDATA[$V{v_total_pph}]]></expression>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box padding="3" style="Detail">
@@ -512,7 +530,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="textField" uuid="f0b72a32-142f-47cc-bf10-f04de16502c3" positionType="Float" x="475" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-			<expression><![CDATA[$V{sum_ppn}]]></expression>
+			<expression><![CDATA[$V{v_total_nominal_kas_bank}]]></expression>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box padding="3" style="Detail">
@@ -531,8 +549,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="textField" uuid="0eed6f3c-80fc-4abb-95a1-cf60bb08be06" positionType="Float" x="545" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-			<expression><![CDATA[$V{sum_total}]]></expression>
+		<element kind="textField" uuid="0eed6f3c-80fc-4abb-95a1-cf60bb08be06" positionType="Float" x="545" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box padding="3" style="Detail">
@@ -543,7 +560,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="textField" uuid="59e556fa-83ed-46e1-b305-a2c6392f8d07" positionType="Float" x="405" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-			<expression><![CDATA[$V{sum_nilai_pekerjaan}]]></expression>
+			<expression><![CDATA[$V{v_total_piutang}]]></expression>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box padding="3" style="Detail">
@@ -554,7 +571,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			</box>
 		</element>
 		<element kind="textField" uuid="c7c48c5e-85d8-4c71-b16a-fed600288289" positionType="Float" x="685" y="0" width="70" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
-			<expression><![CDATA[$V{sum_saldo}]]></expression>
+			<expression><![CDATA[$V{v_total_total_bayar}]]></expression>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box padding="3" style="Detail">

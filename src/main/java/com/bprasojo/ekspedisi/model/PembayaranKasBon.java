@@ -94,7 +94,7 @@ public class PembayaranKasBon extends BaseClass{
     public Perkiraan getPerkiraanKas() throws SQLException {
         if (perkiraanKas == null) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            perkiraanKas = perkiraanDAO.getPerkiraanById(this.perkiraanKasId);
+            perkiraanKas = perkiraanDAO.getById(this.perkiraanKasId);
         }
         return perkiraanKas;
     }
@@ -103,7 +103,7 @@ public class PembayaranKasBon extends BaseClass{
     public Bank getBank() throws SQLException {
         if (bank == null) {
             BankDAO bankDAO = new BankDAO();
-            bank = bankDAO.getBankById(this.bankId);
+            bank = bankDAO.getById(this.bankId);
         }
         return bank;
     }

@@ -5,7 +5,6 @@
 package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.utils.AppUtils;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,12 +17,12 @@ import net.sf.jasperreports.engine.JRException;
  *
  * @author USER
  */
-public class FrmRptRekapInvoiceCustomer extends javax.swing.JInternalFrame {
+public class FrmRptRekapPembayaranInvoiceCustomer extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
-    public FrmRptRekapInvoiceCustomer() {
+    public FrmRptRekapPembayaranInvoiceCustomer() {
         initComponents();
         
         edTglAkhir.setDate(new Date());
@@ -50,7 +49,7 @@ public class FrmRptRekapInvoiceCustomer extends javax.swing.JInternalFrame {
         btnTampilkan = new javax.swing.JButton();
 
         setClosable(true);
-        setTitle("Rekap Invoice Customer");
+        setTitle("Rekap Pembayaran Invoice Customer");
 
         jLabel1.setText("Periode");
 
@@ -101,7 +100,7 @@ public class FrmRptRekapInvoiceCustomer extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/DaftarInvoice.jasper";
+        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/DaftarPembayaranInvoice.jasper";
         
         Map<String, Object> params = new HashMap<>();
         params.put("p_tglawal", edTglAwal.getDate());

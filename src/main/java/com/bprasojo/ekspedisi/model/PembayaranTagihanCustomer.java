@@ -5,6 +5,7 @@
 package com.bprasojo.ekspedisi.model;
 
 import com.bprasojo.ekspedisi.dao.BankDAO;
+import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.dao.TagihanCustomerDAO;
 import java.sql.SQLException;
 import java.util.Date;
@@ -59,7 +60,10 @@ public class PembayaranTagihanCustomer {
     public void setNoRegister(String noRegister) { this.noRegister = noRegister; }
 
     public int getTagihanCustomerId() { return tagihanCustomerId; }
-    public void setTagihanCustomerId(int tagihanCustomerId) { this.tagihanCustomerId = tagihanCustomerId; }
+    public void setTagihanCustomerId(int tagihanCustomerId) { 
+        this.tagihanCustomerId = tagihanCustomerId; 
+        this.tagihanCustomer = null;
+    }
 
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
@@ -74,13 +78,22 @@ public class PembayaranTagihanCustomer {
     public void setPphPersen(int pphPersen) { this.pphPersen = pphPersen; }
 
     public int getPerkiraanKasId() { return perkiraanKasId; }
-    public void setPerkiraanKasId(int perkiraanKasId) { this.perkiraanKasId = perkiraanKasId; }
+    public void setPerkiraanKasId(int perkiraanKasId) { 
+        this.perkiraanKasId = perkiraanKasId; 
+        this.perkiraanKas = null;
+    }
 
     public int getBankId() { return bankId; }
-    public void setBankId(int bankId) { this.bankId = bankId; }
+    public void setBankId(int bankId) { 
+        this.bankId = bankId; 
+        this.bank = null;
+    }
 
     public int getPerkiraanPphId() { return perkiraanPphId; }
-    public void setPerkiraanPphId(int perkiraanPphId) { this.perkiraanPphId = perkiraanPphId; }
+    public void setPerkiraanPphId(int perkiraanPphId) { 
+        this.perkiraanPphId = perkiraanPphId; 
+        this.perkiraanPph = null;
+    }
 
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
@@ -102,9 +115,25 @@ public class PembayaranTagihanCustomer {
     public Bank getBank() throws SQLException{
         if (bank == null) {
             BankDAO bankDAO = new BankDAO();
-            bank = bankDAO.getBankById(bankId);
+            bank = bankDAO.getById(bankId);
         }
         return bank;
+    }
+    
+    public Perkiraan getPerkiraanKas() throws SQLException{
+        if (perkiraanKas == null) {
+            PerkiraanDAO perkiraanKasDAO = new PerkiraanDAO();
+            perkiraanKas = perkiraanKasDAO.getById(id);
+        }
+        return perkiraanKas;
+    }
+    
+    public Perkiraan getPerkiraanPPH() throws SQLException{
+        if (perkiraanPph == null) {
+            PerkiraanDAO perkiraanKasDAO = new PerkiraanDAO();
+            perkiraanPph = perkiraanKasDAO.getById(id);
+        }
+        return perkiraanPph;
     }
     
     public Integer getTotal(){

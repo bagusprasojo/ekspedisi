@@ -83,10 +83,10 @@ public class TagihanCustomerDAO {
         boolean isInsert = tagihan.getId() == 0; 
         if (isInsert) {
             tagihan.setNoInvoice(generateNoInvoice(tagihan.getTanggal()));
-            sql = "INSERT INTO tagihan_customer (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan) " +
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+            sql = "INSERT INTO tagihan_customer (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan, perkiraan_piutang_id) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
         } else {
-            sql = "UPDATE tagihan_customer SET customer_id=?, no_invoice=?, tanggal=?, pekerjaan=?, nilai_pekerjaan=?, ppn_persen=?, ppn=?, total=?, terbilang=?, pelunasan=?, status_lunas=?, keterangan=? WHERE id=?";
+            sql = "UPDATE tagihan_customer SET customer_id=?, no_invoice=?, tanggal=?, pekerjaan=?, nilai_pekerjaan=?, ppn_persen=?, ppn=?, total=?, terbilang=?, pelunasan=?, status_lunas=?, keterangan=?, perkiraan_piutang_id=? WHERE id=?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -104,9 +104,10 @@ public class TagihanCustomerDAO {
             stmt.setInt(10, tagihan.getPelunasan());
             stmt.setString(11, tagihan.getStatusLunas());
             stmt.setString(12, tagihan.getKeterangan());
-
+            stmt.setInt(13, tagihan.getPerkiraanPiutangId());
+            
             if (tagihan.getId() != 0) {
-                stmt.setInt(13, tagihan.getId());
+                stmt.setInt(14, tagihan.getId());
             }
 
             stmt.executeUpdate();
@@ -163,7 +164,8 @@ public class TagihanCustomerDAO {
                         rs.getString("terbilang"),
                         rs.getInt("pelunasan"),
                         rs.getString("status_lunas"),
-                        rs.getString("keterangan")
+                        rs.getString("keterangan"),
+                        rs.getInt("perkiraan_piutang_id")
                     );
                 }
             }

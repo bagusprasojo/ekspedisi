@@ -42,7 +42,7 @@ public class JurnalDetail {
     public Perkiraan getPerkiraan() throws SQLException {
         if (perkiraan == null) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            perkiraan = perkiraanDAO.getPerkiraanById(this.getPerkiraanId());
+            perkiraan = perkiraanDAO.getById(this.getPerkiraanId());
         }
         return perkiraan;
     }

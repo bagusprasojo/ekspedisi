@@ -56,9 +56,10 @@
 		<query language="sql"><![CDATA[]]></query>
 	</dataset>
 	<parameter name="p_tanggal" class="java.util.Date"/>
-	<query language="SQL"><![CDATA[select a.*, b.kode as kode_akun, b.nama as nama_akun
+	<query language="SQL"><![CDATA[select a.*, c.nama as nama_karyawan, c.alamat as alamat_karyawan, b.kode as kode_akun, b.nama as nama_akun
 from kas_bon_karyawan a
 left  join perkiraan b on a.perkiraan_pinjaman_id = b.id
+inner join stake_holder c on a.karyawan_id = c.id
 where date(a.tanggal) <=  $P{p_tanggal} 
 and a.status_lunas = 'Belum'
 order by b.kode, a.no_register]]></query>
@@ -70,16 +71,6 @@ order by b.kode, a.no_register]]></query>
 	<field name="tanggal" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="tanggal"/>
 		<property name="com.jaspersoft.studio.field.label" value="tanggal"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
-	</field>
-	<field name="nama_karyawan" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="nama_karyawan"/>
-		<property name="com.jaspersoft.studio.field.label" value="nama_karyawan"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
-	</field>
-	<field name="alamat_karyawan" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="alamat_karyawan"/>
-		<property name="com.jaspersoft.studio.field.label" value="alamat_karyawan"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
 	</field>
 	<field name="perkiraan_pinjaman_id" class="java.lang.Integer">
@@ -126,6 +117,31 @@ order by b.kode, a.no_register]]></query>
 		<property name="com.jaspersoft.studio.field.name" value="no_register"/>
 		<property name="com.jaspersoft.studio.field.label" value="no_register"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
+	</field>
+	<field name="created_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
+	</field>
+	<field name="updated_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
+	</field>
+	<field name="karyawan_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="karyawan_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="karyawan_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
+	</field>
+	<field name="nama_karyawan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama_karyawan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="stake_holder"/>
+	</field>
+	<field name="alamat_karyawan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="alamat"/>
+		<property name="com.jaspersoft.studio.field.label" value="alamat_karyawan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="stake_holder"/>
 	</field>
 	<field name="kode_akun" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="kode"/>

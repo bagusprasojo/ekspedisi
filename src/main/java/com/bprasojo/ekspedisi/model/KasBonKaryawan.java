@@ -109,7 +109,7 @@ public class KasBonKaryawan extends BaseClass{
     public Perkiraan getPerkiraanPinjaman() throws SQLException {
         if (perkiraanPinjaman == null) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            perkiraanPinjaman = perkiraanDAO.getPerkiraanById(this.perkiraanPinjamanId);
+            perkiraanPinjaman = perkiraanDAO.getById(this.perkiraanPinjamanId);
         }
         return perkiraanPinjaman;
     }
@@ -117,7 +117,7 @@ public class KasBonKaryawan extends BaseClass{
     public Perkiraan getPerkiraanKas() throws SQLException {
         if (perkiraanKas == null) {
             PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
-            perkiraanKas = perkiraanDAO.getPerkiraanById(this.perkiraanKasId);
+            perkiraanKas = perkiraanDAO.getById(this.perkiraanKasId);
         }
         return perkiraanKas;
     }
@@ -126,7 +126,7 @@ public class KasBonKaryawan extends BaseClass{
     public Bank getBank() throws SQLException {
         if (bank == null) {
             BankDAO bankDAO = new BankDAO();
-            bank = bankDAO.getBankById(this.bankId);
+            bank = bankDAO.getById(this.bankId);
         }
         return bank;
     }

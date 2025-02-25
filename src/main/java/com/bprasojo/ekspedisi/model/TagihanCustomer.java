@@ -8,6 +8,7 @@ package com.bprasojo.ekspedisi.model;
  *
  * @author USER
  */
+import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import java.util.Date;
 import java.sql.SQLException;
@@ -26,15 +27,17 @@ public class TagihanCustomer {
     private int pelunasan;
     private String statusLunas;
     private String keterangan;
+    private int perkiraanPiutangId;
     
     private transient StakeHolder customer;
+    private transient Perkiraan perkiraanPiutang;
 
     // Constructor
     public TagihanCustomer() {}
 
     public TagihanCustomer(int id, int customerId, String noInvoice, Date tanggal, String pekerjaan,
                            int nilaiPekerjaan, int ppnPersen, int ppn, int total,
-                           String terbilang, int pelunasan, String statusLunas, String keterangan) {
+                           String terbilang, int pelunasan, String statusLunas, String keterangan, int perkiraanPiutangId) {
         this.id = id;
         this.customerId = customerId;
         this.noInvoice = noInvoice;
@@ -48,6 +51,10 @@ public class TagihanCustomer {
         this.pelunasan = pelunasan;
         this.statusLunas = statusLunas;
         this.keterangan = keterangan;
+        this.perkiraanPiutangId = perkiraanPiutangId;
+        
+        this.customer = null;
+        this.perkiraanPiutang = null;
     }
 
     // Getter & Setter
@@ -55,7 +62,16 @@ public class TagihanCustomer {
     public void setId(int id) { this.id = id; customer = null;}
 
     public int getCustomerId() { return customerId; }
-    public void setCustomerId(int customerId) { this.customerId = customerId; }
+    public void setCustomerId(int customerId) { 
+        this.customerId = customerId; 
+        customer = null;
+    }
+    
+    public int getPerkiraanPiutangId() { return perkiraanPiutangId; }
+    public void setPerkiraanPiutangId(int perkiraanPiutangId) { 
+        this.perkiraanPiutangId = perkiraanPiutangId; 
+        perkiraanPiutang = null;
+    }
 
     public String getNoInvoice() { return noInvoice; }
     public void setNoInvoice(String noInvoice) { this.noInvoice = noInvoice; }
@@ -96,6 +112,14 @@ public class TagihanCustomer {
             customer = stakeHolderDAO.getById(this.customerId);
         }
         return customer;
+    }
+    
+    public Perkiraan getPerkiraanPiutang() throws SQLException{
+        if (perkiraanPiutang == null) {
+            PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
+            perkiraanPiutang = perkiraanDAO.getById(this.perkiraanPiutangId);
+        }
+        return perkiraanPiutang;
     }
     
     public Integer getSaldo(){

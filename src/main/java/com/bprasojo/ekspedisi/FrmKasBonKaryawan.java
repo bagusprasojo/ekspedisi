@@ -867,7 +867,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                             lblBank.setText("");
                         } else {
                             cbViaBank.setSelectedIndex(1);
-                            bank = bankDAO.getBankById(kasBonKaryawan.getBankId());
+                            bank = bankDAO.getById(kasBonKaryawan.getBankId());
                             lblBank.setText(kasBonKaryawan.getBank().toString());
                         }
                         showLoopUpBank = true;
