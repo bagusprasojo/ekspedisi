@@ -4,8 +4,8 @@
  */
 package com.bprasojo.ekspedisi;
 
-import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
-import com.bprasojo.ekspedisi.model.StakeHolder;
+import com.bprasojo.ekspedisi.dao.ClosingDAO;
+import com.bprasojo.ekspedisi.model.Closing;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author USER
  */
-public class FrmCustomer extends javax.swing.JInternalFrame {
+public class FrmClosing extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmArmada
@@ -28,59 +28,42 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     
     private int currentPage = 1;
     
-    private StakeHolder stakeHolder = null;
-    private final StakeHolderDAO stakeHolderDAO = new StakeHolderDAO();
+    private Closing closing = null;
+    private final ClosingDAO closingDAO = new ClosingDAO();
     private DefaultTableModel tableModel;
     private boolean SilakanLoadData = false;
-    private String jenis;
     
     
-    public FrmCustomer() {
+    
+    public FrmClosing() {
         initComponents();
         
-        tableModel = new DefaultTableModel(new String[]{"Id","Kode","Nama","Alamat","Kota","Kode Pos","Telp","No KTP","Lokasi Kerja"}, 0);
-        tblStakeHolder.setModel(tableModel);
-        tblStakeHolder.removeColumn(tblStakeHolder.getColumnModel().getColumn(0));
+        tableModel = new DefaultTableModel(new String[]{"Id","Tanggal","Keterangan"}, 0);
+        tblClosing.setModel(tableModel);
+        tblClosing.removeColumn(tblClosing.getColumnModel().getColumn(0));
         
         setStatusTombol("awal");
         SilakanLoadData = true;
         
         inisialisasiEventTableModel();        
-        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNama, edAlamat, edKota, edKodePos, edNoKTP, edTelp, edLokasiKerja));        
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edTanggal,edKeterangan));        
     }
 
-    public void KonfigurasiForm(){
-        if (this.jenis != null && this.jenis.equals("Customer")){
-            edLokasiKerja.setVisible(false);
-            lblLokasiKerja.setVisible(false);
-            
-            tblStakeHolder.removeColumn(tblStakeHolder.getColumnModel().getColumn(7));
-        }
-    }
-    public void setJenis(String jenis){
-        this.jenis = jenis;
-    }
-    public void loadDataStakeHolder(int page) {
+    public void loadDataClosing(int page) {
         try {
             tableModel.setRowCount(0); // Bersihkan tabel
-            List<Map<String, Object>> result = stakeHolderDAO.getStakeHolderByPage(page, edSearch.getText(), this.jenis);
+            List<Map<String, Object>> result = closingDAO.getClosingByPage(page, edTglAwal.getDate(), edTglAkhir.getDate(), edSearch.getText());
             for (Map<String, Object> row : result) {
                 tableModel.addRow(new Object[]{
                     (Integer) row.get("id"),
-                    (String) row.get("kode"),
-                    (String) row.get("nama"),
-                    (String) row.get("alamat"),
-                    (String) row.get("kota"),
-                    (String) row.get("kode_pos"),
-                    (String) row.get("telp"),
-                    (String) row.get("no_ktp"),
-                    (String) row.get("lokasi_kerja")
+                    (String) row.get("tanggal"),
+                    (String) row.get("keterangan")
                 });            
             }
             
-            tblStakeHolder.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            tblClosing.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         } catch (SQLException ex) {
-            AppUtils.showWarningDialog("Gagal load daftar " + this.jenis + " dengan error \n" + ex.getMessage());
+            AppUtils.showWarningDialog("Gagal load daftar closing dengan error \n" + ex.getMessage());
         }
     }
     
@@ -106,26 +89,20 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
         pnlSearch = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         edSearch = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        edTglAwal4 = new com.toedter.calendar.JDateChooser();
+        jLabel4 = new javax.swing.JLabel();
+        edTglAkhir = new com.toedter.calendar.JDateChooser();
         pnlButton = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblStakeHolder = new javax.swing.JTable();
+        tblClosing = new javax.swing.JTable();
         pnlInput = new javax.swing.JPanel();
-        edNama = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        edAlamat = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        edNoKTP = new javax.swing.JTextField();
-        lblLokasiKerja = new javax.swing.JLabel();
-        edLokasiKerja = new javax.swing.JTextField();
+        edKeterangan = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        edKota = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        edKodePos = new javax.swing.JTextField();
-        lblLokasiKerja1 = new javax.swing.JLabel();
-        edTelp = new javax.swing.JTextField();
+        edTanggal = new com.toedter.calendar.JDateChooser();
 
         setClosable(true);
         setMaximizable(true);
@@ -243,24 +220,54 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel3.setText("Periode");
+
+        edTglAwal4.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                edTglAwal4PropertyChange(evt);
+            }
+        });
+
+        jLabel4.setText("s.d.");
+
+        edTglAkhir.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                edTglAkhirPropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlSearchLayout = new javax.swing.GroupLayout(pnlSearch);
         pnlSearch.setLayout(pnlSearchLayout);
         pnlSearchLayout.setHorizontalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSearchLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel7)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(edTglAwal4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addGap(12, 12, 12)
+                .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addGap(18, 18, 18)
                 .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(430, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         pnlSearchLayout.setVerticalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(edTglAkhir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(edTglAwal4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -305,7 +312,7 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
 
         pnlData.add(pnlButton, java.awt.BorderLayout.SOUTH);
 
-        tblStakeHolder.setModel(new javax.swing.table.DefaultTableModel(
+        tblClosing.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -316,8 +323,8 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(tblStakeHolder);
-        tblStakeHolder.getAccessibleContext().setAccessibleParent(tblStakeHolder);
+        jScrollPane2.setViewportView(tblClosing);
+        tblClosing.getAccessibleContext().setAccessibleParent(tblClosing);
 
         pnlData.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
@@ -326,50 +333,13 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
         pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlInput.setFocusCycleRoot(true);
 
-        edNama.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Alamat");
+        jLabel2.setText("Keterangan");
 
-        edAlamat.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel3.setText("No Identitas");
-
-        edNoKTP.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-
-        lblLokasiKerja.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblLokasiKerja.setText("Lokasi Kerja");
-
-        edLokasiKerja.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        edLokasiKerja.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edLokasiKerjaActionPerformed(evt);
-            }
-        });
+        edKeterangan.setDisabledTextColor(new java.awt.Color(0, 0, 0));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("Nama");
-
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Kota");
-
-        edKota.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText("Kode Pos");
-
-        edKodePos.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-
-        lblLokasiKerja1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblLokasiKerja1.setText("Telp");
-
-        edTelp.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        edTelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edTelpActionPerformed(evt);
-            }
-        });
+        jLabel1.setText("Tanggal");
 
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
@@ -379,75 +349,29 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edKota, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblLokasiKerja, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lblLokasiKerja1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edNoKTP, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(edLokasiKerja, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(edTelp, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(edKodePos, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(67, Short.MAX_VALUE))
+                    .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(315, Short.MAX_VALUE))
         );
 
-        pnlInputLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {edKota, edNama});
-
-        pnlInputLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel4, jLabel5});
-
-        pnlInputLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel3, lblLokasiKerja, lblLokasiKerja1});
+        pnlInputLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2});
 
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
                     .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(edKota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4)))
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(pnlInputLayout.createSequentialGroup()
-                                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(edNoKTP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel3))
-                                        .addGap(28, 28, 28))
-                                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(edTelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(lblLokasiKerja1)))
-                                .addGap(6, 6, 6)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(edLokasiKerja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblLokasiKerja))))
+                        .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edKodePos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))))
-                .addContainerGap(12, Short.MAX_VALUE))
+                            .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)))
+                    .addComponent(jLabel1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlDua.add(pnlInput, java.awt.BorderLayout.NORTH);
@@ -458,17 +382,13 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        stakeHolder = new StakeHolder();
+        closing = new Closing();
         
-        edNama.setText("");
-        edAlamat.setText("");
-        edNoKTP.setText("");
-        edLokasiKerja.setText("");
-//        edKota.setText("");
-//        edTelp.setText("");
+        AppUtils.SetTanggalAkhirBulan(edTanggal);
+        edKeterangan.setText("");
         
         setStatusTombol("tambah");
-        loadDataStakeHolder(currentPage);
+        loadDataClosing(currentPage);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void setStatusTombol(String mode){
@@ -515,26 +435,15 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
             return;
         }
         try {
-            stakeHolder.setNama(edNama.getText());
-            stakeHolder.setAlamat(edAlamat.getText());
-            stakeHolder.setLokasiKerja(edLokasiKerja.getText());
-            stakeHolder.setJenis(this.jenis);
-            stakeHolder.setNoKtp(edNoKTP.getText());
-            stakeHolder.setTelp(edTelp.getText());
-            stakeHolder.setKota(edKota.getText());
-            stakeHolder.setKodePos(edKodePos.getText());
-            
-            stakeHolderDAO.save(stakeHolder);
+            closing.setTanggal(edTanggal.getDate());
+            closing.setKeterangan(edKeterangan.getText());
+            closingDAO.save(closing);
             AppUtils.showInfoDialog("Data berhasil disimpan");
-            loadDataStakeHolder(currentPage);
+            loadDataClosing(currentPage);
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
-
-    private void edLokasiKerjaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edLokasiKerjaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edLokasiKerjaActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         setStatusTombol("edit");
@@ -542,13 +451,13 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
         currentPage++;
-        loadDataStakeHolder(currentPage);
+        loadDataClosing(currentPage);
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
         if (currentPage > 1) {
             currentPage--;
-            loadDataStakeHolder(currentPage);
+            loadDataClosing(currentPage);
         }
     }//GEN-LAST:event_btnPrevActionPerformed
 
@@ -561,9 +470,9 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
 
         if (userConfirmed) {
             try {
-                stakeHolderDAO.delete(stakeHolder.getId());
+                closingDAO.delete(closing.getId());
                 setStatusTombol("awal");
-                loadDataStakeHolder(currentPage);
+                loadDataClosing(currentPage);
             } catch (SQLException ex) {
                 AppUtils.showWarningDialog("Ada kesalahan dengan error : \n" + ex.getMessage());
             }
@@ -579,13 +488,23 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     private void edSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edSearchKeyReleased
         if (SilakanLoadData){
             currentPage = 1;
-            loadDataStakeHolder(currentPage);
+            loadDataClosing(currentPage);
         }
     }//GEN-LAST:event_edSearchKeyReleased
 
-    private void edTelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edTelpActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edTelpActionPerformed
+    private void edTglAkhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAkhirPropertyChange
+        if (SilakanLoadData){
+            currentPage = 1;
+            loadDataClosing(currentPage);
+        }
+    }//GEN-LAST:event_edTglAkhirPropertyChange
+
+    private void edTglAwal4PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwal4PropertyChange
+        if (SilakanLoadData){
+            currentPage = 1;
+            loadDataClosing(currentPage);
+        }
+    }//GEN-LAST:event_edTglAwal4PropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -597,73 +516,62 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
-    private javax.swing.JTextField edAlamat;
-    private javax.swing.JTextField edKodePos;
-    private javax.swing.JTextField edKota;
-    private javax.swing.JTextField edLokasiKerja;
-    private javax.swing.JTextField edNama;
-    private javax.swing.JTextField edNoKTP;
+    private javax.swing.JTextField edKeterangan;
     private javax.swing.JTextField edSearch;
-    private javax.swing.JTextField edTelp;
+    private com.toedter.calendar.JDateChooser edTanggal;
+    private com.toedter.calendar.JDateChooser edTglAkhir;
+    private com.toedter.calendar.JDateChooser edTglAwal;
+    private com.toedter.calendar.JDateChooser edTglAwal1;
+    private com.toedter.calendar.JDateChooser edTglAwal2;
+    private com.toedter.calendar.JDateChooser edTglAwal3;
+    private com.toedter.calendar.JDateChooser edTglAwal4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel lblLokasiKerja;
-    private javax.swing.JLabel lblLokasiKerja1;
     private javax.swing.JPanel pnlButton;
     private javax.swing.JPanel pnlData;
     private javax.swing.JPanel pnlDua;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlSearch;
-    private javax.swing.JTable tblStakeHolder;
+    private javax.swing.JTable tblClosing;
     // End of variables declaration//GEN-END:variables
     
     private void SetEnableKomponenInput(boolean enable){
-        edNama.setEnabled(enable);
-        edAlamat.setEnabled(enable);
-        edAlamat.setEnabled(enable);
-        edKota.setEnabled(enable);
-        edKodePos.setEnabled(enable);
-        edNoKTP.setEnabled(enable);
-        edTelp.setEnabled(enable);
-        edLokasiKerja.setEnabled(enable);
+        edTanggal.setEnabled(enable);
+        edKeterangan.setEnabled(enable);
     }
     
     private void inisialisasiEventTableModel() {
-        tblStakeHolder.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        tblClosing.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 // Memeriksa apakah ada baris yang dipilih
                 if (!e.getValueIsAdjusting()) {
-                    int selectedRow = tblStakeHolder.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    int selectedRow = tblClosing.getSelectedRow(); // Mendapatkan baris yang dipilih
                     if (selectedRow != -1) {
                         
-                        int id = (Integer) tblStakeHolder.getModel().getValueAt(tblStakeHolder.getSelectedRow(),0);
+                        int id = (Integer) tblClosing.getModel().getValueAt(tblClosing.getSelectedRow(),0);
 //                        Integer id = (Integer) tblStakeHolder.getValueAt(selectedRow, 0);
-                        LoadStakeHolder(id);
+                        LoadClosing(id);
                         setStatusTombol("selected");
                     }
                 }
             }
 
-            private void LoadStakeHolder(Integer id) {
+            private void LoadClosing(Integer id) {
                 try {
-                    stakeHolder = stakeHolderDAO.getById(id);
-                    if (stakeHolder != null){
-                        edLokasiKerja.setText(stakeHolder.getLokasiKerja());
-                        edAlamat.setText(stakeHolder.getAlamat());
-                        edNama.setText(stakeHolder.getNama());
-                        edNoKTP.setText(stakeHolder.getNoKtp());
-                        edTelp.setText(stakeHolder.getTelp());                        
-                        edKodePos.setText(stakeHolder.getKodePos());
-                        edKota.setText(stakeHolder.getKota());
+                    closing = closingDAO.getById(id);
+                    if (closing != null){
+                        edKeterangan.setText(closing.getKeterangan());
+                        edTanggal.setDate(closing.getTanggal());
+                        
                     } else {
-                        AppUtils.setDefaultValues(edLokasiKerja, edAlamat, edNama, edNoKTP, edTelp, edKodePos, edKota);
+                        edKeterangan.setText("");
+                        AppUtils.SetTanggalAkhirBulan(edTanggal);
                     }
                 } catch (SQLException ex) {
                     AppUtils.showWarningDialog("Ada kesalahan load data dengan pesan : \n" + ex.getMessage());
@@ -673,23 +581,7 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     }
 
     private boolean validasiInput() {
-        if (edNama.getText().equals("")){
-            AppUtils.showWarningDialog("No Polisi belum diisi");
-            edNama.requestFocus();
-            return false;
-        }
         
-        if (edAlamat.getText().equals("")){
-            AppUtils.showWarningDialog("Kendaraan belum diisi");
-            edAlamat.requestFocus();
-            return false;
-        }
-        
-        if (edNoKTP.getText().equals("")){
-            AppUtils.showWarningDialog("Pemilik belum diisi");
-            edNoKTP.requestFocus();
-            return false;
-        }
         
         return true;
     }

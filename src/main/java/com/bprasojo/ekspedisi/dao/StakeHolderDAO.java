@@ -12,7 +12,9 @@ import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.StakeHolder;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,9 +44,9 @@ public class StakeHolderDAO {
 
         if (isInsert) {            
 //            stakeholder.setKode(generateKode(stakeholder.getJenis()));
-            sql = "INSERT INTO stake_holder (kode, nama, alamat, no_ktp, lokasi_kerja, jenis) VALUES (?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO stake_holder (kode, nama, alamat, no_ktp, lokasi_kerja, jenis, kota, kode_pos, telp) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
         } else {
-            sql = "UPDATE stake_holder SET kode = ?, nama = ?, alamat = ?, no_ktp = ?, lokasi_kerja = ?, jenis = ? WHERE id = ?";
+            sql = "UPDATE stake_holder SET kode = ?, nama = ?, alamat = ?, no_ktp = ?, lokasi_kerja = ?, jenis = ? , kota = ? , kode_pos = ? , telp = ? WHERE id = ?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -54,9 +56,12 @@ public class StakeHolderDAO {
             stmt.setString(4, stakeholder.getNoKtp());
             stmt.setString(5, stakeholder.getLokasiKerja());
             stmt.setString(6, stakeholder.getJenis());
+            stmt.setString(7, stakeholder.getKota());
+            stmt.setString(8, stakeholder.getKodePos());
+            stmt.setString(9, stakeholder.getTelp());
 
             if (!isInsert) {
-                stmt.setInt(7, stakeholder.getId());
+                stmt.setInt(10, stakeholder.getId());
             }
 
             stmt.executeUpdate();
@@ -99,7 +104,10 @@ public class StakeHolderDAO {
                         rs.getString("alamat"),
                         rs.getString("no_ktp"),
                         rs.getString("lokasi_kerja"),
-                        rs.getString("jenis")
+                        rs.getString("jenis"),
+                        rs.getString("kota"),
+                        rs.getString("kode_pos"),
+                        rs.getString("telp")
                     );
                 }
             }
@@ -117,49 +125,55 @@ public class StakeHolderDAO {
         return getByField("kode", kode);
     }
     
-    public List<StakeHolder> getStakeHolderByPage(int page, String filter, String jenis) throws SQLException {
-        List<StakeHolder> stakeHolderList = new ArrayList<>();
+    public List<Map<String, Object>> getStakeHolderByPage(int page, String filter, String jenis) throws SQLException {
+        List<Map<String, Object>> resultList = new ArrayList<>();
         
         // Query dengan WHERE jika ada filter
         String sql = "SELECT * FROM stake_holder  WHERE jenis = '" + jenis + "'";
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " and (kode  like ? or nama like ? or alamat like ? or no_ktp like ? or lokasi_kerja like ? )";
+            sql += " and (kode  like ? or nama like ? or alamat like ? or no_ktp like ? or lokasi_kerja like ?  or kota like ? or kode_pos like ? or telp like ?)";
         }
 
         sql += " LIMIT ? OFFSET ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             int paramIndex = 1;
-        
+
+            // Set filter parameters if present
             if (filter != null && !filter.trim().isEmpty()) {
-                for (int i = 0; i < 5; i++) { // 6 kolom yang difilter
+                for (int i = 0; i < 8; i++) { // Filter untuk 5 kolom
                     stmt.setString(paramIndex++, "%" + filter + "%");
                 }
             }
-            
-            int pageSize = 20;
+
+            // Set limit and offset for pagination
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 
+            // Eksekusi query
             try (ResultSet rs = stmt.executeQuery()) {
+                // Mendapatkan metadata kolom
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                // Proses setiap row hasil query
                 while (rs.next()) {
-                    StakeHolder stakeHolder = new StakeHolder(
-                        rs.getInt("id"),
-                        rs.getString("kode"),
-                        rs.getString("nama"),
-                        rs.getString("alamat"),
-                        rs.getString("no_ktp"),
-                        rs.getString("lokasi_kerja"),
-                        rs.getString("jenis")
-                        
-                    );
-                    stakeHolderList.add(stakeHolder);
+                    Map<String, Object> rowMap = new LinkedHashMap<>();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i); // Nama kolom
+                        Object columnValue = rs.getObject(i); // Nilai kolom
+                        rowMap.put(columnName, columnValue); // Menyimpan dalam Map
+                    }
+                    resultList.add(rowMap); // Menambahkan baris ke dalam list
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Sesuaikan dengan penanganan error Anda
         }
 
-        return stakeHolderList;
+        return resultList;
     }
 }
 
