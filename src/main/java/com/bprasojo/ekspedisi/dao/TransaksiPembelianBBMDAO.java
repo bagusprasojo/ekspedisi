@@ -35,9 +35,9 @@ public class TransaksiPembelianBBMDAO {
         boolean isInsert = transaksi.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO transaksi_pembelian_bbm (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, user_create) VALUES (?, ?, ?, ?, ?, ?,?,?)";
+            sql = "INSERT INTO transaksi_pembelian_bbm (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , user_create) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
         } else {
-            sql = "UPDATE transaksi_pembelian_bbm SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, user_update =? WHERE id = ?";
+            sql = "UPDATE transaksi_pembelian_bbm SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , user_update =?  WHERE id = ?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -48,12 +48,13 @@ public class TransaksiPembelianBBMDAO {
             stmt.setDouble(5, transaksi.getNominalBBM());
             stmt.setString(6, transaksi.getKeterangan());
             stmt.setInt(7, transaksi.getDriverId());
+            stmt.setInt(8, transaksi.getBankId());
 
             if (isInsert) {
-                stmt.setString(8, transaksi.getUserCreate());
+                stmt.setString(9, transaksi.getUserCreate());
             } else {
-                stmt.setString(8, transaksi.getUserUpdate());
-                stmt.setInt(9, transaksi.getId());
+                stmt.setString(9, transaksi.getUserUpdate());
+                stmt.setInt(10, transaksi.getId());
             }
 
             stmt.executeUpdate();
@@ -85,7 +86,8 @@ public class TransaksiPembelianBBMDAO {
                     rs.getString("keterangan"),
                     rs.getInt("driver_id"),
                     rs.getString("user_create"),
-                    rs.getString("user_update")
+                    rs.getString("user_update"),
+                    rs.getInt("bank_id")
                 );
             }
         }
@@ -135,10 +137,11 @@ public class TransaksiPembelianBBMDAO {
     public List<Map<String, Object>> getTransaksiPembelianBBMByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
         List<Map<String, Object>> resultList = new ArrayList<>();
 
-        String sql = "SELECT a.*, b.nopol, b.kendaraan, b.pemilik, c.nama as driver "
+        String sql = "SELECT a.*, b.nopol, b.kendaraan, b.pemilik, c.nama as driver, d.nama_bank "
                      + " FROM transaksi_pembelian_bbm a "
                      + " LEFT JOIN armada b ON a.armada_id = b.id "
                      + " LEFT JOIN stake_holder c ON a.driver_id = c.id "
+                     + " left join bank d on a.bank_id = d.id "
                      + " WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {

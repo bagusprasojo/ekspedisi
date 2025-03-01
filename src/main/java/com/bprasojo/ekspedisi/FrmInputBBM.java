@@ -5,9 +5,11 @@
 package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
+import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.dao.TransaksiPembelianBBMDAO;
 import com.bprasojo.ekspedisi.model.Armada;
+import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
 import com.bprasojo.ekspedisi.model.User;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -43,6 +46,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private TransaksiPembelianBBMDAO transaksiPembelianBBMDAO = null;
     private ArmadaDAO armadaDAO = null;
     private StakeHolderDAO stakeHolderDAO = null;
+    private BankDAO bankDAO = null;
     
     
     private DefaultTableModel tableModel;
@@ -62,14 +66,15 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         transaksiPembelianBBMDAO = new TransaksiPembelianBBMDAO();
         armadaDAO = new ArmadaDAO();
         stakeHolderDAO = new StakeHolderDAO();
+        bankDAO = new BankDAO();
         
         try {
             setMaximum(true);
         } catch (PropertyVetoException ex) {
             Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }        
         
-        
+        LoadBank();
         AppUtils.SetTanggalAwalBulan(edTglAwal);
         AppUtils.SetTanggalToday(edTglAkhir);
         
@@ -82,10 +87,10 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         LoadDataTransaksiPembelianBBM(currentPage);
         btnNewActionPerformed(null);
         
-//        setStatusTombol("awal");
+        setStatusTombol("awal");
         inisialisasiEventTableModel();
         
-        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNopol, edKendaraan, edDriver, edTanggal, edKMTerakhir, edKMSekarang, edPembelianBBM, edKeterangan));
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNopol, btnKendaraan, edDriver, btnDriver, cbBank, edTanggal, edKMTerakhir, edKMSekarang, edPembelianBBM, edKeterangan));
         
         
         
@@ -110,7 +115,6 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         btnKeluar = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         pnlInput = new javax.swing.JPanel();
-        edNopol = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -128,6 +132,9 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         edDriver = new javax.swing.JTextField();
         btnDriver = new javax.swing.JButton();
         btnKendaraan = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        cbBank = new javax.swing.JComboBox<>();
+        edNopol = new javax.swing.JTextField();
         pnlNextPrev = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -249,12 +256,6 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         pnlInput.setFocusCycleRoot(true);
 
-        edNopol.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edNopolActionPerformed(evt);
-            }
-        });
-
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("No Polisi");
 
@@ -324,6 +325,9 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel13.setText("Kas/Bank");
+
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
         pnlInputLayout.setHorizontalGroup(
@@ -331,6 +335,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             .addGroup(pnlInputLayout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -348,60 +353,58 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(edKMSekarang, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(edPembelianBBM, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(edKendaraan)
-                        .addGroup(pnlInputLayout.createSequentialGroup()
-                            .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(edDriver, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                                .addComponent(edNopol))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(btnKendaraan)
-                                .addComponent(btnDriver))))
-                    .addComponent(edKeterangan))
+                    .addComponent(edKendaraan, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInputLayout.createSequentialGroup()
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(edDriver)
+                            .addComponent(edNopol))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnKendaraan)
+                            .addComponent(btnDriver)))
+                    .addComponent(edKeterangan)
+                    .addComponent(cbBank, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 234, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(edNopol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel9)
-                                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(btnKendaraan))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnDriver))
-                        .addGap(6, 6, 6)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edKMSekarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(edKMTerakhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edPembelianBBM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)))
-                    .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGap(62, 62, 62)
-                        .addComponent(jLabel4)))
+                .addContainerGap()
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edNopol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnKendaraan)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(btnDriver))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edKMTerakhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7)
+                    .addComponent(edKMSekarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edPembelianBBM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -540,7 +543,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         armada = null;
         driver = null;
         
-        AppUtils.setDefaultValues(edNopol, edKendaraan, edDriver, edTanggal, edKMTerakhir, edKMSekarang, edPembelianBBM, edKeterangan);
+        AppUtils.setDefaultValues(edNopol, edKendaraan, edDriver, cbBank, edTanggal, edKMTerakhir, edKMSekarang, edPembelianBBM, edKeterangan);
         
         
         setStatusTombol("tambah");
@@ -562,7 +565,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             transBeliBBM.setUserCreate(user.getUsername());
             transBeliBBM.setUserUpdate(user.getUsername());
             
-            
+            Bank selectedBank = (Bank) cbBank.getSelectedItem();
+            transBeliBBM.setBankId(selectedBank.getId());
             
             transaksiPembelianBBMDAO.save(transBeliBBM);
             
@@ -574,10 +578,6 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
-
-    private void edNopolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edNopolActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edNopolActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         setStatusTombol("edit");
@@ -725,6 +725,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<Bank> cbBank;
     private javax.swing.JTextField edDriver;
     private javax.swing.JTextField edFilter;
     private javax.swing.JFormattedTextField edKMSekarang;
@@ -739,6 +740,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -815,6 +817,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                         (String) row.get("kendaraan"),
                         (String) row.get("pemilik"),
                         (String) row.get("driver"),
+                        (String) row.get("nama_bank"),
                         (Date) row.get("tanggal"),
                         AppUtils.NumericFormat(kmTerakhir),
                         AppUtils.NumericFormat(kmSekarang),
@@ -862,6 +865,12 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
                             driver = null;
                             edDriver.setText("");
                         }
+                        
+                        if (transBeliBBM.getBankId() > 0){
+                            AppUtils.setSelectedIndexById(cbBank, transBeliBBM.getBankId());
+                        } else {
+                          cbBank.setSelectedIndex(-1);
+                        }
                     }
                 } catch (SQLException ex) {
                     AppUtils.showErrorDialog("Ada kesalahan load data dengan error :\n" + ex.getMessage());
@@ -880,6 +889,12 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
         if (driver == null){
             AppUtils.showWarningDialog("Driver belum diisi");
             edDriver.requestFocusInWindow();
+            return false;
+        }
+        
+        if (cbBank.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Bank belum dipilih");
+            cbBank.requestFocusInWindow();
             return false;
         }
         
@@ -915,20 +930,21 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     }
 
     private void InisialisasiTableInputBBM() {
-        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","Driver","Tanggal","KM Terakhir","KM Sekarang","Jarak Tempuh","Pembelian BBM","Keterangan", "Pc"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","Driver","Bank","Tanggal","KM Terakhir","KM Sekarang","Jarak Tempuh","Pembelian BBM","Keterangan", "Pc"}, 0);
         tblInputBBM.setModel(tableModel);
         
-        AppUtils.SetTableAligmentRight(tblInputBBM, 6);
         AppUtils.SetTableAligmentRight(tblInputBBM, 7);
         AppUtils.SetTableAligmentRight(tblInputBBM, 8);
         AppUtils.SetTableAligmentRight(tblInputBBM, 9);
+        AppUtils.SetTableAligmentRight(tblInputBBM, 10);
         
         tblInputBBM.removeColumn(tblInputBBM.getColumnModel().getColumn(0));
     }
     
     private void SetEnableKomponenInput(boolean enable) {
         edNopol.setEnabled(enable);
-//        edKendaraan.setEnabled(enable);
+        btnKendaraan.setEnabled(enable);
+        cbBank.setEnabled(enable);
         edTanggal.setEnabled(enable);
         edKMSekarang.setEnabled(enable);
         edKMTerakhir.setEnabled(enable);
@@ -949,6 +965,21 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             }
         } catch (SQLException ex) {
             AppUtils.showWarningDialog("Driver tidak ditemukan");
+        }
+    }
+    
+    private void LoadBank() {
+        try {
+            List<Bank> banks = bankDAO.getAllBank();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Bank> model = new DefaultComboBoxModel<>();
+            for (Bank b : banks) {
+                model.addElement(b); // Menambahkan objek Perkiraan ke model
+            }
+            cbBank.setModel(model);
+        } catch (SQLException ex) {
+            AppUtils.showWarningDialog("Gagal load bank dengan error : \n" + ex.getMessage());
         }
     }
 }

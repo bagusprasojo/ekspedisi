@@ -5,6 +5,7 @@
 package com.bprasojo.ekspedisi.model;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
+import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import java.sql.SQLException;
 import java.util.Date;
@@ -24,15 +25,17 @@ public class TransaksiPembelianBBM extends BaseClass{
     private int driverId;
     private String userCreate;
     private String userUpdate;
+    private int bankId;
 
     
     private transient Armada armada; // Lazy loading
     private transient StakeHolder driver;
+    private transient Bank bank;
     
 
     public TransaksiPembelianBBM() {}
 
-    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId, String userCreate, String userUpdate) {
+    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId, String userCreate, String userUpdate, int bankId) {
         this.id = id;
         this.armadaId = armadaId;
         this.tanggal = tanggal;
@@ -43,6 +46,7 @@ public class TransaksiPembelianBBM extends BaseClass{
         this.driverId = driverId;
         this.userCreate = userCreate;
         this.userUpdate = userUpdate;
+        this.bankId = bankId;
     }
 
     // Getter & Setter
@@ -60,6 +64,12 @@ public class TransaksiPembelianBBM extends BaseClass{
     public void setDriverId(int driverId) { 
         this.driverId = driverId; 
         this.driver  = null; 
+    }
+    
+    public int getBankId() { return bankId; }
+    public void setBankId(int bankId) { 
+        this.bankId = bankId; 
+        this.bank  = null; 
     }
 
     public Date getTanggal() { return tanggal; }
@@ -99,6 +109,14 @@ public class TransaksiPembelianBBM extends BaseClass{
             driver = driverDAO.getById(this.driverId);
         }
         return driver;
+    }
+    
+    public Bank getBank() throws SQLException {
+        if (bank == null) {
+            BankDAO bankDAO = new BankDAO();
+            bank = bankDAO.getById(this.bankId);
+        }
+        return bank;
     }
 }
 
