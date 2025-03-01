@@ -35,9 +35,9 @@ public class TransaksiPembelianBBMDAO {
         boolean isInsert = transaksi.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO transaksi_pembelian_bbm (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id) VALUES (?, ?, ?, ?, ?, ?,?)";
+            sql = "INSERT INTO transaksi_pembelian_bbm (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, user_create) VALUES (?, ?, ?, ?, ?, ?,?,?)";
         } else {
-            sql = "UPDATE transaksi_pembelian_bbm SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=? WHERE id = ?";
+            sql = "UPDATE transaksi_pembelian_bbm SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, user_update =? WHERE id = ?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -49,8 +49,11 @@ public class TransaksiPembelianBBMDAO {
             stmt.setString(6, transaksi.getKeterangan());
             stmt.setInt(7, transaksi.getDriverId());
 
-            if (!isInsert) {
-                stmt.setInt(8, transaksi.getId());
+            if (isInsert) {
+                stmt.setString(8, transaksi.getUserCreate());
+            } else {
+                stmt.setString(8, transaksi.getUserUpdate());
+                stmt.setInt(9, transaksi.getId());
             }
 
             stmt.executeUpdate();
@@ -80,7 +83,9 @@ public class TransaksiPembelianBBMDAO {
                     rs.getInt("km_sekarang"),
                     rs.getInt("nominal_BBM"),
                     rs.getString("keterangan"),
-                    rs.getInt("driver_id")
+                    rs.getInt("driver_id"),
+                    rs.getString("user_create"),
+                    rs.getString("user_update")
                 );
             }
         }

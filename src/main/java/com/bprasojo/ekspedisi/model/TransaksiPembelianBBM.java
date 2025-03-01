@@ -22,13 +22,17 @@ public class TransaksiPembelianBBM extends BaseClass{
     private int nominalBBM;
     private String keterangan;
     private int driverId;
+    private String userCreate;
+    private String userUpdate;
+
     
     private transient Armada armada; // Lazy loading
     private transient StakeHolder driver;
+    
 
     public TransaksiPembelianBBM() {}
 
-    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId) {
+    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId, String userCreate, String userUpdate) {
         this.id = id;
         this.armadaId = armadaId;
         this.tanggal = tanggal;
@@ -37,6 +41,8 @@ public class TransaksiPembelianBBM extends BaseClass{
         this.nominalBBM = nominalBBM;
         this.keterangan = keterangan;
         this.driverId = driverId;
+        this.userCreate = userCreate;
+        this.userUpdate = userUpdate;
     }
 
     // Getter & Setter
@@ -70,6 +76,13 @@ public class TransaksiPembelianBBM extends BaseClass{
 
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
+
+
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 
     // Lazy loading untuk objek Armada
     public Armada getArmada() throws SQLException {

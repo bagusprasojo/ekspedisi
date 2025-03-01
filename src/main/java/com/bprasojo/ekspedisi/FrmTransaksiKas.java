@@ -15,6 +15,7 @@ import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
@@ -86,6 +87,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         
         setStatusTombol("awal");
         inisialisasiEventTableModel();
+        
+         pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNamaAkun, btnAkunTransaksi, cbBank, cbArmada, btnHapusArmada, edTanggal, edUangKeluar, edUangMasuk, edKeterangan));;
         
     }
     // </editor-fold>

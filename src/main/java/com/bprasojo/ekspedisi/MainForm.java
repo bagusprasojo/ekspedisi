@@ -359,7 +359,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_miCustomerActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        FrmInputBBM frmInputBBM = new FrmInputBBM();
+        FrmInputBBM frmInputBBM = new FrmInputBBM(user);
         desktopPane.add(frmInputBBM);
         frmInputBBM.setVisible(true);
         
