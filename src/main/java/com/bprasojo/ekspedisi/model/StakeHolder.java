@@ -19,11 +19,13 @@ public class StakeHolder {
     private String kota;
     private String kodePos;
     private String telp;
+    private String userCreate;
+    private String userUpdate;
 
     // Constructor
     public StakeHolder() {}
 
-    public StakeHolder(int id, String kode, String nama, String alamat, String noKtp, String lokasiKerja, String jenis, String kota, String kodePos, String telp) {
+    public StakeHolder(int id, String kode, String nama, String alamat, String noKtp, String lokasiKerja, String jenis, String kota, String kodePos, String telp, String userCreate, String userUpdate) {
         this.id = id;
         this.kode = kode;
         this.nama = nama;
@@ -42,6 +44,12 @@ public class StakeHolder {
 
     public String getKode() { return kode; }
     public void setKode(String kode) { this.kode = kode; }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
     
     public String getKodePos() { return kodePos; }
     public void setKodePos(String kodePos) { this.kodePos = kodePos; }

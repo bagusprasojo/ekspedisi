@@ -6,6 +6,7 @@ package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.dao.BankDAO;
+import com.bprasojo.ekspedisi.dao.ConfigDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.dao.TransaksiKasDAO;
 import com.bprasojo.ekspedisi.model.Armada;
@@ -40,8 +41,9 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     
     private Perkiraan perkiraanTransaksi = null;
     private TransaksiKas transaksiKas = null;
-            
     
+            
+    private final ConfigDAO configDAO = new ConfigDAO();
     private final PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
     private final ArmadaDAO armadaDAO = new ArmadaDAO();
     private final BankDAO bankDAO = new BankDAO();
@@ -55,6 +57,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     
     public FrmTransaksiKas() {
         initComponents();
+        
+        
         try {
             setMaximum(true);
         } catch (PropertyVetoException ex) {
@@ -102,7 +106,6 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         cbBank = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -114,7 +117,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         cbArmada = new javax.swing.JComboBox<>();
         btnHapusArmada = new javax.swing.JButton();
-        btnHapusBank = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
         pnlNextPrev = new javax.swing.JPanel();
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
@@ -248,9 +251,6 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Untuk Armada");
 
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText("Tanggal");
-
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel6.setText("Uang Keluar");
 
@@ -274,7 +274,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         });
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel9.setText("Via Bank");
+        jLabel9.setText("Kas/Bank");
 
         btnHapusArmada.setText("Hapus");
         btnHapusArmada.addActionListener(new java.awt.event.ActionListener() {
@@ -283,56 +283,49 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             }
         });
 
-        btnHapusBank.setText("Hapus");
-        btnHapusBank.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHapusBankActionPerformed(evt);
-            }
-        });
+        jLabel11.setText("Tanggal");
 
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
         pnlInputLayout.setHorizontalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInputLayout.createSequentialGroup()
-                .addGap(61, 61, 61)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlInputLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(edUangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(pnlInputLayout.createSequentialGroup()
                                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(edUangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(edUangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(pnlInputLayout.createSequentialGroup()
-                                        .addComponent(cbArmada, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cbArmada, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnHapusArmada, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cbBank, 0, 416, Short.MAX_VALUE)
-                                    .addComponent(edNamaAkun))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnAkunTransaksi)
-                                    .addComponent(btnHapusBank))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                        .addComponent(btnHapusArmada, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(cbBank, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(pnlInputLayout.createSequentialGroup()
+                                        .addComponent(edNamaAkun, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnAkunTransaksi))))))
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(edUangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -345,16 +338,17 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(btnHapusBank))
-                .addGap(6, 6, 6)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
                     .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cbArmada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)
-                        .addComponent(btnHapusArmada))
-                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnHapusArmada)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(edUangMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -365,7 +359,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
-                .addGap(5, 5, 5))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(pnlInput, java.awt.BorderLayout.NORTH);
@@ -391,7 +385,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         pnlNextPrevLayout.setHorizontalGroup(
             pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNextPrevLayout.createSequentialGroup()
-                .addContainerGap(567, Short.MAX_VALUE)
+                .addContainerGap(541, Short.MAX_VALUE)
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext)
@@ -538,7 +532,9 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                 transaksiKas.setAkunKasId(selectedBank.getAkun().getId());
             } else {
                 transaksiKas.setBankId(0);
-                transaksiKas.setAkunKasId(3);
+                
+                int AkunKasId = Integer.parseInt(configDAO.getByKode("KAS_ID").getNilai());
+                transaksiKas.setAkunKasId(AkunKasId);
             }
             
             if (cbArmada.getSelectedIndex() >= 0){
@@ -608,10 +604,6 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         cbArmada.setSelectedIndex(-1);
     }//GEN-LAST:event_btnHapusArmadaActionPerformed
 
-    private void btnHapusBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusBankActionPerformed
-        cbBank.setSelectedIndex(-1);
-    }//GEN-LAST:event_btnHapusBankActionPerformed
-
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
         if (currentPage > 1) {
             currentPage--;
@@ -678,7 +670,6 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnHapusArmada;
-    private javax.swing.JButton btnHapusBank;
     private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnNext;
@@ -696,10 +687,10 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField edUangMasuk;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -770,18 +761,19 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     }
 
     private void LoadArmada() {
-//        try {
-//            List<Armada> armadas = armadaDAO.getArmadaByPage(1,"");
-//            
-//            // Masukkan data ke JComboBox
-//            DefaultComboBoxModel<Armada> model = new DefaultComboBoxModel<>();
-//            for (Armada a : armadas) {
-//                model.addElement(a); // Menambahkan objek Perkiraan ke model
-//            }
-//            cbArmada.setModel(model);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            List<Map<String, Object>> result = armadaDAO.getArmadaByPage(1,"", 2000);
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Armada> model = new DefaultComboBoxModel<>();
+            for (Map<String, Object> row : result) {
+                Armada armada = armadaDAO.getArmadaById((Integer) row.get("id"));
+                model.addElement(armada);                
+            }
+            cbArmada.setModel(model);
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal load armada dengan error \n" + ex.getMessage());
+        }
     }
 
     private void LoadDataTransaksiKas(int currentPage) {
@@ -862,6 +854,12 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             edNamaAkun.requestFocusInWindow();
             return false;
         }
+        
+        if (cbBank.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Kas/Bank belum dipilih");
+            cbBank.requestFocusInWindow();
+            return false;
+        }
       
         Integer nominalMasuk = 0;
         if (edUangMasuk.getValue() != null){
@@ -901,7 +899,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         edNamaAkun.setEnabled(enable);
         btnAkunTransaksi.setEnabled(enable);
         cbBank.setEnabled(enable);
-        btnHapusBank.setEnabled(enable);
+//        btnHapusBank.setEnabled(enable);
         cbArmada.setEnabled(enable);
         btnHapusArmada.setEnabled(enable);
         edTanggal.setEnabled(enable);

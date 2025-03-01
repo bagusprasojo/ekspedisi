@@ -6,6 +6,7 @@ package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.model.StakeHolder;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import java.sql.SQLException;
@@ -33,7 +34,12 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     private DefaultTableModel tableModel;
     private boolean SilakanLoadData = false;
     private String jenis;
+    private User user;
     
+    public FrmCustomer(User user) {
+        this();
+        this.user = user;
+    }
     
     public FrmCustomer() {
         initComponents();
@@ -523,6 +529,9 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
             stakeHolder.setTelp(edTelp.getText());
             stakeHolder.setKota(edKota.getText());
             stakeHolder.setKodePos(edKodePos.getText());
+            
+            stakeHolder.setUserCreate(user.getUsername());
+            stakeHolder.setUserUpdate(user.getUsername());
             
             stakeHolderDAO.save(stakeHolder);
             AppUtils.showInfoDialog("Data berhasil disimpan");

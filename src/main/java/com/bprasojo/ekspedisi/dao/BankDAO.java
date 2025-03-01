@@ -58,7 +58,8 @@ public class BankDAO {
                         rs.getString("atas_nama"),
                         rs.getString("keterangan"),
                         rs.getInt("id"),
-                        akun
+                        akun,
+                        rs.getInt("is_kas")
                 );
             }
         }
@@ -77,7 +78,7 @@ public class BankDAO {
     // Ambil semua Bank
     public List<Bank> getAllBank() throws SQLException {
         List<Bank> bankList = new ArrayList<>();
-        String query = "SELECT * FROM bank a";
+        String query = "SELECT * FROM bank a order by is_kas desc, nama_bank, no_rekening";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
@@ -89,7 +90,8 @@ public class BankDAO {
                         rs.getString("atas_nama"),
                         rs.getString("keterangan"),
                         rs.getInt("id"),
-                        akun
+                        akun,
+                        rs.getInt("is_kas")
                 ));
             }
         }

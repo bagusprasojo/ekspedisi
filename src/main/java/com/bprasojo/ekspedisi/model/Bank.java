@@ -10,15 +10,17 @@ public class Bank extends BaseClass{
     private String keterangan;
     private Integer id;
     private Perkiraan akun; 
+    private int isKas;
 
     // Constructor
-    public Bank(String noRekening, String namaBank, String atasNama, String keterangan, Integer id, Perkiraan akun) {
+    public Bank(String noRekening, String namaBank, String atasNama, String keterangan, Integer id, Perkiraan akun, int isKas) {
         this.noRekening = noRekening;
         this.namaBank = namaBank;
         this.atasNama = atasNama;
         this.keterangan = keterangan;
         this.id = id;
         this.akun = akun;
+        this.isKas = isKas;
     }
 
     public Bank() {
@@ -28,6 +30,7 @@ public class Bank extends BaseClass{
         this.keterangan = "";
         this.id = 0;
         this.akun = null;
+        this.isKas = 0;
         
     }
 
@@ -47,6 +50,14 @@ public class Bank extends BaseClass{
     
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public int getIsKas() {
+        return isKas;
+    }
+    
+    public void setIsKas(Integer isKas) {
+        this.isKas = isKas;
     }
     
     public String getNoRekening() {
@@ -83,6 +94,10 @@ public class Bank extends BaseClass{
 
     @Override
     public String toString() {
-        return namaBank + '-' + noRekening ;
+        if (isKas == 1){
+            return namaBank;
+        } else {
+            return namaBank + '-' + noRekening ;
+        }
     }
 }

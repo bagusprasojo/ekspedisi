@@ -57,7 +57,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     
     public FrmKasBonKaryawan() {
         initComponents();
-        lblBank.setText("");
+//        lblBank.setText("");
         
         try {
             setMaximum(true);
@@ -71,6 +71,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         karyawanDAO = new StakeHolderDAO();
         
         LoadJenisKasbon();
+        LoadBank();
         
         AppUtils.SetTanggalAwalBulan(edTglAwal);
         AppUtils.SetTanggalToday(edTglAkhir);
@@ -115,14 +116,13 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         edTanggal = new com.toedter.calendar.JDateChooser();
-        cbViaBank = new javax.swing.JComboBox<>();
         edNominal = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
         edKeterangan = new javax.swing.JTextField();
-        lblBank = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         eNoRegister = new javax.swing.JTextField();
         btnKaryawan = new javax.swing.JButton();
+        cbBank = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -261,25 +261,10 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         jLabel6.setText("Tanggal");
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel7.setText("Via Bank");
+        jLabel7.setText("Kas/Bank");
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Nominal");
-
-        edTanggal.setNextFocusableComponent(cbViaBank);
-
-        cbViaBank.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tunai", "Via Bank" }));
-        cbViaBank.setNextFocusableComponent(edNominal);
-        cbViaBank.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbViaBankItemStateChanged(evt);
-            }
-        });
-        cbViaBank.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                cbViaBankPropertyChange(evt);
-            }
-        });
 
         edNominal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edNominal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -289,8 +274,6 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         jLabel9.setText("Keterangan");
 
         edKeterangan.setNextFocusableComponent(cbJenisKasBon);
-
-        lblBank.setText("lblBank");
 
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("Nama");
@@ -339,12 +322,9 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(edNominal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
                     .addComponent(edKeterangan)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblBank))
-                    .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(111, Short.MAX_VALUE))
+                    .addComponent(edTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbBank, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -356,34 +336,31 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         .addComponent(jLabel3)
                         .addComponent(cbJenisKasBon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel6)))
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel4)
+                    .addComponent(eNoRegister, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel7)
-                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblBank)
-                        .addComponent(jLabel4)
-                        .addComponent(eNoRegister, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5)))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel8)
-                                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11)
-                                    .addComponent(btnKaryawan))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel9)))))
+                        .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(edAlamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11)
+                            .addComponent(btnKaryawan))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -517,6 +494,20 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void LoadBank() {
+        try {
+            List<Bank> banks = bankDAO.getAllBank();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Bank> model = new DefaultComboBoxModel<>();
+            for (Bank b : banks) {
+                model.addElement(b); // Menambahkan objek Perkiraan ke model
+            }
+            cbBank.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
 //        LoadDataTransaksiKas(currentPage);
 //
@@ -529,7 +520,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         edNominal.setValue(0);
         edKeterangan.setText("");
         cbJenisKasBon.setSelectedIndex(0);
-        cbViaBank.setSelectedIndex(0);
+        cbBank.setSelectedIndex(0);
         
         showLoopUpBank = true;
         
@@ -549,10 +540,10 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             Perkiraan perkiraan = (Perkiraan) cbJenisKasBon.getSelectedItem();
             kasBonKaryawan.setPerkiraanPinjamanId(perkiraan.getId());
             kasBonKaryawan.setKaryawanId(karyawan.getId());            
-            kasBonKaryawan.setSumberDana(cbViaBank.getSelectedItem().toString());
+            kasBonKaryawan.setSumberDana(cbBank.getSelectedItem().toString());
             kasBonKaryawan.setTanggal(edTanggal.getDate());
             
-            if (cbViaBank.getSelectedIndex() == 0){
+            if (cbBank.getSelectedIndex() == 0){
                 kasBonKaryawan.setBankId(0);
                 kasBonKaryawan.setPerkiraanKasId(perkiraanDAO.getPerkiraanKas().getId());
             } else {
@@ -641,41 +632,6 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tblKasBonFocusGained
 
-    private void cbViaBankPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbViaBankPropertyChange
-        
-    }//GEN-LAST:event_cbViaBankPropertyChange
-
-    private void cbViaBankItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbViaBankItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED && showLoopUpBank){
-            if (cbViaBank.getSelectedIndex() <= 0){
-                bank = null;
-                lblBank.setText("");
-            } else {
-                String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
-                LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
-                Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
-                if (selectedRecord != null) {
-                    try {
-                        // Mengambil nilai dengan nama kolom
-                        String no_rekening = selectedRecord.get("no_rekening").toString();
-                        bank = bankDAO.getBankByNoRekening(no_rekening);
-
-                        if (bank != null){
-                            lblBank.setText(bank.toString());
-                        } else {
-                            lblBank.setText("");
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
-                }
-            }
-        }
-    }//GEN-LAST:event_cbViaBankItemStateChanged
-
     private void btnKaryawanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKaryawanActionPerformed
         String sqlQuery = "select kode, nama, alamat, no_ktp from " 
                      + " stake_holder where jenis = 'karyawan'";
@@ -704,8 +660,8 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox<Bank> cbBank;
     private javax.swing.JComboBox<Perkiraan> cbJenisKasBon;
-    private javax.swing.JComboBox<String> cbViaBank;
     private javax.swing.JTextField eNoRegister;
     private javax.swing.JTextField edAlamat;
     private javax.swing.JTextField edFilter;
@@ -731,7 +687,6 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel lblBank;
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlNextPrev;
     private javax.swing.JTable tblKasBon;
@@ -805,15 +760,15 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
 //            return false;
 //        }
 //        
-        if (cbViaBank.getSelectedIndex() < 0){
+        if (cbBank.getSelectedIndex() < 0){
             AppUtils.showWarningDialog("Via bank belum dipilih");
-            cbViaBank.requestFocus();
+            cbBank.requestFocus();
             return false;
         }
         
-        if (cbViaBank.getSelectedIndex() == 1 && bank == null){
+        if (cbBank.getSelectedIndex() == 1 && bank == null){
             AppUtils.showWarningDialog("Bank belum dipilih");
-            cbViaBank.requestFocus();
+            cbBank.requestFocus();
             return false;
         }
         
@@ -863,12 +818,12 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         
                         showLoopUpBank = false;
                         if (kasBonKaryawan.getBankId() == 0){
-                            cbViaBank.setSelectedIndex(0);
-                            lblBank.setText("");
+                            cbBank.setSelectedIndex(0);
+//                            lblBank.setText("");
                         } else {
-                            cbViaBank.setSelectedIndex(1);
+                            cbBank.setSelectedIndex(1);
                             bank = bankDAO.getById(kasBonKaryawan.getBankId());
-                            lblBank.setText(kasBonKaryawan.getBank().toString());
+//                            lblBank.setText(kasBonKaryawan.getBank().toString());
                         }
                         showLoopUpBank = true;
                         
@@ -934,7 +889,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         edNama.setEnabled(enable);
         edAlamat.setEnabled(enable);
         edTanggal.setEnabled(enable);
-        cbViaBank.setEnabled(enable);
+        cbBank.setEnabled(enable);
         edNominal.setEnabled(enable);
         edKeterangan.setEnabled(enable);
         btnKaryawan.setEnabled(enable);

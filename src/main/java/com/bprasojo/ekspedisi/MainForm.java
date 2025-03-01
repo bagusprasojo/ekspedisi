@@ -1,9 +1,15 @@
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.awt.Component;
+import java.beans.PropertyVetoException;
 import java.net.URL;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 /*
@@ -20,10 +26,13 @@ public class MainForm extends javax.swing.JFrame {
     /**
      * Creates new form MainForm
      */
+    
+    User user = null;
     public MainForm() {
-        initComponents();
-        
+        initComponents();        
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        setMenuItemsEnabled(false);
     }
 
     /**
@@ -38,6 +47,7 @@ public class MainForm extends javax.swing.JFrame {
         desktopPane = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        mnLogin = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         miCustomer = new javax.swing.JMenuItem();
@@ -69,6 +79,8 @@ public class MainForm extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenuItem17 = new javax.swing.JMenuItem();
         jMenuItem18 = new javax.swing.JMenuItem();
+        jMenu9 = new javax.swing.JMenu();
+        jMenuItem19 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -87,6 +99,14 @@ public class MainForm extends javax.swing.JFrame {
         jMenuBar1.setName("mainMenu"); // NOI18N
 
         jMenu1.setText("File");
+
+        mnLogin.setText("Login");
+        mnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnLoginActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mnLogin);
 
         jMenuItem3.setText("Exit");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
@@ -126,7 +146,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu2);
 
-        jMenu3.setText("Administrasi");
+        jMenu3.setText("Keuangan");
 
         jMenu5.setText("Mutasi Kas");
 
@@ -279,6 +299,18 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenu3.add(jMenu8);
 
+        jMenu9.setText("Closing");
+
+        jMenuItem19.setText("Closing");
+        jMenuItem19.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem19ActionPerformed(evt);
+            }
+        });
+        jMenu9.add(jMenuItem19);
+
+        jMenu3.add(jMenu9);
+
         jMenuBar1.add(jMenu3);
 
         jMenu4.setText("Akuntansi");
@@ -317,7 +349,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_miTransaksiKasActionPerformed
 
     private void miCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCustomerActionPerformed
-        FrmCustomer frmCustomer = new FrmCustomer();
+        FrmCustomer frmCustomer = new FrmCustomer(user);
         frmCustomer.setTitle("Customer");
         frmCustomer.setJenis("Customer");
         frmCustomer.loadDataStakeHolder(1);
@@ -394,7 +426,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        FrmCustomer frmCustomer = new FrmCustomer();
+        FrmCustomer frmCustomer = new FrmCustomer(user);
         frmCustomer.setTitle("Karyawan");
         frmCustomer.setJenis("Karyawan");
         frmCustomer.KonfigurasiForm();
@@ -427,6 +459,25 @@ public class MainForm extends javax.swing.JFrame {
         desktopPane.add(frmRptRekapPembayaranInvoiceCustomer);
         frmRptRekapPembayaranInvoiceCustomer.setVisible(true);
     }//GEN-LAST:event_jMenuItem18ActionPerformed
+
+    private void jMenuItem19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem19ActionPerformed
+        FrmClosing frmClosing = new FrmClosing();
+        desktopPane.add(frmClosing);
+        frmClosing.setVisible(true);
+    }//GEN-LAST:event_jMenuItem19ActionPerformed
+
+    private void mnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnLoginActionPerformed
+        if (mnLogin.getText().equals("Login")){
+            FrmLogin frmLogin = new FrmLogin(this, true);
+            frmLogin.setLocationRelativeTo(this);        
+            frmLogin.setVisible(true);
+        } else {
+            user = null;            
+            mnLogin.setText("Login");
+            setMenuItemsEnabled(false);
+            closeAllForm();
+        }
+    }//GEN-LAST:event_mnLoginActionPerformed
 
     /**
      * @param args the command line arguments
@@ -462,6 +513,26 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
     }
+    
+    public void setMenuItemsEnabled(boolean enabled) {
+        for (int i = 0; i < jMenuBar1.getMenuCount(); i++) {
+            JMenu menu = jMenuBar1.getMenu(i);
+            if (menu != null) {
+                for (int j = 0; j < menu.getItemCount(); j++) {
+                    JMenuItem menuItem = menu.getItem(j);
+                    if (menuItem != null) {
+                        String itemText = menuItem.getText();
+
+                        // Hanya disable/enable menu selain "Login" dan "Exit"
+                        if (!itemText.equalsIgnoreCase("Login") && !itemText.equalsIgnoreCase("Exit")) {
+                            menuItem.setEnabled(enabled);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane desktopPane;
@@ -473,6 +544,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu8;
+    private javax.swing.JMenu jMenu9;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
@@ -484,6 +556,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem18;
+    private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -499,5 +572,20 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
     private javax.swing.JMenuItem miTransaksiKas;
+    private javax.swing.JMenuItem mnLogin;
     // End of variables declaration//GEN-END:variables
+
+    private void closeAllForm() {
+        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+            try {
+                frame.setClosed(true); // Menutup frame
+            } catch (PropertyVetoException ex) {
+                AppUtils.showErrorDialog("Gagal tutup semua form dengan error \n" + ex.getMessage());
+            }
+        }
+    }
+    
+    public void SetCaptionMenuLogin(String Caption){
+        mnLogin.setText(Caption);
+    }
 }

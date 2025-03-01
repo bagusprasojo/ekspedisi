@@ -9,6 +9,7 @@ import com.bprasojo.ekspedisi.model.Closing;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JTable;
@@ -42,6 +43,9 @@ public class FrmClosing extends javax.swing.JInternalFrame {
         tblClosing.setModel(tableModel);
         tblClosing.removeColumn(tblClosing.getColumnModel().getColumn(0));
         
+        AppUtils.SetTanggalAwalBulan(edTglAwal);
+        AppUtils.SetTanggalAkhirBulan(edTglAkhir);
+        
         setStatusTombol("awal");
         SilakanLoadData = true;
         
@@ -56,7 +60,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
             for (Map<String, Object> row : result) {
                 tableModel.addRow(new Object[]{
                     (Integer) row.get("id"),
-                    (String) row.get("tanggal"),
+                    AppUtils.DateFormatShort((Date) row.get("tanggal")),
                     (String) row.get("keterangan")
                 });            
             }
@@ -90,7 +94,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         edSearch = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        edTglAwal4 = new com.toedter.calendar.JDateChooser();
+        edTglAwal = new com.toedter.calendar.JDateChooser();
         jLabel4 = new javax.swing.JLabel();
         edTglAkhir = new com.toedter.calendar.JDateChooser();
         pnlButton = new javax.swing.JPanel();
@@ -220,11 +224,11 @@ public class FrmClosing extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel3.setText("Periode");
+        jLabel3.setText("Tanggal");
 
-        edTglAwal4.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        edTglAwal.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                edTglAwal4PropertyChange(evt);
+                edTglAwalPropertyChange(evt);
             }
         });
 
@@ -244,30 +248,29 @@ public class FrmClosing extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(edTglAwal4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(edTglAwal, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
-                .addGap(12, 12, 12)
-                .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel7)
                 .addGap(18, 18, 18)
                 .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(120, Short.MAX_VALUE))
         );
         pnlSearchLayout.setVerticalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel7)
-                        .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(edTglAkhir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(edTglAwal4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(edSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel4))
+                    .addComponent(edTglAwal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -294,7 +297,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
         pnlButtonLayout.setHorizontalGroup(
             pnlButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlButtonLayout.createSequentialGroup()
-                .addContainerGap(529, Short.MAX_VALUE)
+                .addContainerGap(576, Short.MAX_VALUE)
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext)
@@ -354,7 +357,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(315, Short.MAX_VALUE))
+                .addContainerGap(362, Short.MAX_VALUE))
         );
 
         pnlInputLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2});
@@ -492,19 +495,19 @@ public class FrmClosing extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_edSearchKeyReleased
 
+    private void edTglAwalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwalPropertyChange
+        if (SilakanLoadData){
+            currentPage = 1;
+            loadDataClosing(currentPage);
+        }
+    }//GEN-LAST:event_edTglAwalPropertyChange
+
     private void edTglAkhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAkhirPropertyChange
         if (SilakanLoadData){
             currentPage = 1;
             loadDataClosing(currentPage);
         }
     }//GEN-LAST:event_edTglAkhirPropertyChange
-
-    private void edTglAwal4PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwal4PropertyChange
-        if (SilakanLoadData){
-            currentPage = 1;
-            loadDataClosing(currentPage);
-        }
-    }//GEN-LAST:event_edTglAwal4PropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -521,10 +524,6 @@ public class FrmClosing extends javax.swing.JInternalFrame {
     private com.toedter.calendar.JDateChooser edTanggal;
     private com.toedter.calendar.JDateChooser edTglAkhir;
     private com.toedter.calendar.JDateChooser edTglAwal;
-    private com.toedter.calendar.JDateChooser edTglAwal1;
-    private com.toedter.calendar.JDateChooser edTglAwal2;
-    private com.toedter.calendar.JDateChooser edTglAwal3;
-    private com.toedter.calendar.JDateChooser edTglAwal4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

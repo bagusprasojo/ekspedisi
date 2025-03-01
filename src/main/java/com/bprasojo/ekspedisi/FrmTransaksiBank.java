@@ -695,7 +695,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_edFilterKeyReleased
 
     private void btnRekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRekActionPerformed
-        String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
+        String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank where is_kas = 0";
         LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
         Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
         if (selectedRecord != null) {

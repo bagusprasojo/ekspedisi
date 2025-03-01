@@ -38,7 +38,7 @@ public class ArmadaDAO {
         return this.conn;
     
     }
-    public List<Map<String, Object>> getArmadaByPage(int page, String filter) throws SQLException {
+    public List<Map<String, Object>> getArmadaByPage(int page, String filter, int pageSize) throws SQLException {
         List<Map<String, Object>> resultList = new ArrayList<>();
         
         // Query dengan WHERE jika ada filter
@@ -60,7 +60,7 @@ public class ArmadaDAO {
                 }
             }
             
-            int pageSize = 20;
+//            int pageSize = 200;
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 

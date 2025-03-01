@@ -43,10 +43,10 @@ public class StakeHolderDAO {
         boolean isInsert = stakeholder.getId() == 0;
 
         if (isInsert) {            
-//            stakeholder.setKode(generateKode(stakeholder.getJenis()));
-            sql = "INSERT INTO stake_holder (kode, nama, alamat, no_ktp, lokasi_kerja, jenis, kota, kode_pos, telp) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
+            stakeholder.setKode(generateKode(stakeholder.getJenis()));
+            sql = "INSERT INTO stake_holder (kode, nama, alamat, no_ktp, lokasi_kerja, jenis, kota, kode_pos, telp, user_create) VALUES (?, ?, ?, ?, ?, ?,?,?,?,?)";
         } else {
-            sql = "UPDATE stake_holder SET kode = ?, nama = ?, alamat = ?, no_ktp = ?, lokasi_kerja = ?, jenis = ? , kota = ? , kode_pos = ? , telp = ? WHERE id = ?";
+            sql = "UPDATE stake_holder SET kode = ?, nama = ?, alamat = ?, no_ktp = ?, lokasi_kerja = ?, jenis = ? , kota = ? , kode_pos = ? , telp = ?, user_update = ? WHERE id = ?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -60,8 +60,11 @@ public class StakeHolderDAO {
             stmt.setString(8, stakeholder.getKodePos());
             stmt.setString(9, stakeholder.getTelp());
 
-            if (!isInsert) {
-                stmt.setInt(10, stakeholder.getId());
+            if (isInsert) {
+                stmt.setString(10, stakeholder.getUserCreate());
+            } else {
+                stmt.setString(10, stakeholder.getUserUpdate());
+                stmt.setInt(11, stakeholder.getId());
             }
 
             stmt.executeUpdate();
@@ -107,7 +110,9 @@ public class StakeHolderDAO {
                         rs.getString("jenis"),
                         rs.getString("kota"),
                         rs.getString("kode_pos"),
-                        rs.getString("telp")
+                        rs.getString("telp"),
+                        rs.getString("user_create"),
+                        rs.getString("user_update")
                     );
                 }
             }

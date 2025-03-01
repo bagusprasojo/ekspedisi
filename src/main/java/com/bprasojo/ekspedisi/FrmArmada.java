@@ -59,7 +59,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         
         List<Map<String, Object>> result;
         try {
-            result = armadaDAO.getArmadaByPage(currentPage, edSearch.getText());
+            result = armadaDAO.getArmadaByPage(currentPage, "", 2000);
             for (Map<String, Object> row : result) {
             
             tableModel.addRow(new Object[]{
