@@ -30,6 +30,8 @@ public class TransaksiKas extends  BaseClass{
     private String keterangan;
     private int armadaId; // ID untuk lazy loading
     private Armada armada; // Properti lazy
+    private String userCreate;
+    private String userUpdate;
 
     private final PerkiraanDAO perkiraanDAO; // DAO untuk lazy loading
     private final ArmadaDAO armadaDAO; // DAO untuk lazy loading
@@ -117,5 +119,11 @@ public class TransaksiKas extends  BaseClass{
         }
         return bank;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }
 

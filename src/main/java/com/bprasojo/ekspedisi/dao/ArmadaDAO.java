@@ -90,9 +90,9 @@ public class ArmadaDAO {
         String sql;
         
         if (armada.getId() <= 0){
-            sql = "INSERT INTO armada (nopol, kendaraan, pemilik, alamat, kota, telp, driver_id) VALUES (?, ?, ?, ?, ?, ?,?)";
+            sql = "INSERT INTO armada (nopol, kendaraan, pemilik, alamat, kota, telp, driver_id, user_create) VALUES (?, ?, ?, ?, ?, ?,?,?)";
         } else {
-            sql = "update armada set nopol = ?, kendaraan=?, pemilik=?, alamat=?, kota=?, telp=?, driver_id=? where id=?";
+            sql = "update armada set nopol = ?, kendaraan=?, pemilik=?, alamat=?, kota=?, telp=?, driver_id=?, user_update=? where id=?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -106,8 +106,11 @@ public class ArmadaDAO {
             stmt.setString(6, armada.getTelp());
             stmt.setInt(7, armada.getDriverId());
             
-            if (armada.getId() > 0) {
-                stmt.setInt(8, armada.getId());
+            if (armada.getId() <= 0) {
+                stmt.setString(8, armada.getUserCreate());
+            } else {
+                stmt.setString(8, armada.getUserUpdate());
+                stmt.setInt(9, armada.getId());
             }
             
             stmt.executeUpdate();
@@ -146,7 +149,9 @@ public class ArmadaDAO {
                         rs.getString("kota"),                        
                         rs.getString("telp"),
                         rs.getInt("driver_id"),
-                        rs.getInt("id")
+                        rs.getInt("id"),
+                        rs.getString("user_create"),
+                        rs.getString("user_update")
                 );
             }
         }

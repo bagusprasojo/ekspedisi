@@ -21,13 +21,16 @@ public class Armada extends BaseClass{
     private String telp;
     private int driver_id;
     private int id;
+    private String userCreate;
+    private String userUpdate;
+
     
     private transient StakeHolder driver;
 
     // Constructor
     public Armada(){}
     
-    public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp, int driver_id, int id) {
+    public Armada(String nopol, String kendaraan, String pemilik, String alamat, String kota, String telp, int driver_id, int id, String userCreate, String userUpdate) {
         this.nopol = nopol;
         this.kendaraan = kendaraan;
         this.pemilik = pemilik;
@@ -36,8 +39,8 @@ public class Armada extends BaseClass{
         this.telp = telp;
         this.driver_id = driver_id;
         this.id = id;
-        
-        
+        this.userCreate = userCreate;
+        this.userUpdate = userUpdate;
         
     }
 
@@ -115,6 +118,12 @@ public class Armada extends BaseClass{
     public void setTelp(String telp) {
         this.telp = telp;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 
     @Override
     public String toString() {

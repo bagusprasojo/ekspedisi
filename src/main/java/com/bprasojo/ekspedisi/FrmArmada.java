@@ -8,7 +8,9 @@ import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.model.Armada;
 import com.bprasojo.ekspedisi.model.StakeHolder;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.sql.SQLException;
 import java.util.List;
@@ -37,7 +39,12 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     private final ArmadaDAO armadaDAO = new ArmadaDAO();
     private DefaultTableModel tableModel;
     private boolean SilakanLoadData = false;
+    private User user;
     
+    public FrmArmada(User user) {
+        this();
+        this.user = user;
+    }
     
     public FrmArmada() {
         initComponents();
@@ -52,6 +59,8 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         
         inisialisasiEventTableModel();
         
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNoPolisi, edKendaraan, edPemilik, edAlamat, edKota, edTelp, edNamaDriver, btnDriver));;
+        
     }
 
     private void loadDataArmada(int page) {
@@ -59,7 +68,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         
         List<Map<String, Object>> result;
         try {
-            result = armadaDAO.getArmadaByPage(currentPage, "", 2000);
+            result = armadaDAO.getArmadaByPage(currentPage, edSearch.getText(), 20);
             for (Map<String, Object> row : result) {
             
             tableModel.addRow(new Object[]{
@@ -324,6 +333,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         pnlDua.add(pnlData, java.awt.BorderLayout.CENTER);
 
         pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlInput.setFocusCycleRoot(true);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Kendaraan");
@@ -374,8 +384,10 @@ public class FrmArmada extends javax.swing.JInternalFrame {
 
         jLabel10.setText("No KTP");
 
+        edAlamatDriver.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edAlamatDriver.setEnabled(false);
 
+        edNoKTPDriver.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         edNoKTPDriver.setEnabled(false);
 
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
@@ -454,7 +466,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(edTelp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlDua.add(pnlInput, java.awt.BorderLayout.NORTH);
@@ -536,6 +548,8 @@ public class FrmArmada extends javax.swing.JInternalFrame {
             armada.setKota(kota);
             armada.setTelp(telp);
             armada.setDriverId(driver.getId());
+            armada.setUserCreate(user.getUsername());
+            armada.setUserUpdate(user.getUsername());
 
             armadaDAO.save(armada);
             AppUtils.showInfoDialog("Data berhasil disimpan");

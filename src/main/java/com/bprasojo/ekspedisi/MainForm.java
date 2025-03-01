@@ -333,7 +333,7 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void miArmadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miArmadaActionPerformed
-        FrmArmada frmArmada = new FrmArmada(); // Buat instance FrmArmada
+        FrmArmada frmArmada = new FrmArmada(user); // Buat instance FrmArmada
         desktopPane.add(frmArmada); // Tambahkan ke JDesktopPane
         frmArmada.setVisible(true); // Tampilkan FrmArmada
     }//GEN-LAST:event_miArmadaActionPerformed
@@ -343,7 +343,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void miTransaksiKasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miTransaksiKasActionPerformed
-        FrmTransaksiKas frmTransaksiKas = new FrmTransaksiKas();
+        FrmTransaksiKas frmTransaksiKas = new FrmTransaksiKas(user);
         desktopPane.add(frmTransaksiKas);
         frmTransaksiKas.setVisible(true);
     }//GEN-LAST:event_miTransaksiKasActionPerformed

@@ -29,6 +29,12 @@ public class FrmLogin extends javax.swing.JDialog {
 //        setLocationRelativeTo(parent); // Posisi di tengah parent
         initComponents();
         setTitle("Login");
+        
+        String mode = System.getProperty("mode", "production"); // Default 'production'
+        if ("development".equals(mode)) {
+            edUser.setText("admin");
+            edPassword.setText("admin");
+        }
     }
 
     /**
@@ -49,6 +55,11 @@ public class FrmLogin extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setResizable(false);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
 
         jLabel1.setText("User");
 
@@ -58,6 +69,11 @@ public class FrmLogin extends javax.swing.JDialog {
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
+            }
+        });
+        btnLogin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnLoginKeyPressed(evt);
             }
         });
 
@@ -121,6 +137,14 @@ public class FrmLogin extends javax.swing.JDialog {
                 AppUtils.showErrorDialog("Terjadi kesalahan saat mengakses database.");
             }
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnLoginKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLoginKeyPressed
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseClicked
 
     /**
      * @param args the command line arguments

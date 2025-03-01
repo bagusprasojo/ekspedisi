@@ -13,6 +13,7 @@ import com.bprasojo.ekspedisi.model.Armada;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.TransaksiKas;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.beans.PropertyVetoException;
@@ -54,7 +55,12 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     
     private int currentPage = 1;
     private boolean SilakanLoadData = false;
+    private User user;
     
+    public FrmTransaksiKas(User user) {
+        this();
+        this.user = user;
+    }
     public FrmTransaksiKas() {
         initComponents();
         
@@ -237,6 +243,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         pnlInput.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlInput.setFocusCycleRoot(true);
 
         edNamaAkun.setText("jTextField1");
         edNamaAkun.addActionListener(new java.awt.event.ActionListener() {
@@ -560,6 +567,8 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             
             transaksiKas.setKeterangan(edKeterangan.getText());
             transaksiKas.setTanggal(edTanggal.getDate());
+            transaksiKas.setUserCreate(user.getUsername());
+            transaksiKas.setUserUpdate(user.getUsername());
             
             transaksiKasDAO.save(transaksiKas);
             
@@ -581,13 +590,18 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnAkunTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAkunTransaksiActionPerformed
-        String sqlQuery = "SELECT kode, nama FROM perkiraan ";
+        String sqlQuery = "SELECT " +
+                            " concat(REPEAT(' ', level * 4), kode) as kode_akun, " +
+                            " concat(REPEAT(' ', level * 4), nama) as nama_akun " +
+                            " FROM perkiraan " +
+                            " ORDER BY kode";
+        
         LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
         Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
         if (selectedRecord != null) {
             try {
                 // Mengambil nilai dengan nama kolom
-                String kode = selectedRecord.get("kode").toString();
+                String kode = selectedRecord.get("kode_akun").toString().trim();
                 perkiraanTransaksi = perkiraanDAO.getPerkiraanByKode(kode);
                 String akun = perkiraanTransaksi.getKode() + "-" + perkiraanTransaksi.getNama();
                 edNamaAkun.setText(akun);
@@ -793,7 +807,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                         (String) row.get("nopol"),
                         AppUtils.NumericFormat((Integer) row.get("nominal_keluar")),
                         AppUtils.NumericFormat((Integer) row.get("nominal_masuk")),
-                        "Lia"
+                        (String) row.get("user_create"),
                 });
         }
         

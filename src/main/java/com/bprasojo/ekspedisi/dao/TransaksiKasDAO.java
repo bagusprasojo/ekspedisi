@@ -99,9 +99,9 @@ public class TransaksiKasDAO {
     boolean isInsert = transaksiKas.getId() == 0;
 
     if (isInsert) {
-        sql = "INSERT INTO transaksi_kas (akun_kas_Id, akun_transaksi_id, tanggal, nominal_masuk, nominal_keluar, keterangan, armada_id, bank_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO transaksi_kas (akun_kas_Id, akun_transaksi_id, tanggal, nominal_masuk, nominal_keluar, keterangan, armada_id, bank_id, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
     } else {
-        sql = "UPDATE transaksi_kas SET akun_kas_Id = ?, akun_transaksi_id = ?, tanggal = ?, nominal_masuk = ?, nominal_keluar = ?, keterangan = ?, armada_id = ?, bank_id = ? WHERE id = ?";
+        sql = "UPDATE transaksi_kas SET akun_kas_Id = ?, akun_transaksi_id = ?, tanggal = ?, nominal_masuk = ?, nominal_keluar = ?, keterangan = ?, armada_id = ?, bank_id = ?, user_update=? WHERE id = ?";
     }
 
     try (PreparedStatement statement = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -116,8 +116,11 @@ public class TransaksiKasDAO {
         statement.setInt(7, transaksiKas.getArmadaId());
         statement.setInt(8, transaksiKas.getBankId());
 
-        if (!isInsert) {
-            statement.setInt(9, transaksiKas.getId()); // ID hanya ditambahkan jika UPDATE
+        if (isInsert) {
+            statement.setString(9, transaksiKas.getUserCreate());
+        } else {
+            statement.setString(9, transaksiKas.getUserUpdate());
+            statement.setInt(10, transaksiKas.getId()); // ID hanya ditambahkan jika UPDATE
         }
 
         statement.executeUpdate();

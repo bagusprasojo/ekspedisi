@@ -465,13 +465,8 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         stakeHolder = new StakeHolder();
-        
-        edNama.setText("");
-        edAlamat.setText("");
-        edNoKTP.setText("");
-        edLokasiKerja.setText("");
-//        edKota.setText("");
-//        edTelp.setText("");
+
+        AppUtils.setDefaultValues(edNama, edAlamat, edNoKTP, edLokasiKerja, edKota, edKodePos, edTelp);
         
         setStatusTombol("tambah");
         loadDataStakeHolder(currentPage);
