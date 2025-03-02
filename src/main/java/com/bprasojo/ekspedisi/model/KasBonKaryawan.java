@@ -27,6 +27,9 @@ public class KasBonKaryawan extends BaseClass{
     private String statusLunas;
     private String noRegister;
     private int karyawanID;
+    private String userCreate;
+    private String userUpdate;
+    
 
     private transient Perkiraan perkiraanPinjaman; // Lazy loading
     private transient Perkiraan perkiraanKas; // Lazy loading
@@ -35,7 +38,7 @@ public class KasBonKaryawan extends BaseClass{
 
     public KasBonKaryawan() {}
 
-    public KasBonKaryawan(int id, Date tanggal, int karyawanId, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas, String noRegister) {
+    public KasBonKaryawan(int id, Date tanggal, int karyawanId, int perkiraanPinjamanId,int perkiraanKasId, int nominal, String keterangan, int bankId, String sumberDana, int pelunasan, String statusLunas, String noRegister, String userCreate, String userUpdate) {
         this.id = id;
         this.tanggal = tanggal;
         this.perkiraanPinjamanId = perkiraanPinjamanId;
@@ -138,5 +141,11 @@ public class KasBonKaryawan extends BaseClass{
         }
         return karyawan;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }
 

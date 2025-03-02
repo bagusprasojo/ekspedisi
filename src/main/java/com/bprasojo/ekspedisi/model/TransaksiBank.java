@@ -27,6 +27,8 @@ public class TransaksiBank extends BaseClass{
     private int jenisTransaksiId;
     private String uraian;
     private int biayaAdmBank;
+    private String userCreate;
+    private String userUpdate;
 
     private transient Bank bankUtama; // Lazy loading
     private transient Bank bankTujuan; // Lazy loading
@@ -36,7 +38,7 @@ public class TransaksiBank extends BaseClass{
 
     public TransaksiBank() {}
 
-    public TransaksiBank(int id, Date tanggal, int bankUtamaId, int jenisTransaksiid, int debet, int kredit, int bankTujuanId, int akunUtamaId, int akunTujuanId, int biayaAdmBank, String uraian) {
+    public TransaksiBank(int id, Date tanggal, int bankUtamaId, int jenisTransaksiid, int debet, int kredit, int bankTujuanId, int akunUtamaId, int akunTujuanId, int biayaAdmBank, String uraian, String userCreate, String userUpdate) {
         this.id = id;
         this.tanggal = tanggal;
         this.bankUtamaId = bankUtamaId;
@@ -48,14 +50,16 @@ public class TransaksiBank extends BaseClass{
         this.akunTujuanId = akunTujuanId;
         this.biayaAdmBank = biayaAdmBank;
         this.uraian = uraian;
+        this.userCreate = userCreate;
+        this.userUpdate = userUpdate;
     }
 
     // Getter & Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     
-    public int getbiayaAdmBank() { return biayaAdmBank; }
-    public void setbiayaAdmBank(int biayaAdmBank) { this.biayaAdmBank = biayaAdmBank; }
+    public int getBiayaAdmBank() { return biayaAdmBank; }
+    public void setBiayaAdmBank(int biayaAdmBank) { this.biayaAdmBank = biayaAdmBank; }
     
     public String getUraian() { return uraian; }
     public void setUraian(String uraian) { this.uraian = uraian; }
@@ -143,5 +147,11 @@ public class TransaksiBank extends BaseClass{
         }
         return jenisTransaksi;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }
 

@@ -10,7 +10,9 @@ import com.bprasojo.ekspedisi.dao.TransaksiBankDAO;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.JenisTransaksi;
 import com.bprasojo.ekspedisi.model.TransaksiBank;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.sql.SQLException;
 import java.util.Date;
@@ -49,6 +51,12 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     private boolean SilakanLoadData = false;
     private DefaultTableModel tableModel;
     private String frmMode = "";
+    private User user;
+    
+    public FrmTransaksiBank(User user) {
+        this();
+        this.user = user;
+    }
     
     public FrmTransaksiBank() {
         initComponents();
@@ -75,6 +83,8 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         SilakanLoadData = true;
         LoadDataTransaksiBank(currentPage);
         inisialisasiEventTableModel();
+        
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNoRek, btnRek, edTanggal, cbJenisTransaksi, edDebet, edKredit, edUraian));
         
         setStatusTombol("awal");
     }
@@ -361,6 +371,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         pnlInput.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlInput.setFocusCycleRoot(true);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("No Rekening");
@@ -375,8 +386,14 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Nama Bank");
 
+        edBank.setEditable(false);
+        edBank.setEnabled(false);
+
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("Atas Nama");
+
+        edAtasNama.setEditable(false);
+        edAtasNama.setEnabled(false);
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Saldo Akhir");
@@ -567,16 +584,8 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         transaksiBank  = new TransaksiBank();
         
         bank = null;
-        edNoRek.setText("");
-        edAtasNama.setText("");
-        edBank.setText("");
-        edSaldoAkhir.setValue(0);        
-
-        AppUtils.SetTanggalToday(edTanggal);
-        cbJenisTransaksi.setSelectedIndex(-1);
-        edDebet.setValue(0);
-        edKredit.setValue(0);
-        edUraian.setText("");
+        
+        AppUtils.setDefaultValues(edNoRek, edAtasNama, edBank, edSaldoAkhir, edTanggal, cbJenisTransaksi, edDebet, edKredit, edUraian, cbBankTujuan, edBiayaAdmBank);
         
         cbBankTujuan.setSelectedIndex(-1);
         edBiayaAdmBank.setValue(0);
@@ -604,11 +613,11 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                 transaksiBank.setBankTujuanId(bankTujuan.getId());
                 transaksiBank.setAkunTujuanId(bankTujuan.getAkun().getId());                
                 
-                transaksiBank.setbiayaAdmBank(((Number) edBiayaAdmBank.getValue()).intValue());
+                transaksiBank.setBiayaAdmBank(((Number) edBiayaAdmBank.getValue()).intValue());
             } else {
                 transaksiBank.setAkunTujuanId(jenisTransaksi.getAkunId());
                 transaksiBank.setBankTujuanId(0);
-                transaksiBank.setbiayaAdmBank(0);
+                transaksiBank.setBiayaAdmBank(0);
             }
             
             
@@ -627,15 +636,19 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
             transaksiBank.setKredit(nominalKredit);
             transaksiBank.setUraian(edUraian.getText());
             
+            transaksiBank.setUserCreate(user.getUsername());
+            transaksiBank.setUserUpdate(user.getUsername());
+            
             transaksiBankDAO.save(transaksiBank);
 
             AppUtils.showInfoDialog("Data berhasil disimpan!");
             LoadDataTransaksiBank(currentPage);
 
         } catch (SQLException ex) {
-            Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
-            AppUtils.showErrorDialog("Gagal simpan dengan pesan " + ex.toString());
+            AppUtils.showErrorDialogSimpan(ex);
             
+        } catch (Exception ex) {
+            AppUtils.showErrorDialogSimpan(ex);
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -884,7 +897,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                             if (transaksiBank.getJenisTransaksi().getKode().equals("20")){
                                 btnLihatBank.setVisible(true);
                                 AppUtils.setSelectedIndexById(cbBankTujuan, transaksiBank.getBankTujuanId());
-                                edBiayaAdmBank.setValue(transaksiBank.getbiayaAdmBank());                                
+                                edBiayaAdmBank.setValue(transaksiBank.getBiayaAdmBank());                                
                             } else {
                                 btnLihatBank.setVisible(false);
                                 cbBankTujuan.setSelectedIndex(-1);
@@ -909,8 +922,8 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     private void enableKomponenInput(boolean enable){
         edNoRek.setEnabled(enable);
         btnRek.setEnabled(enable);
-        edBank.setEnabled(enable);
-        edAtasNama.setEnabled(enable);
+//        edBank.setEnabled(enable);
+//        edAtasNama.setEnabled(enable);
         edTanggal.setEnabled(enable);
         cbJenisTransaksi.setEnabled(enable);
         edDebet.setEnabled(enable);
@@ -1088,7 +1101,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                         AppUtils.NumericFormat((Integer) row.get("kredit")),
                         AppUtils.NumericFormat((Integer) row.get("biaya_adm_bank")),
                         (String) row.get("uraian"),
-                        (String) row.get("pc")
+                        (String) row.get("user_create")
                 });
         }
         

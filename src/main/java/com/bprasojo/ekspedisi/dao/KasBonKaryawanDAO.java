@@ -10,6 +10,7 @@ package com.bprasojo.ekspedisi.dao;
  */
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class KasBonKaryawanDAO {
+public class KasBonKaryawanDAO extends ParentDAO{
     private Connection conn;
 
     public KasBonKaryawanDAO() {
@@ -31,7 +32,10 @@ public class KasBonKaryawanDAO {
     }
 
     public void save(KasBonKaryawan kasBonKaryawan) throws SQLException {
-        // Tentukan status lunas
+        if (!validasiClosing(kasBonKaryawan.getId(), kasBonKaryawan.getTanggal())){
+            throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+        }
+        
         kasBonKaryawan.setStatuLunas(kasBonKaryawan.getNominal() > kasBonKaryawan.getPelunasan() ? "Belum" : "Lunas");
 
         Date tanggal = new Date(kasBonKaryawan.getTanggal().getTime());
@@ -43,9 +47,9 @@ public class KasBonKaryawanDAO {
 
         String sql;
         if (isInsert){ 
-            sql = "INSERT INTO kas_bon_karyawan (tanggal, karyawan_id, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO kas_bon_karyawan (tanggal, karyawan_id, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {    
-            sql = "UPDATE kas_bon_karyawan SET tanggal = ?, karyawan_id = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register = ? WHERE id = ?";            
+            sql = "UPDATE kas_bon_karyawan SET tanggal = ?, karyawan_id = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register = ?, user_uodate = ? WHERE id = ?";            
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -61,8 +65,11 @@ public class KasBonKaryawanDAO {
             stmt.setString(10, kasBonKaryawan.getStatusLunas());
             stmt.setString(11, kasBonKaryawan.getNoRegister());
 
-            if (!isInsert) {
-                stmt.setInt(12, kasBonKaryawan.getId());
+            if (isInsert) {
+                stmt.setString(12, kasBonKaryawan.getUserCreate());
+            } else {
+                stmt.setString(12, kasBonKaryawan.getUserUpdate());
+                stmt.setInt(13, kasBonKaryawan.getId());
             }
 
             stmt.executeUpdate();
@@ -100,7 +107,9 @@ public class KasBonKaryawanDAO {
                         rs.getString("sumber_dana"),
                         rs.getInt("pelunasan"),
                         rs.getString("status_lunas"),
-                        rs.getString("no_register")
+                        rs.getString("no_register"),
+                        rs.getString("user_create"),
+                        rs.getString("user_update")
                     );
                 }
             }
@@ -117,6 +126,10 @@ public class KasBonKaryawanDAO {
     }    
 
     public void delete(int id) throws SQLException {
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
         String sql = "DELETE FROM kas_bon_karyawan WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);

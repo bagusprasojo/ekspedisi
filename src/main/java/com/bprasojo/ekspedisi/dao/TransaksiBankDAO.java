@@ -8,67 +8,54 @@ package com.bprasojo.ekspedisi.dao;
  *
  * @author USER
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.TransaksiBank;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TransaksiBankDAO {
-    private Connection conn;
+public class TransaksiBankDAO extends ParentDAO{
+//    private Connection conn;
 
     public TransaksiBankDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        super();
+        _nama_table_ = "transaksi_bank";
     }
 
     // Menyimpan atau memperbarui transaksi bank
     public void save(TransaksiBank transaksi) throws SQLException {
+        if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
+            throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+        }
+        
         String sql;
         boolean isInsert = transaksi.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO transaksi_bank (tanggal, bank_utama_id, jenis_transaksi_id, debet, kredit, bank_tujuan_id, akun_utama_id, akun_tujuan_id, biaya_adm_bank, uraian) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+            sql = "INSERT INTO " + _nama_table_ + " (tanggal, bank_utama_id, jenis_transaksi_id, debet, kredit, bank_tujuan_id, akun_utama_id, akun_tujuan_id, biaya_adm_bank, uraian, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
         } else {
-            sql = "UPDATE transaksi_bank SET tanggal = ?, bank_utama_id = ?, jenis_transaksi_id = ?, debet = ?, kredit = ?, bank_tujuan_id = ?, akun_utama_id = ?, akun_tujuan_id = ?, biaya_adm_bank=?, uraian = ? WHERE id = ?";
+            sql = "UPDATE " + _nama_table_ + " SET tanggal = ?, bank_utama_id = ?, jenis_transaksi_id = ?, debet = ?, kredit = ?, bank_tujuan_id = ?, akun_utama_id = ?, akun_tujuan_id = ?, biaya_adm_bank=?, uraian = ?, user_update =?  WHERE id = ?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
             stmt.setDate(1, new java.sql.Date(transaksi.getTanggal().getTime()));
             stmt.setInt(2, transaksi.getBankUtamaId());
-            
-            if (transaksi.getJenisTransaksi() != null){
-                stmt.setInt(3, transaksi.getJenisTransaksiId());
-            } else {
-                stmt.setNull(3, Types.INTEGER);
-            }
+            stmt.setInt(3, transaksi.getJenisTransaksiId());
             stmt.setDouble(4, transaksi.getDebet());
             stmt.setDouble(5, transaksi.getKredit());
-
-            if (transaksi.getBankTujuanId() != null) {
-                stmt.setInt(6, transaksi.getBankTujuanId());
-            } else {
-                stmt.setNull(6, Types.INTEGER);
-            }
-
+            stmt.setInt(6, transaksi.getBankTujuanId());
             stmt.setInt(7, transaksi.getAkunUtamaId());
-
-            if (transaksi.getAkunTujuanId() != null) {
-                stmt.setInt(8, transaksi.getAkunTujuanId());
-            } else {
-                stmt.setNull(8, Types.INTEGER);
-            }
-            
-            stmt.setInt(9, transaksi.getbiayaAdmBank());
+            stmt.setInt(8, transaksi.getAkunTujuanId());
+            stmt.setInt(9, transaksi.getBiayaAdmBank());
             stmt.setString(10, transaksi.getUraian());
 
-            if (!isInsert) {
-                stmt.setInt(11, transaksi.getId());
+            if (isInsert) {
+                stmt.setString(11, transaksi.getUserCreate());
+            } else {
+                stmt.setString(11, transaksi.getUserUpdate());
+                stmt.setInt(12, transaksi.getId());
             }
 
             stmt.executeUpdate();
@@ -101,7 +88,9 @@ public class TransaksiBankDAO {
                     rs.getInt("akun_utama_id"),
                     rs.getInt("akun_tujuan_id"),
                     rs.getInt("biaya_adm_bank"),
-                    rs.getString("uraian")
+                    rs.getString("uraian"),
+                    rs.getString("user_create"),
+                    rs.getString("user_update")
                 );
             }
         }
@@ -167,7 +156,11 @@ public class TransaksiBankDAO {
     }
     
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM transaksi_bank WHERE id = ?";
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();

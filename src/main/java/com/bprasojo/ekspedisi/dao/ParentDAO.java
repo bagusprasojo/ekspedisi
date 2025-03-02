@@ -42,7 +42,11 @@ public class ParentDAO {
         return null;
     }
     
-    public Date getOldTransDate(int id) throws SQLException {
+    public Date getOldTransDate(int id) throws SQLException {        
+        if (_nama_table_ == null){
+            throw new SQLException("_nama_table_ belum diset");
+        }
+        
         String sql = "SELECT tanggal FROM " + _nama_table_ + " WHERE id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

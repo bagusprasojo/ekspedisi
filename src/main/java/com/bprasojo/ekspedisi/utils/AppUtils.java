@@ -58,6 +58,18 @@ public class AppUtils {
         }
     }
     
+    public static void showErrorDialogSimpan(Exception ex) {
+        String message = "Transaksi tidak bisa disimpan karena : \n " +
+                         ex.getMessage();
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    public static void showErrorDialogHapus(Exception ex) {
+        String message = "Transaksi tidak bisa dihapus karena : \n " +
+                         ex.getMessage();
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
     public static void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

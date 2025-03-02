@@ -88,7 +88,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         setStatusTombol("awal");
         inisialisasiEventTableModel();
         
-         pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNamaAkun, btnAkunTransaksi, cbBank, cbArmada, btnHapusArmada, edTanggal, edUangKeluar, edUangMasuk, edKeterangan));;
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edNamaAkun, btnAkunTransaksi, cbBank, cbArmada, btnHapusArmada, edTanggal, edUangKeluar, edUangMasuk, edKeterangan));;
         
     }
     // </editor-fold>

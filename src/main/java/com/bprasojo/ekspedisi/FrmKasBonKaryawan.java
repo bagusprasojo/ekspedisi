@@ -12,9 +12,9 @@ import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.StakeHolder;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
-import java.awt.event.ItemEvent;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -53,8 +52,12 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     private boolean SilakanLoadData = false;
     
     private DefaultTableModel tableModel;
-    private boolean showLoopUpBank = false;
+    private User user;
     
+    public FrmKasBonKaryawan(User user) {
+        this();
+        this.user = user;
+    }
     public FrmKasBonKaryawan() {
         initComponents();
 //        lblBank.setText("");
@@ -522,7 +525,6 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         cbJenisKasBon.setSelectedIndex(0);
         cbBank.setSelectedIndex(0);
         
-        showLoopUpBank = true;
         
         setStatusTombol("tambah");
     }//GEN-LAST:event_btnNewActionPerformed
@@ -553,7 +555,11 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             
             kasBonKaryawan.setNominal(((Number)edNominal.getValue()).intValue());
             kasBonKaryawan.setKeterangan(edKeterangan.getText());
+            kasBonKaryawan.setUserCreate(user.getUsername());
+            kasBonKaryawan.setUserUpdate(user.getUsername());
+            
             kasBonKaryawanDAO.save(kasBonKaryawan);
+            
 
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + kasBonKaryawan.getNoRegister());
             LoadDataKasBon(currentPage);
@@ -816,7 +822,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         
                         edTanggal.setDate(kasBonKaryawan.getTanggal());
                         
-                        showLoopUpBank = false;
+//                        showLoopUpBank = false;
                         if (kasBonKaryawan.getBankId() == 0){
                             cbBank.setSelectedIndex(0);
 //                            lblBank.setText("");
@@ -825,7 +831,6 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                             bank = bankDAO.getById(kasBonKaryawan.getBankId());
 //                            lblBank.setText(kasBonKaryawan.getBank().toString());
                         }
-                        showLoopUpBank = true;
                         
                         edNominal.setValue(kasBonKaryawan.getNominal());
                         edKeterangan.setText(kasBonKaryawan.getKeterangan());
@@ -876,7 +881,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         AppUtils.NumericFormat(saldo),
                         (String) row.get("status_lunas"),
                         (String) row.get("keterangan"),
-                        "Lia"
+                        (String) row.get("user_create")
                 });
         }
         

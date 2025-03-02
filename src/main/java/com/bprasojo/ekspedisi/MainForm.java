@@ -378,7 +378,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        FrmTransaksiBank frmTransaksiBank = new FrmTransaksiBank();
+        FrmTransaksiBank frmTransaksiBank = new FrmTransaksiBank(user);
         desktopPane.add(frmTransaksiBank);
         frmTransaksiBank.setVisible(true);
     }//GEN-LAST:event_jMenuItem8ActionPerformed
@@ -402,7 +402,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        FrmKasBonKaryawan frmKasBonKaryawan = new FrmKasBonKaryawan();
+        FrmKasBonKaryawan frmKasBonKaryawan = new FrmKasBonKaryawan(user);
         desktopPane.add(frmKasBonKaryawan);
         frmKasBonKaryawan.setVisible(true);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
