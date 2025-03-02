@@ -8,36 +8,35 @@ package com.bprasojo.ekspedisi.dao;
  *
  * @author USER
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class TransaksiPembelianBBMDAO {
-    private Connection conn;
+public class TransaksiPembelianBBMDAO extends ParentDAO {
+    
 
     public TransaksiPembelianBBMDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "transaksi_pembelian_bbm";
     }
 
     // Menyimpan atau memperbarui data transaksi pembelian BBM
     public void save(TransaksiPembelianBBM transaksi) throws SQLException {
+        if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
+            throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+        }
+        
         String sql;
         boolean isInsert = transaksi.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO transaksi_pembelian_bbm (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , user_create) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
+            sql = "INSERT INTO " + _nama_table_ + " (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , user_create) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
         } else {
-            sql = "UPDATE transaksi_pembelian_bbm SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , user_update =?  WHERE id = ?";
+            sql = "UPDATE " + _nama_table_ + " SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , user_update =?  WHERE id = ?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -195,7 +194,11 @@ public class TransaksiPembelianBBMDAO {
 
     // Menghapus transaksi berdasarkan ID
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM transaksi_pembelian_bbm WHERE id = ?";
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();

@@ -580,7 +580,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             
 
         } catch (SQLException ex) {
-            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+            AppUtils.showErrorDialog("Ada kesalahan dengan error :\n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -675,7 +675,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
                 setStatusTombol("awal");
                 LoadDataTransaksiKas(currentPage);
             } catch (SQLException ex) {
-                Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+                AppUtils.showErrorDialog("Ada kesalahan dengan error : \n" + ex.getMessage());
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed

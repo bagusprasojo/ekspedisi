@@ -34,6 +34,12 @@ import net.sf.jasperreports.view.JasperViewer;
  * @author USER
  */
 public class AppUtils {
+    public static int dateToInt(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String formattedDate = sdf.format(date);
+        
+        return Integer.parseInt(formattedDate);
+    }
     public static void setDefaultValues(JComponent... components) {
         for (JComponent component : components) {
             if (component instanceof JFormattedTextField) {
@@ -101,10 +107,12 @@ public class AppUtils {
         
     }
     
-    public static void SetTanggalToday(JDateChooser edTanggal){
+    public static Date now(){
         Calendar calendar = Calendar.getInstance();
-        Date today = calendar.getTime(); 
-        edTanggal.setDate(today);    
+        return calendar.getTime(); 
+    }
+    public static void SetTanggalToday(JDateChooser edTanggal){
+        edTanggal.setDate(AppUtils.now());    
     }
     
     public static void SetTanggalAwalBulan(JDateChooser edTanggal){

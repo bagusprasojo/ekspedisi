@@ -8,32 +8,27 @@ package com.bprasojo.ekspedisi.dao;
  *
  * @author USER
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.TransaksiKas;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 
 
-public class TransaksiKasDAO {
-    private Connection conn;
+public class TransaksiKasDAO extends ParentDAO{
+//    private Connection conn;
 
     // Constructor untuk inisialisasi koneksi database
     public TransaksiKasDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "transaksi_kas";
     }
     
-    public Connection getConnection(){
-        return this.conn;
-    }
+//    public Connection getConnection(){
+//        return this.conn;
+//    }
 
     public List<Map<String, Object>> getTransaksiKasByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -95,52 +90,60 @@ public class TransaksiKasDAO {
     }
 
     public void save(TransaksiKas transaksiKas) throws SQLException {
-    String sql;
-    boolean isInsert = transaksiKas.getId() == 0;
-
-    if (isInsert) {
-        sql = "INSERT INTO transaksi_kas (akun_kas_Id, akun_transaksi_id, tanggal, nominal_masuk, nominal_keluar, keterangan, armada_id, bank_id, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
-    } else {
-        sql = "UPDATE transaksi_kas SET akun_kas_Id = ?, akun_transaksi_id = ?, tanggal = ?, nominal_masuk = ?, nominal_keluar = ?, keterangan = ?, armada_id = ?, bank_id = ?, user_update=? WHERE id = ?";
-    }
-
-    try (PreparedStatement statement = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
-        statement.setInt(1, transaksiKas.getAkunKasId());
-        statement.setInt(2, transaksiKas.getAkunTransaksiId());
         
-        Date tanggal = new Date(transaksiKas.getTanggal().getTime());
-        statement.setDate(3, tanggal);
-        statement.setInt(4, transaksiKas.getNominalMasuk());
-        statement.setInt(5, transaksiKas.getNominalKeluar());
-        statement.setString(6, transaksiKas.getKeterangan());
-        statement.setInt(7, transaksiKas.getArmadaId());
-        statement.setInt(8, transaksiKas.getBankId());
+        if (!validasiClosing(transaksiKas.getId(), transaksiKas.getTanggal())){
+            throw new SQLException("Transaksi tidak bisa disimpan karena sudah closing");
+        }
+        String sql;
+        boolean isInsert = transaksiKas.getId() == 0;
 
         if (isInsert) {
-            statement.setString(9, transaksiKas.getUserCreate());
+            sql = "INSERT INTO " + _nama_table_ + " (akun_kas_Id, akun_transaksi_id, tanggal, nominal_masuk, nominal_keluar, keterangan, armada_id, bank_id, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
         } else {
-            statement.setString(9, transaksiKas.getUserUpdate());
-            statement.setInt(10, transaksiKas.getId()); // ID hanya ditambahkan jika UPDATE
+            sql = "UPDATE " + _nama_table_ + " SET akun_kas_Id = ?, akun_transaksi_id = ?, tanggal = ?, nominal_masuk = ?, nominal_keluar = ?, keterangan = ?, armada_id = ?, bank_id = ?, user_update=? WHERE id = ?";
         }
 
-        statement.executeUpdate();
+        try (PreparedStatement statement = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
+            statement.setInt(1, transaksiKas.getAkunKasId());
+            statement.setInt(2, transaksiKas.getAkunTransaksiId());
 
-        // Jika INSERT, ambil ID yang dihasilkan
-        if (isInsert) {
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    transaksiKas.setId(generatedKeys.getInt(1));
+            Date tanggal = new Date(transaksiKas.getTanggal().getTime());
+            statement.setDate(3, tanggal);
+            statement.setInt(4, transaksiKas.getNominalMasuk());
+            statement.setInt(5, transaksiKas.getNominalKeluar());
+            statement.setString(6, transaksiKas.getKeterangan());
+            statement.setInt(7, transaksiKas.getArmadaId());
+            statement.setInt(8, transaksiKas.getBankId());
+
+            if (isInsert) {
+                statement.setString(9, transaksiKas.getUserCreate());
+            } else {
+                statement.setString(9, transaksiKas.getUserUpdate());
+                statement.setInt(10, transaksiKas.getId()); // ID hanya ditambahkan jika UPDATE
+            }
+
+            statement.executeUpdate();
+
+            // Jika INSERT, ambil ID yang dihasilkan
+            if (isInsert) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        transaksiKas.setId(generatedKeys.getInt(1));
+                    }
                 }
             }
         }
     }
-}
 
     
 
     // Menghapus data TransaksiKas
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM transaksi_kas WHERE id = ?";
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Transaksi tidak bisa dihapus karena sudah closing");
+        }
+        
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, id);
             statement.executeUpdate();
