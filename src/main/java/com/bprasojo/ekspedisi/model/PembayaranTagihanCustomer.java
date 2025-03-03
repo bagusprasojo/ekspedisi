@@ -33,10 +33,14 @@ public class PembayaranTagihanCustomer {
     private Perkiraan perkiraanKas;
     private Bank bank;
     private Perkiraan perkiraanPph;
+    private String userCreate;
+    private String userUpdate;
 
     public PembayaranTagihanCustomer() {}
 
-    public PembayaranTagihanCustomer(int id, String noRegister, int tagihanCustomerId, Date tanggal, int nominalKas, int pph,int pphPersen, int perkiraanKasId, int bankId, int perkiraanPphId, String keterangan, String sumberDana, String terbilang) {
+    public PembayaranTagihanCustomer(int id, String noRegister, int tagihanCustomerId, Date tanggal, int nominalKas, int pph,int pphPersen, int perkiraanKasId, int bankId, int perkiraanPphId, String keterangan, String sumberDana, String terbilang, String userCreate, String userUpdate) {
+        this();
+        
         this.id = id;
         this.noRegister = noRegister;
         this.tagihanCustomerId = tagihanCustomerId;
@@ -50,6 +54,8 @@ public class PembayaranTagihanCustomer {
         this.keterangan = keterangan;
         this.sumberDana = sumberDana;
         this.terbilang = terbilang;
+        this.userCreate = userCreate;
+        this.userUpdate = userUpdate;
     }
 
     // Getter dan Setter
@@ -139,5 +145,11 @@ public class PembayaranTagihanCustomer {
     public Integer getTotal(){
         return nominalKas + pph;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }
 

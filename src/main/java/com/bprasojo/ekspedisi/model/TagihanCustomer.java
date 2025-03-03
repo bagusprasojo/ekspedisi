@@ -28,6 +28,8 @@ public class TagihanCustomer {
     private String statusLunas;
     private String keterangan;
     private int perkiraanPiutangId;
+    private String userCreate;
+    private String userUpdate;
     
     private transient StakeHolder customer;
     private transient Perkiraan perkiraanPiutang;
@@ -37,7 +39,7 @@ public class TagihanCustomer {
 
     public TagihanCustomer(int id, int customerId, String noInvoice, Date tanggal, String pekerjaan,
                            int nilaiPekerjaan, int ppnPersen, int ppn, int total,
-                           String terbilang, int pelunasan, String statusLunas, String keterangan, int perkiraanPiutangId) {
+                           String terbilang, int pelunasan, String statusLunas, String keterangan, int perkiraanPiutangId, String userCreate, String userUpdate) {
         this.id = id;
         this.customerId = customerId;
         this.noInvoice = noInvoice;
@@ -55,6 +57,8 @@ public class TagihanCustomer {
         
         this.customer = null;
         this.perkiraanPiutang = null;
+        this.userCreate = userCreate;
+        this.userUpdate = userUpdate;
     }
 
     // Getter & Setter
@@ -125,5 +129,11 @@ public class TagihanCustomer {
     public Integer getSaldo(){
         return total - pelunasan;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }
 

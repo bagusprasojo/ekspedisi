@@ -11,6 +11,7 @@ import com.bprasojo.ekspedisi.model.Config;
 import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
@@ -52,6 +53,12 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     int currentPage = 1;
     
     private DefaultTableModel tableModel;
+    private User user;
+    
+    public FrmInvoice(User user) {
+        this();
+        this.user = user;
+    }
     
     public FrmInvoice() {
         initComponents();
@@ -122,12 +129,10 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         btnCustomer = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         edNilaiPekerjaan = new javax.swing.JFormattedTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        edPekerjaan = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        edKeterangan = new javax.swing.JTextArea();
         edPPN = new javax.swing.JFormattedTextField();
         edTotal = new javax.swing.JFormattedTextField();
+        edPekerjaan = new javax.swing.JTextField();
+        edKeterangan = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -310,12 +315,6 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             }
         });
 
-        edPekerjaan.setLineWrap(true);
-        jScrollPane2.setViewportView(edPekerjaan);
-
-        edKeterangan.setLineWrap(true);
-        jScrollPane3.setViewportView(edKeterangan);
-
         edPPN.setEditable(false);
         edPPN.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
         edPPN.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -333,6 +332,12 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         edTotal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 edTotalActionPerformed(evt);
+            }
+        });
+
+        edPekerjaan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edPekerjaanActionPerformed(evt);
             }
         });
 
@@ -355,7 +360,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                         .addComponent(btnCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(edNoInvoice, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
+                    .addComponent(edPekerjaan))
                 .addGap(18, 18, 18)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -365,10 +370,10 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(edNilaiPekerjaan)
-                    .addComponent(jScrollPane3)
                     .addComponent(edPPN)
-                    .addComponent(edTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                    .addComponent(edTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(edKeterangan))
+                .addGap(0, 130, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,13 +392,10 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(edTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel11))
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel9))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlInputLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(pnlInputLayout.createSequentialGroup()
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
@@ -405,14 +407,13 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                             .addComponent(btnCustomer))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel7))
+                            .addComponent(jLabel6)
                             .addGroup(pnlInputLayout.createSequentialGroup()
                                 .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(edPekerjaan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7))))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -590,6 +591,8 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             
             String terbilang = AppUtils.terbilang(invoice.getTotal()) + " Rupiah";
             invoice.setTerbilang(terbilang);
+            invoice.setUserCreate(user.getUsername());
+            invoice.setUserUpdate(user.getUsername());
             
             invoiceDAO.save(invoice);
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + invoice.getNoInvoice());
@@ -713,6 +716,10 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_edTotalActionPerformed
 
+    private void edPekerjaanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edPekerjaanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edPekerjaanActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
@@ -727,11 +734,11 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSimpan;
     private javax.swing.JTextField edCustomer;
     private javax.swing.JTextField edFilter;
-    private javax.swing.JTextArea edKeterangan;
+    private javax.swing.JTextField edKeterangan;
     private javax.swing.JFormattedTextField edNilaiPekerjaan;
     private javax.swing.JTextField edNoInvoice;
     private javax.swing.JFormattedTextField edPPN;
-    private javax.swing.JTextArea edPekerjaan;
+    private javax.swing.JTextField edPekerjaan;
     private com.toedter.calendar.JDateChooser edTanggal;
     private com.toedter.calendar.JDateChooser edTglAkhir;
     private com.toedter.calendar.JDateChooser edTglAwal;
@@ -750,8 +757,6 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlInput;
@@ -921,7 +926,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
                     AppUtils.NumericFormat(saldo),
                     (String) row.get("status_lunas"),
                     (String) row.get("keterangan"),
-                    (String) row.get("pc")
+                    (String) row.get("user_create")
                 });
             }
             

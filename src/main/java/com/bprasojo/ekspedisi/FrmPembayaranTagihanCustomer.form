@@ -302,19 +302,17 @@
                       </Group>
                       <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="edNominal" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cbViaBank" min="-2" pref="92" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="lblBank" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="edNominal" alignment="0" max="32767" attributes="0"/>
+                              <Component id="edTanggal" alignment="1" pref="137" max="32767" attributes="0"/>
+                              <Component id="edPPHPersen" alignment="0" max="32767" attributes="0"/>
+                              <Component id="edTotal" alignment="0" max="32767" attributes="0"/>
+                              <Component id="edPPH" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="edTanggal" alignment="1" max="32767" attributes="0"/>
-                          <Component id="edPPHPersen" alignment="0" max="32767" attributes="0"/>
-                          <Component id="edTotal" alignment="0" max="32767" attributes="0"/>
+                          <Component id="cbBank" max="32767" attributes="0"/>
                           <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
-                          <Component id="edPPH" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="19" max="32767" attributes="0"/>
+                      <EmptySpace pref="200" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -374,8 +372,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="cbViaBank" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lblBank" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cbBank" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -457,22 +454,14 @@
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="edTanggal">
             </Component>
-            <Component class="javax.swing.JComboBox" name="cbViaBank">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
-                    <StringItem index="0" value="Tunai"/>
-                    <StringItem index="1" value="Via Bank"/>
-                  </StringArray>
-                </Property>
-              </Properties>
+            <Component class="javax.swing.JComboBox" name="cbBank">
               <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbViaBankItemStateChanged"/>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbViaBankActionPerformed"/>
-                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="cbViaBankPropertyChange"/>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbBankItemStateChanged"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbBankActionPerformed"/>
+                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="cbBankPropertyChange"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Bank&gt;"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="edNominal">
@@ -493,11 +482,6 @@
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="text" type="java.lang.String" value="Keterangan"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="lblBank">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="lblBank"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel11">

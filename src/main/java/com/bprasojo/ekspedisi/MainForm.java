@@ -414,7 +414,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        FrmPembayaranKasBon frmPembayaranKasBon = new FrmPembayaranKasBon();
+        FrmPembayaranKasBon frmPembayaranKasBon = new FrmPembayaranKasBon(user);
         desktopPane.add(frmPembayaranKasBon);
         frmPembayaranKasBon.setVisible(true);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
@@ -436,13 +436,13 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem16ActionPerformed
-        FrmPembayaranTagihanCustomer frmPembayaranTagihanCustomer = new FrmPembayaranTagihanCustomer();
+        FrmPembayaranTagihanCustomer frmPembayaranTagihanCustomer = new FrmPembayaranTagihanCustomer(user);
         desktopPane.add(frmPembayaranTagihanCustomer);
         frmPembayaranTagihanCustomer.setVisible(true);
     }//GEN-LAST:event_jMenuItem16ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        FrmInvoice frmInvoice = new FrmInvoice();
+        FrmInvoice frmInvoice = new FrmInvoice(user);
         desktopPane.add(frmInvoice);
         frmInvoice.setVisible(true);
                 

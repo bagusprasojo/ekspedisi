@@ -29,6 +29,8 @@ public class KasBonKaryawanDAO extends ParentDAO{
         } catch (SQLException ex) {
             Logger.getLogger(KasBonKaryawanDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        _nama_table_ = "kas_bon_karyawan";
     }
 
     public void save(KasBonKaryawan kasBonKaryawan) throws SQLException {
@@ -47,9 +49,9 @@ public class KasBonKaryawanDAO extends ParentDAO{
 
         String sql;
         if (isInsert){ 
-            sql = "INSERT INTO kas_bon_karyawan (tanggal, karyawan_id, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO " + _nama_table_ + " (tanggal, karyawan_id, perkiraan_pinjaman_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, pelunasan, status_lunas, no_register, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {    
-            sql = "UPDATE kas_bon_karyawan SET tanggal = ?, karyawan_id = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register = ?, user_uodate = ? WHERE id = ?";            
+            sql = "UPDATE " + _nama_table_ + " SET tanggal = ?, karyawan_id = ?, perkiraan_pinjaman_id = ?, perkiraan_kas_id = ?, nominal = ?, keterangan = ?, bank_id = ?, sumber_dana = ?, pelunasan = ?, status_lunas = ?, no_register = ?, user_update = ? WHERE id = ?";            
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
@@ -130,7 +132,7 @@ public class KasBonKaryawanDAO extends ParentDAO{
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         
-        String sql = "DELETE FROM kas_bon_karyawan WHERE id = ?";
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();

@@ -10,6 +10,7 @@ import com.bprasojo.ekspedisi.dao.TagihanCustomerDAO;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.PembayaranTagihanCustomer;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
+import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -42,7 +44,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     PembayaranTagihanCustomer pembayaranTagihanCustomer = null;
     PembayaranTagihanCustomerDAO pembayaranTagihanCustomerDAO = null;
     
-    Bank bank = null;    
+//    Bank bank = null;    
     BankDAO bankDAO = null;
     
     TagihanCustomer tagihanCustomer = null;
@@ -53,13 +55,18 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     
     private DefaultTableModel tableModel;
     private boolean showLoopUpBank = false;
+    private User user;
     
+    public FrmPembayaranTagihanCustomer(User user) {
+        this();
+        this.user = user;
+    
+    }
     public FrmPembayaranTagihanCustomer() {
         initComponents();
         
-        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edInvoice, btnInvoice, edTanggal, cbViaBank, edNominal, edPPHPersen, edPPH, edTotal, edKeterangan));
-        lblBank.setText("                               ");
-        
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edInvoice, btnInvoice, edTanggal, cbBank, edNominal, edPPHPersen, edPPH, edTotal, edKeterangan));
+
         try {
             setMaximum(true);
         } catch (PropertyVetoException ex) {
@@ -74,6 +81,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         AppUtils.SetTanggalToday(edTglAkhir);
         edFilter.setText("");
         
+        LoadBank();
         InisialisasiTablePembayaranTagihanCustomer();
         
         SilakanLoadData = true;
@@ -110,10 +118,9 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         edTanggal = new com.toedter.calendar.JDateChooser();
-        cbViaBank = new javax.swing.JComboBox<>();
+        cbBank = new javax.swing.JComboBox<>();
         edNominal = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
-        lblBank = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         eNoRegister = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
@@ -290,20 +297,19 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Nominal Kas/Bank");
 
-        cbViaBank.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tunai", "Via Bank" }));
-        cbViaBank.addItemListener(new java.awt.event.ItemListener() {
+        cbBank.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbViaBankItemStateChanged(evt);
+                cbBankItemStateChanged(evt);
             }
         });
-        cbViaBank.addActionListener(new java.awt.event.ActionListener() {
+        cbBank.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbViaBankActionPerformed(evt);
+                cbBankActionPerformed(evt);
             }
         });
-        cbViaBank.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        cbBank.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                cbViaBankPropertyChange(evt);
+                cbBankPropertyChange(evt);
             }
         });
 
@@ -317,8 +323,6 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Keterangan");
-
-        lblBank.setText("lblBank");
 
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("Nama");
@@ -456,17 +460,15 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                             .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(6, 6, 6)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(edNominal)
-                    .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblBank, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(edPPHPersen)
-                    .addComponent(edTotal)
-                    .addComponent(jScrollPane3)
-                    .addComponent(edPPH))
-                .addContainerGap(19, Short.MAX_VALUE))
+                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(edNominal)
+                        .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                        .addComponent(edPPHPersen)
+                        .addComponent(edTotal)
+                        .addComponent(edPPH))
+                    .addComponent(cbBank, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addContainerGap(200, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -513,8 +515,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                     .addGroup(pnlInputLayout.createSequentialGroup()
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
-                            .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblBank))
+                            .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -675,7 +676,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         
         pembayaranTagihanCustomer = new PembayaranTagihanCustomer();
         tagihanCustomer = null;
-        bank = null;
+//        bank = null;
         
         AppUtils.setDefaultValues(edInvoice, 
                                     edNilaiPekerjaan, 
@@ -688,11 +689,10 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                                     edTanggal,
                                     edNominal,
                                     edKeterangan,
-                                    cbViaBank,
+                                    cbBank,
                                     edPPH,
                                     edPPHPersen,
-                                    edTotal,
-                                    lblBank);  
+                                    edTotal);  
         
         
         showLoopUpBank = true;
@@ -711,16 +711,12 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
 
         try {
             pembayaranTagihanCustomer.setTagihanCustomerId(tagihanCustomer.getId());
-            pembayaranTagihanCustomer.setSumberDana(cbViaBank.getSelectedItem().toString());
+            pembayaranTagihanCustomer.setSumberDana(cbBank.getSelectedItem().toString());
             pembayaranTagihanCustomer.setTanggal(edTanggal.getDate());
             
-            if (cbViaBank.getSelectedIndex() == 0){
-                pembayaranTagihanCustomer.setBankId(0);
-                pembayaranTagihanCustomer.setPerkiraanKasId(4);
-            } else {
-                pembayaranTagihanCustomer.setBankId(bank.getId());
-                pembayaranTagihanCustomer.setPerkiraanKasId(bank.getAkun().getId());
-            }
+            Bank selectedBank = (Bank) cbBank.getSelectedItem();
+            pembayaranTagihanCustomer.setBankId(selectedBank.getId());
+            pembayaranTagihanCustomer.setPerkiraanKasId(selectedBank.getAkun().getId());            
             
             pembayaranTagihanCustomer.setNominalKas(((Number)edNominal.getValue()).intValue());
             pembayaranTagihanCustomer.setPphPersen(((Number)edPPHPersen.getValue()).intValue());
@@ -730,6 +726,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             String terbilang = AppUtils.terbilang(pembayaranTagihanCustomer.getNominalKas()) + " Rupiah";
             pembayaranTagihanCustomer.setTerbilang(terbilang);
             
+            pembayaranTagihanCustomer.setUserCreate(user.getUsername());
+            pembayaranTagihanCustomer.setUserUpdate(user.getUsername());
             pembayaranTagihanCustomerDAO.save(pembayaranTagihanCustomer);
 
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + pembayaranTagihanCustomer.getNoRegister());
@@ -814,44 +812,44 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnInvoiceActionPerformed
 
-    private void cbViaBankPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbViaBankPropertyChange
+    private void cbBankPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbBankPropertyChange
 
-    }//GEN-LAST:event_cbViaBankPropertyChange
+    }//GEN-LAST:event_cbBankPropertyChange
 
-    private void cbViaBankItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbViaBankItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED && showLoopUpBank){
-            if (cbViaBank.getSelectedIndex() <= 0){
-                bank = null;
-                lblBank.setText("");
-            } else {
-                String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
-                LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
-                Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
-                if (selectedRecord != null) {
-                    try {
-                        // Mengambil nilai dengan nama kolom
-                        String no_rekening = selectedRecord.get("no_rekening").toString();
-                        bank = bankDAO.getBankByNoRekening(no_rekening);
+    private void cbBankItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbBankItemStateChanged
+//        if (evt.getStateChange() == ItemEvent.SELECTED && showLoopUpBank){
+//            if (cbBank.getSelectedIndex() <= 0){
+//                bank = null;
+//                lblBank.setText("");
+//            } else {
+//                String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
+//                LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+//                Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+//                if (selectedRecord != null) {
+//                    try {
+//                        // Mengambil nilai dengan nama kolom
+//                        String no_rekening = selectedRecord.get("no_rekening").toString();
+//                        bank = bankDAO.getBankByNoRekening(no_rekening);
+//
+//                        if (bank != null){
+//                            lblBank.setText(bank.toString());
+//                        } else {
+//                            lblBank.setText("");
+//                        }
+//                    } catch (SQLException ex) {
+//                        Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
+//                }
+//            }
+//        }
+    }//GEN-LAST:event_cbBankItemStateChanged
 
-                        if (bank != null){
-                            lblBank.setText(bank.toString());
-                        } else {
-                            lblBank.setText("");
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
-                }
-            }
-        }
-    }//GEN-LAST:event_cbViaBankItemStateChanged
-
-    private void cbViaBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbViaBankActionPerformed
+    private void cbBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbBankActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cbViaBankActionPerformed
+    }//GEN-LAST:event_cbBankActionPerformed
 
     private void edNominalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edNominalPropertyChange
         hitungTotal();
@@ -885,7 +883,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
-    private javax.swing.JComboBox<String> cbViaBank;
+    private javax.swing.JComboBox<Bank> cbBank;
     private javax.swing.JTextField eNoRegister;
     private javax.swing.JTextArea edAlamat;
     private javax.swing.JTextField edFilter;
@@ -927,7 +925,6 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel lblBank;
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlNextPrev;
@@ -981,15 +978,9 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             return false;
         }
         
-        if (cbViaBank.getSelectedIndex() < 0){
-            AppUtils.showWarningDialog("Via bank belum dipilih");
-            cbViaBank.requestFocus();
-            return false;
-        }
-        
-        if (cbViaBank.getSelectedIndex() == 1 && bank == null){
+        if (cbBank.getSelectedIndex() < 0){
             AppUtils.showWarningDialog("Bank belum dipilih");
-            cbViaBank.requestFocus();
+            cbBank.requestFocus();
             return false;
         }
         
@@ -1038,16 +1029,11 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                         
                         edTanggal.setDate(pembayaranTagihanCustomer.getTanggal());
                         
-                        showLoopUpBank = false;
-                        if (pembayaranTagihanCustomer.getBankId() == 0){
-                            cbViaBank.setSelectedIndex(0);
-                            lblBank.setText("");
+                        if (pembayaranTagihanCustomer.getBankId() > 0){
+                            AppUtils.setSelectedIndexById(cbBank, pembayaranTagihanCustomer.getBankId());
                         } else {
-                            cbViaBank.setSelectedIndex(1);
-                            bank = bankDAO.getById(pembayaranTagihanCustomer.getBankId());
-                            lblBank.setText(pembayaranTagihanCustomer.getBank().toString());
+                          cbBank.setSelectedIndex(-1);
                         }
-                        showLoopUpBank = true;
                         
                         edNominal.setValue(pembayaranTagihanCustomer.getNominalKas());
                         edPPHPersen.setValue(pembayaranTagihanCustomer.getPphPersen());
@@ -1086,7 +1072,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                         AppUtils.NumericFormat(pph),                        
                         AppUtils.NumericFormat(pembayaran),
                         (String) row.get("keterangan"),
-                        "Lia"
+                        (String) row.get("user_create")
                 });
         }
         
@@ -1102,7 +1088,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edPPHPersen.setEnabled(enable);
         edTotal.setEnabled(enable);
         edTanggal.setEnabled(enable);
-        cbViaBank.setEnabled(enable);
+        cbBank.setEnabled(enable);
         edNominal.setEnabled(enable);
         edKeterangan.setEnabled(enable);
     }
@@ -1164,5 +1150,20 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         pph = ((Number)edPPH.getValue()).intValue();
       
       edTotal.setValue(nominalKas + pph);
+    }
+    
+    private void LoadBank() {
+        try {
+            List<Bank> banks = bankDAO.getAllBank();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Bank> model = new DefaultComboBoxModel<>();
+            for (Bank b : banks) {
+                model.addElement(b); // Menambahkan objek Perkiraan ke model
+            }
+            cbBank.setModel(model);
+        } catch (SQLException ex) {
+            AppUtils.showWarningDialog("Gagal load bank dengan error : \n" + ex.getMessage());
+        }
     }
 }

@@ -78,7 +78,7 @@ public class ParentDAO {
             
             if (oldDateTransInt <= dateClsoingInt){
                return false;
-        }
+            }
         }
         
         return true;

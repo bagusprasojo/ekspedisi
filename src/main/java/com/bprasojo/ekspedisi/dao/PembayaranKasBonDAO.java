@@ -11,6 +11,7 @@ package com.bprasojo.ekspedisi.dao;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import com.bprasojo.ekspedisi.model.PembayaranKasBon;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PembayaranKasBonDAO {
+public class PembayaranKasBonDAO extends ParentDAO{
     private Connection conn;
 
     public PembayaranKasBonDAO() {
@@ -29,13 +30,17 @@ public class PembayaranKasBonDAO {
         } catch (SQLException ex) {
             Logger.getLogger(PembayaranKasBonDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        _nama_table_ = "pembayaran_kas_bon";
     }
 
     public void save(PembayaranKasBon pembayaranKasBon) throws SQLException {
-        // Menyimpan status auto-commit sebelumnya
+        if (!validasiClosing(pembayaranKasBon.getId(), pembayaranKasBon.getTanggal())){
+            throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+        }
+        
+        
         boolean previousAutoCommit = conn.getAutoCommit();
-
-        // Mulai transaksi dengan menonaktifkan auto-commit
         conn.setAutoCommit(false);
 
         try {
@@ -48,12 +53,12 @@ public class PembayaranKasBonDAO {
                 String noRegister = generateNoRegister(pembayaranKasBon.getTanggal());
                 pembayaranKasBon.setNoRegister(noRegister);
 
-                sql = "INSERT INTO pembayaran_kas_bon(tanggal, kas_bon_karyawan_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, no_register) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                sql = "INSERT INTO " + _nama_table_ + " (tanggal, kas_bon_karyawan_id, perkiraan_kas_id, nominal, keterangan, bank_id, sumber_dana, no_register, user_create) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             } else {
                 // kembalikan dulu pelunasan jika kas bon beda
                 kas_bon_old_id = getById(pembayaranKasBon.getId()).getKasBonKaryawanId();
-                sql = "UPDATE pembayaran_kas_bon SET tanggal=?, kas_bon_karyawan_id=?, perkiraan_kas_id=?, nominal=?, keterangan=?, bank_id=?, sumber_dana=?, no_register=? " +
+                sql = "UPDATE " + _nama_table_ + " SET tanggal=?, kas_bon_karyawan_id=?, perkiraan_kas_id=?, nominal=?, keterangan=?, bank_id=?, sumber_dana=?, no_register=?, user_update = ? " +
                       "WHERE id=?";
             }
 
@@ -69,8 +74,11 @@ public class PembayaranKasBonDAO {
                 stmt.setString(8, pembayaranKasBon.getNoRegister());
 
                 // Jika melakukan update, tambahkan ID sebagai parameter terakhir
-                if (pembayaranKasBon.getId() > 0) {
-                    stmt.setInt(9, pembayaranKasBon.getId());
+                if (pembayaranKasBon.getId() <= 0) {
+                    stmt.setString(9, pembayaranKasBon.getUserCreate());
+                } else {
+                    stmt.setString(9, pembayaranKasBon.getUserUpdate());
+                    stmt.setInt(10, pembayaranKasBon.getId());
                 }
 
                 stmt.executeUpdate();
@@ -155,7 +163,10 @@ public class PembayaranKasBonDAO {
                         rs.getString("keterangan"),
                         rs.getInt("bank_Id"),
                         rs.getString("sumber_dana"),
-                        rs.getString("no_register")
+                        rs.getString("no_register"),
+                        rs.getString("user_create"),
+                        rs.getString("user_update")
+                            
                     );
                 }
             }
@@ -166,14 +177,15 @@ public class PembayaranKasBonDAO {
     
 
     public void delete(int id) throws SQLException {
-        // Menyimpan status auto-commit sebelumnya
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
         boolean previousAutoCommit = conn.getAutoCommit();
-
-        // Mulai transaksi dengan menonaktifkan auto-commit
         conn.setAutoCommit(false);
         
         
-        String sql = "DELETE FROM pembayaran_kas_bon WHERE id = ?";
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             PembayaranKasBon pembayaranKasBon = getById(id);
             

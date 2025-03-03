@@ -8,26 +8,21 @@ package com.bprasojo.ekspedisi.dao;
  *
  * @author USER
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class TagihanCustomerDAO {
-    private Connection conn;
+public class TagihanCustomerDAO extends ParentDAO{
+//    private Connection conn;
 
     public TagihanCustomerDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(TagihanCustomerDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "tagihan_customer";
     }
 
     public String generateNoInvoice(java.util.Date inputDate) {
@@ -36,8 +31,8 @@ public class TagihanCustomerDAO {
 
         // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
         String sql = "SELECT MAX(SUBSTRING(no_invoice, 11)) AS last_number " +
-                     "FROM tagihan_customer " +
-                     "WHERE no_invoice LIKE 'INV-" + yearMonth + "%'";
+                     " FROM " + _nama_table_ + 
+                     " WHERE no_invoice LIKE 'INV-" + yearMonth + "%'";
 
         try (Statement stmt = conn.createStatement(); 
             ResultSet rs = stmt.executeQuery(sql)) {
@@ -68,6 +63,10 @@ public class TagihanCustomerDAO {
     }
     // Simpan atau Update
     public void save(TagihanCustomer tagihan) throws SQLException {
+        if (!validasiClosing(tagihan.getId(), tagihan.getTanggal())){
+            throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+        }
+        
         String sql;
         
         if (tagihan.getPelunasan() > 0){
@@ -83,10 +82,10 @@ public class TagihanCustomerDAO {
         boolean isInsert = tagihan.getId() == 0; 
         if (isInsert) {
             tagihan.setNoInvoice(generateNoInvoice(tagihan.getTanggal()));
-            sql = "INSERT INTO tagihan_customer (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan, perkiraan_piutang_id) " +
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+            sql = "INSERT INTO " + _nama_table_ + " (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan, perkiraan_piutang_id, user_create) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
         } else {
-            sql = "UPDATE tagihan_customer SET customer_id=?, no_invoice=?, tanggal=?, pekerjaan=?, nilai_pekerjaan=?, ppn_persen=?, ppn=?, total=?, terbilang=?, pelunasan=?, status_lunas=?, keterangan=?, perkiraan_piutang_id=? WHERE id=?";
+            sql = "UPDATE " + _nama_table_ + " SET customer_id=?, no_invoice=?, tanggal=?, pekerjaan=?, nilai_pekerjaan=?, ppn_persen=?, ppn=?, total=?, terbilang=?, pelunasan=?, status_lunas=?, keterangan=?, perkiraan_piutang_id=?, user_update=? WHERE id=?";
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -106,8 +105,11 @@ public class TagihanCustomerDAO {
             stmt.setString(12, tagihan.getKeterangan());
             stmt.setInt(13, tagihan.getPerkiraanPiutangId());
             
-            if (tagihan.getId() != 0) {
-                stmt.setInt(14, tagihan.getId());
+            if (tagihan.getId() <= 0) {
+                stmt.setString(14, tagihan.getUserCreate());
+            } else {
+                stmt.setString(14, tagihan.getUserUpdate());
+                stmt.setInt(15, tagihan.getId());
             }
 
             stmt.executeUpdate();
@@ -123,6 +125,10 @@ public class TagihanCustomerDAO {
 
     // Hapus data
     public void delete(int id) throws SQLException {
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
         TagihanCustomer invoice = getById(id);
         if (invoice == null){
             throw new SQLException("Data invoice tidak ditemukan");
@@ -132,7 +138,7 @@ public class TagihanCustomerDAO {
             throw new SQLException("Data invoice tidak bisa dihapus karena sudah ada pembayaran");
         }
         
-        String sql = "DELETE FROM tagihan_customer WHERE id=?";
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id=?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -141,7 +147,7 @@ public class TagihanCustomerDAO {
 
     // Dapatkan data berdasarkan ID atau No Invoice
     private TagihanCustomer getByField(String field, Object value) throws SQLException {
-        String sql = "SELECT * FROM tagihan_customer WHERE " + field + " = ?";
+        String sql = "SELECT * FROM " + _nama_table_ + " WHERE " + field + " = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             if (value instanceof Integer) {
                 stmt.setInt(1, (Integer) value);
@@ -165,7 +171,9 @@ public class TagihanCustomerDAO {
                         rs.getInt("pelunasan"),
                         rs.getString("status_lunas"),
                         rs.getString("keterangan"),
-                        rs.getInt("perkiraan_piutang_id")
+                        rs.getInt("perkiraan_piutang_id"),
+                        rs.getString("user_create"),
+                        rs.getString("user_update")
                     );
                 }
             }
@@ -185,7 +193,7 @@ public class TagihanCustomerDAO {
         List<Map<String, Object>> resultList = new ArrayList<>();
 
         // Query dasar
-        String sql = "SELECT a.*, b.nama as nama_customer, 'Lia' as pc FROM tagihan_customer a " 
+        String sql = "SELECT a.*, b.nama as nama_customer FROM " + _nama_table_ + " a " 
                      + " inner join stake_holder b on a.customer_id = b.id "
                      + " WHERE a.tanggal BETWEEN ? AND ? "; 
 

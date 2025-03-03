@@ -11,6 +11,7 @@ package com.bprasojo.ekspedisi.dao;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.PembayaranTagihanCustomer;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,15 +21,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PembayaranTagihanCustomerDAO {
-    private Connection conn;
+public class PembayaranTagihanCustomerDAO extends ParentDAO{
+    
 
     public PembayaranTagihanCustomerDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(PembayaranTagihanCustomerDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "pembayaran_tagihan_customer";
     }
 
     public String generateNoRegister(java.util.Date inputDate) {
@@ -37,7 +35,7 @@ public class PembayaranTagihanCustomerDAO {
 
         // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
         String sql = "SELECT MAX(SUBSTRING(no_register, 11)) AS last_number " +
-                     "FROM pembayaran_tagihan_customer " +
+                     "FROM " + _nama_table_ + " " +
                      "WHERE no_register LIKE 'BKM-" + yearMonth + "%'";
 
         try (Statement stmt = conn.createStatement(); 
@@ -72,7 +70,7 @@ public class PembayaranTagihanCustomerDAO {
         int pelunasan = 0;
         
         String sql = "select sum(nominal_kas + pph) as total_nominal "
-                     + " from pembayaran_tagihan_customer "
+                     + " from " + _nama_table_ + " "
                      + " where tagihan_customer_id =? ";
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -106,14 +104,17 @@ public class PembayaranTagihanCustomerDAO {
     }
     
     public void delete(int id) throws SQLException {
-        // Menyimpan status auto-commit sebelumnya
+        if (!validasiClosing(id, AppUtils.now())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
         boolean previousAutoCommit = conn.getAutoCommit();
 
         // Mulai transaksi dengan menonaktifkan auto-commit
         conn.setAutoCommit(false);
         
         
-        String sql = "DELETE FROM pembayaran_tagihan_customer WHERE id = ?";
+        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             PembayaranTagihanCustomer pembayaranTagihanCustomer = getById(id);
             
@@ -148,7 +149,7 @@ public class PembayaranTagihanCustomerDAO {
     private PembayaranTagihanCustomer getByField(String field, Object value) throws SQLException {
         PembayaranTagihanCustomer pembayaran = null;
         
-        String sql = "SELECT * FROM pembayaran_tagihan_customer WHERE " + field + " = ?";
+        String sql = "SELECT * FROM " + _nama_table_ + " WHERE " + field + " = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             if (value instanceof Integer) {
                 stmt.setInt(1, (Integer) value);
@@ -179,6 +180,10 @@ public class PembayaranTagihanCustomerDAO {
     }
     
     public void save(PembayaranTagihanCustomer pembayaran) throws SQLException {
+        if (!validasiClosing(pembayaran.getId(), pembayaran.getTanggal())){
+            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+        }
+        
         boolean previousAutoCommit = conn.getAutoCommit();
         conn.setAutoCommit(false);
         
@@ -189,10 +194,10 @@ public class PembayaranTagihanCustomerDAO {
                 String no_register = generateNoRegister(pembayaran.getTanggal());
                 pembayaran.setNoRegister(no_register);
                 
-                sql = "INSERT INTO pembayaran_tagihan_customer (no_register, tagihan_customer_id, tanggal, nominal_kas, pph,pph_persen, perkiraan_kas_id, bank_id, perkiraan_pph_id, keterangan, sumber_dana, terbilang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+                sql = "INSERT INTO " + _nama_table_ + " (no_register, tagihan_customer_id, tanggal, nominal_kas, pph,pph_persen, perkiraan_kas_id, bank_id, perkiraan_pph_id, keterangan, sumber_dana, terbilang, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
             } else {
                 tagihan_customer_old_id = getById(pembayaran.getId()).getTagihanCustomerId();
-                sql = "UPDATE pembayaran_tagihan_customer SET no_register = ?, tagihan_customer_id = ?, tanggal = ?, nominal_kas = ?, pph = ?,pph_persen = ?, perkiraan_kas_id = ?, bank_id = ?, perkiraan_pph_id = ?, keterangan = ?, sumber_dana = ?, terbilang = ?  WHERE id = ?";
+                sql = "UPDATE " + _nama_table_ + " SET no_register = ?, tagihan_customer_id = ?, tanggal = ?, nominal_kas = ?, pph = ?,pph_persen = ?, perkiraan_kas_id = ?, bank_id = ?, perkiraan_pph_id = ?, keterangan = ?, sumber_dana = ?, terbilang = ?, user_update = ?  WHERE id = ?";
             }
             
             try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -209,8 +214,11 @@ public class PembayaranTagihanCustomerDAO {
                 stmt.setString(11, pembayaran.getSumberDana());
                 stmt.setString(12, pembayaran.getTerbilang());
                 
-                if (pembayaran.getId() != 0) {
-                    stmt.setInt(13, pembayaran.getId());
+                if (pembayaran.getId() <= 0) {
+                    stmt.setString(13, pembayaran.getUserCreate());
+                } else {
+                    stmt.setString(13, pembayaran.getUserUpdate());
+                    stmt.setInt(14, pembayaran.getId());
                 }
                 
                 int affectedRows = stmt.executeUpdate();
@@ -247,7 +255,7 @@ public class PembayaranTagihanCustomerDAO {
         List<Map<String, Object>> resultList = new ArrayList<>();
 
         String sql = "select a.*, (a.nominal_kas + a.pph) as pembayaran, b.no_invoice, b.total as piutang, c.nama, c.alamat" 
-                     + " from pembayaran_tagihan_customer a " 
+                     + " from " + _nama_table_ + " a " 
                      + " inner join tagihan_customer b on a.tagihan_customer_id = b.id" 
                      + " inner join stake_holder c on b.customer_id = c.id "
                      + " WHERE a.tanggal BETWEEN ? AND ?"; 
