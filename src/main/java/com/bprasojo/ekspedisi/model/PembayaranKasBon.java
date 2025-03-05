@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.model;
 
 /**
  *
- * @author USER
  */
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.KasBonKaryawanDAO;

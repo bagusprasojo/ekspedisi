@@ -12,7 +12,6 @@ import java.util.Date;
 
 /**
  *
- * @author USER
  */
 public class PembayaranTagihanCustomer {
     private int id;

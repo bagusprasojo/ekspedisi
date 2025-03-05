@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.dao;
 
 /**
  *
- * @author USER
  */
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
 import com.bprasojo.ekspedisi.utils.AppUtils;

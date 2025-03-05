@@ -8,7 +8,6 @@ import java.security.Timestamp;
 
 /**
  *
- * @author USER
  */
 public class User {
     private int id;

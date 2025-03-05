@@ -23,7 +23,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmArmada extends javax.swing.JInternalFrame {
 

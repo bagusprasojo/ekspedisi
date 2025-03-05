@@ -10,7 +10,6 @@ import java.sql.SQLException;
 
 /**
  *
- * @author USER
  */
 public class Armada extends BaseClass{
     private String nopol;

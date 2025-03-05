@@ -32,7 +32,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmInvoice extends javax.swing.JInternalFrame {
 

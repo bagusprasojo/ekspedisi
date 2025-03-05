@@ -7,6 +7,7 @@ package com.bprasojo.ekspedisi.utils;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.BaseClass;
 import com.toedter.calendar.JDateChooser;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -31,7 +32,6 @@ import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
- * @author USER
  */
 public class AppUtils {
     public static int dateToInt(Date date) {
@@ -111,6 +111,19 @@ public class AppUtils {
             Connection conn  = DatabaseConnection.getConnection();
             
             JasperPrint print = JasperFillManager.fillReport(sourceFileName, params, conn);
+            JasperViewer viewer = new JasperViewer(print, false);
+            viewer.setVisible(true);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }       
+        
+    }
+    
+    public static void showReport(InputStream sourceStream, Map<String, Object> params) throws JRException{
+        try {
+            Connection conn  = DatabaseConnection.getConnection();
+            
+            JasperPrint print = JasperFillManager.fillReport(sourceStream, params, conn);
             JasperViewer viewer = new JasperViewer(print, false);
             viewer.setVisible(true);
         } catch (SQLException ex) {

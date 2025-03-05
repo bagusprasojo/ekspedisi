@@ -15,7 +15,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmRptRekapPembayaranInvoiceCustomer extends javax.swing.JInternalFrame {
 

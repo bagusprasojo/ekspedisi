@@ -30,7 +30,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmInputBBM extends javax.swing.JInternalFrame {
 

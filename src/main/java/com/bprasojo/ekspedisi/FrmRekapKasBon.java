@@ -5,6 +5,7 @@
 package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,7 +17,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmRekapKasBon extends javax.swing.JInternalFrame {
 
@@ -101,22 +101,20 @@ public class FrmRekapKasBon extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/RekapTramsaksiKasBon.jasper";
-        
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/RekapTramsaksiKasBon.jasper");
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String tglAwalFormatted = dateFormat.format(edTglAwal.getDate());
         String tglAkhirFormatted = dateFormat.format(edTglAkhir.getDate());
-
-        // 4. Buat string periode
-        String periode = "Periode : " + tglAwalFormatted + " s.d. " + tglAkhirFormatted;
+        
         
         Map<String, Object> params = new HashMap<>();
         params.put("p_tglawal", edTglAwal.getDate());
         params.put("p_tglakhir", edTglAkhir.getDate());
-        params.put("p_periode", periode);
+        params.put("REPORT_LOGO", "reports/logo.png");
         
         try {
-            AppUtils.showReport(reportPath, params);
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
             Logger.getLogger(FrmRekapKasBon.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,3 +129,4 @@ public class FrmRekapKasBon extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
+

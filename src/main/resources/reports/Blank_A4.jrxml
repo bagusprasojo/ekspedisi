@@ -1,0 +1,73 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Blank_A4" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cf687519-b74a-4027-a254-34b286f0de09">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Ekspedisi"/>
+	<query language="SQL"><![CDATA[select * from transaksi_pembelian_bbm ]]></query>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="armada_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="armada_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="armada_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="tanggal" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="tanggal"/>
+		<property name="com.jaspersoft.studio.field.label" value="tanggal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="km_terakhir" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="km_terakhir"/>
+		<property name="com.jaspersoft.studio.field.label" value="km_terakhir"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="km_sekarang" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="km_sekarang"/>
+		<property name="com.jaspersoft.studio.field.label" value="km_sekarang"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="nominal_BBM" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="nominal_BBM"/>
+		<property name="com.jaspersoft.studio.field.label" value="nominal_BBM"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="keterangan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="keterangan"/>
+		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<variable name="nominal_BBM1" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{nominal_BBM}]]></expression>
+	</variable>
+	<variable name="km_sekarang1" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{km_sekarang}]]></expression>
+	</variable>
+	<background splitType="Stretch"/>
+	<title height="79" splitType="Stretch"/>
+	<pageHeader height="35" splitType="Stretch"/>
+	<columnHeader height="31" splitType="Stretch">
+		<element kind="staticText" uuid="d9247840-b048-4fc4-ba31-8e307198b65a" x="405" y="0" width="100" height="30" hTextAlign="Center">
+			<text><![CDATA[nominal_BBM]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cae3ffa4-ca39-47c1-a234-c96d9f051f1c"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="31" splitType="Stretch">
+			<element kind="textField" uuid="9e1d0bc9-c627-4774-a689-1b9302d8b288" x="405" y="0" width="100" height="30" hTextAlign="Right">
+				<expression><![CDATA[$F{nominal_BBM}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cae3ffa4-ca39-47c1-a234-c96d9f051f1c"/>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="49" splitType="Stretch">
+		<element kind="textField" uuid="274ef338-59a9-46e8-a6f6-30cd15e25c74" x="405" y="10" width="100" height="30" hTextAlign="Right">
+			<expression><![CDATA[$V{nominal_BBM1}]]></expression>
+		</element>
+		<element kind="textField" uuid="6cd8c764-3751-4bf4-911f-3df2663613e7" x="305" y="10" width="100" height="30">
+			<expression><![CDATA[$V{km_sekarang1}]]></expression>
+		</element>
+	</summary>
+</jasperReport>

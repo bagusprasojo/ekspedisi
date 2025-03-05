@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.model;
 
 /**
  *
- * @author USER
  */
 public class Perkiraan extends BaseClass{
     private String kode;

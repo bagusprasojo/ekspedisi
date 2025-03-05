@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
  *
- * @author USER
  */
 public class TransaksiKas extends  BaseClass{
     private int id;

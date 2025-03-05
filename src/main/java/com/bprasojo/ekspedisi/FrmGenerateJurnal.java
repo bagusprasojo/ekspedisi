@@ -16,7 +16,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmGenerateJurnal extends javax.swing.JInternalFrame {
 

@@ -19,7 +19,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmSaldoBank extends javax.swing.JInternalFrame {
 

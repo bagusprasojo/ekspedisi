@@ -19,7 +19,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmClosing extends javax.swing.JInternalFrame {
 

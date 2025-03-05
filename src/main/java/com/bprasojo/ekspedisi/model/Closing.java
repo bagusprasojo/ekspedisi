@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.model;
 
 /**
  *
- * @author USER
  */
 import java.util.Date;
 

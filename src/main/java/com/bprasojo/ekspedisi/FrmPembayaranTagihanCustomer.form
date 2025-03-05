@@ -302,13 +302,11 @@
                       </Group>
                       <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="edNominal" alignment="0" max="32767" attributes="0"/>
-                              <Component id="edTanggal" alignment="1" pref="137" max="32767" attributes="0"/>
-                              <Component id="edPPHPersen" alignment="0" max="32767" attributes="0"/>
-                              <Component id="edTotal" alignment="0" max="32767" attributes="0"/>
-                              <Component id="edPPH" alignment="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="edNominal" alignment="0" max="32767" attributes="0"/>
+                          <Component id="edTanggal" alignment="1" max="32767" attributes="0"/>
+                          <Component id="edPPHPersen" alignment="0" max="32767" attributes="0"/>
+                          <Component id="edTotal" alignment="0" max="32767" attributes="0"/>
+                          <Component id="edPPH" alignment="0" max="32767" attributes="0"/>
                           <Component id="cbBank" max="32767" attributes="0"/>
                           <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -443,7 +441,7 @@
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="Via Bank"/>
+                <Property name="text" type="java.lang.String" value="Kas/Bank"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">

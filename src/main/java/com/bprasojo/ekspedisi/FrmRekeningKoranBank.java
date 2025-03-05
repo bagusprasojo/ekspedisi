@@ -20,7 +20,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmRekeningKoranBank extends javax.swing.JInternalFrame {
 

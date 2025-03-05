@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.dao;
 
 /**
  *
- * @author USER
  */
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.User;

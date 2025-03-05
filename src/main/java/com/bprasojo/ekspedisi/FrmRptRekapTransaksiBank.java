@@ -16,7 +16,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
 

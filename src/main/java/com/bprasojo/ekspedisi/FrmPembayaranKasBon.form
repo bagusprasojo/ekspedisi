@@ -272,12 +272,8 @@
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="edNominal" alignment="0" max="32767" attributes="0"/>
                           <Component id="edKeterangan" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cbViaBank" min="-2" pref="92" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="lblBank" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="edTanggal" min="-2" pref="211" max="-2" attributes="0"/>
+                          <Component id="edTanggal" alignment="0" pref="211" max="32767" attributes="0"/>
+                          <Component id="cbBank" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="94" max="32767" attributes="0"/>
                   </Group>
@@ -299,8 +295,7 @@
                           <Component id="edKasBon" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="btnKasBon" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel7" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbViaBank" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="lblBank" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbBank" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
@@ -366,7 +361,7 @@
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="Via Bank"/>
+                <Property name="text" type="java.lang.String" value="Kas/Bank"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">
@@ -377,21 +372,13 @@
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="edTanggal">
             </Component>
-            <Component class="javax.swing.JComboBox" name="cbViaBank">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
-                    <StringItem index="0" value="Tunai"/>
-                    <StringItem index="1" value="Via Bank"/>
-                  </StringArray>
-                </Property>
-              </Properties>
+            <Component class="javax.swing.JComboBox" name="cbBank">
               <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbViaBankItemStateChanged"/>
-                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="cbViaBankPropertyChange"/>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbBankItemStateChanged"/>
+                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="cbBankPropertyChange"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Bank&gt;"/>
               </AuxValues>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="edNominal">
@@ -412,11 +399,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="edKeterangan">
-            </Component>
-            <Component class="javax.swing.JLabel" name="lblBank">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="lblBank"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel11">
               <Properties>

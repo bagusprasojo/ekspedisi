@@ -19,7 +19,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
 

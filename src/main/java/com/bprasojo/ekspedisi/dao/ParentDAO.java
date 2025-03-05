@@ -13,7 +13,6 @@ import java.util.Date;
 
 /**
  *
- * @author USER
  */
 public class ParentDAO {
     protected Connection conn;

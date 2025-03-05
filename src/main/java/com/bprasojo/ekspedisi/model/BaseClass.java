@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.model;
 
 /**
  *
- * @author USER
  */
 public abstract class BaseClass {
     public abstract int getId();

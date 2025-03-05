@@ -33,7 +33,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmTransaksiKas extends javax.swing.JInternalFrame {
 

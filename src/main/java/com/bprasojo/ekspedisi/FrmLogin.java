@@ -15,7 +15,6 @@ import org.apache.poi.poifs.property.Parent;
 
 /**
  *
- * @author USER
  */
 public class FrmLogin extends javax.swing.JDialog {
 

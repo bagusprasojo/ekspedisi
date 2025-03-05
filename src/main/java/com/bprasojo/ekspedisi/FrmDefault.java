@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi;
 
 /**
  *
- * @author USER
  */
 public class FrmDefault extends javax.swing.JInternalFrame {
 

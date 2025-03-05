@@ -13,7 +13,6 @@ import javax.swing.JComponent;
 
 /**
  *
- * @author USER
  */
 public class CustomFocusTraversalPolicy extends FocusTraversalPolicy {
 

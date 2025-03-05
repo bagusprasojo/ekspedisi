@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.database;
 
 /**
  *
- * @author USER
  */
 import java.sql.Connection;
 import java.sql.DriverManager;

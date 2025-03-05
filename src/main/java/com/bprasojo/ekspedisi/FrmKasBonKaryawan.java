@@ -31,7 +31,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
 

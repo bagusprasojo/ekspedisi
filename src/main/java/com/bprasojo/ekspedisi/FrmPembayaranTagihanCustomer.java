@@ -33,7 +33,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
 
@@ -292,7 +291,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         jLabel6.setText("Tanggal");
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel7.setText("Via Bank");
+        jLabel7.setText("Kas/Bank");
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Nominal Kas/Bank");
@@ -460,12 +459,11 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                             .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(6, 6, 6)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(edNominal)
-                        .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                        .addComponent(edPPHPersen)
-                        .addComponent(edTotal)
-                        .addComponent(edPPH))
+                    .addComponent(edNominal)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(edPPHPersen)
+                    .addComponent(edTotal)
+                    .addComponent(edPPH)
                     .addComponent(cbBank, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane3))
                 .addContainerGap(200, Short.MAX_VALUE))

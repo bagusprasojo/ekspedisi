@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
+    <groupId>com.bprasojo</groupId>
     <artifactId>ekspedisi</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2025.03.01</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <exec.mainClass>com.bprasojo.ekspedisi.Ekspedisi</exec.mainClass>
+        <exec.mainClass>com.bprasojo.ekspedisi.MainForm</exec.mainClass>
     </properties>
-    
-    <dependencies> <!-- Tambahkan tag dependencies disini -->
+
+    <dependencies>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -73,4 +73,47 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.0</version> <!-- Versi plugin Javadoc -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal> <!-- Menghasilkan JAR Javadoc (tetapi kita akan skip proses pembuatan Javadoc) -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skip>true</skip> <!-- Melewati proses pembuatan Javadoc -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase> <!-- Menjalankan saat fase package -->
+                        <goals>
+                            <goal>shade</goal> <!-- Tujuan untuk membuat uber JAR -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Konfigurasi untuk membuat JAR dengan dependensi -->
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <transformers>
+                        <!-- Transformer untuk menambahkan mainClass ke manifest JAR -->
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>com.bprasojo.ekspedisi.MainForm</mainClass>
+                        </transformer>
+                    </transformers>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

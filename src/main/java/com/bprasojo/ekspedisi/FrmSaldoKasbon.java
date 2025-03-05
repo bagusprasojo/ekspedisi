@@ -14,7 +14,6 @@ import net.sf.jasperreports.engine.JRException;
 
 /**
  *
- * @author USER
  */
 public class FrmSaldoKasbon extends javax.swing.JInternalFrame {
 

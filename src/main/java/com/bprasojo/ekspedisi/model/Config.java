@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.model;
 
 /**
  *
- * @author USER
  */
 public class Config {
     private int id;

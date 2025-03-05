@@ -8,7 +8,6 @@ import java.sql.*;
 
 /**
  *
- * @author USER
  */
 public class DBUtils {
     public static ResultSet openQuery(Connection conn, String sql, Object[] params) throws SQLException {

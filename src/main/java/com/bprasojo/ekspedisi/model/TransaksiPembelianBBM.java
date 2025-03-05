@@ -12,7 +12,6 @@ import java.util.Date;
 
 /**
  *
- * @author USER
  */
 public class TransaksiPembelianBBM extends BaseClass{
     private int id;

@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi.dao;
 
 /**
  *
- * @author USER
  */
 import com.bprasojo.ekspedisi.model.TransaksiKas;
 import java.sql.*;

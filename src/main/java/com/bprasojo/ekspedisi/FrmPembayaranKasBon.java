@@ -14,7 +14,6 @@ import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
-import java.awt.event.ItemEvent;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -30,7 +29,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
 
@@ -42,7 +40,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     PembayaranKasBon pembayaranKasBon = null;
     PembayaranKasBonDAO pembayaranKasBonDAO = null;
     
-    Bank bank = null;    
+//    Bank bank = null;    
     BankDAO bankDAO = null;
     
     KasBonKaryawan kasBonKaryawan = null;
@@ -52,7 +50,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     private boolean SilakanLoadData = false;
     
     private DefaultTableModel tableModel;
-    private boolean showLoopUpBank = false;
+//    private boolean showLoopUpBank = false;
     
     public FrmPembayaranKasBon(User user) {
         this();
@@ -60,7 +58,8 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     }
     public FrmPembayaranKasBon() {
         initComponents();
-        lblBank.setText("");
+        
+        
         
         try {
             setMaximum(true);
@@ -84,8 +83,9 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         
         
         inisialisasiEventTableModel();
+        LoadBank();
         
-        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edKasBon, btnKasBon, edTanggal, cbViaBank, edNominal, edKeterangan));
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edKasBon, btnKasBon, edTanggal, cbBank, edNominal, edKeterangan));
     }
 
     /**
@@ -114,11 +114,10 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         edTanggal = new com.toedter.calendar.JDateChooser();
-        cbViaBank = new javax.swing.JComboBox<>();
+        cbBank = new javax.swing.JComboBox<>();
         edNominal = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
         edKeterangan = new javax.swing.JTextField();
-        lblBank = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         eNoRegister = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
@@ -264,20 +263,19 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         jLabel6.setText("Tanggal");
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel7.setText("Via Bank");
+        jLabel7.setText("Kas/Bank");
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Nominal");
 
-        cbViaBank.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tunai", "Via Bank" }));
-        cbViaBank.addItemListener(new java.awt.event.ItemListener() {
+        cbBank.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbViaBankItemStateChanged(evt);
+                cbBankItemStateChanged(evt);
             }
         });
-        cbViaBank.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        cbBank.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                cbViaBankPropertyChange(evt);
+                cbBankPropertyChange(evt);
             }
         });
 
@@ -286,8 +284,6 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Keterangan");
-
-        lblBank.setText("lblBank");
 
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("Nama");
@@ -357,11 +353,8 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(edNominal, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(edKeterangan)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlInputLayout.createSequentialGroup()
-                        .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblBank))
-                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addComponent(cbBank, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(94, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
@@ -379,8 +372,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                     .addComponent(edKasBon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnKasBon)
                     .addComponent(jLabel7)
-                    .addComponent(cbViaBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBank))
+                    .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel3)
@@ -534,11 +526,11 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         
         pembayaranKasBon = new PembayaranKasBon();
         kasBonKaryawan = null;
-        bank = null;
+//        bank = null;
         
-        AppUtils.setDefaultValues(edKasBon, edNama, edAlamat, edTanggal, edNominal, edKeterangan, cbViaBank);
+        AppUtils.setDefaultValues(edKasBon, edNama, edAlamat, edTanggal, edNominal, edKeterangan, cbBank);
         
-        showLoopUpBank = true;
+//        showLoopUpBank = true;
         
         setStatusTombol("tambah");
     }//GEN-LAST:event_btnNewActionPerformed
@@ -554,16 +546,12 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
 
         try {
             pembayaranKasBon.setKasBonKaryawanId(kasBonKaryawan.getId());
-            pembayaranKasBon.setSumberDana(cbViaBank.getSelectedItem().toString());
+            pembayaranKasBon.setSumberDana(cbBank.getSelectedItem().toString());
             pembayaranKasBon.setTanggal(edTanggal.getDate());
             
-            if (cbViaBank.getSelectedIndex() == 0){
-                pembayaranKasBon.setBankId(0);
-                pembayaranKasBon.setPerkiraanKasId(kasBonKaryawan.getPerkiraanKasId());
-            } else {
-                pembayaranKasBon.setBankId(bank.getId());
-                pembayaranKasBon.setPerkiraanKasId(bank.getAkun().getId());
-            }
+            Bank selectedBank = (Bank) cbBank.getSelectedItem();
+            pembayaranKasBon.setBankId(selectedBank.getId());
+            pembayaranKasBon.setPerkiraanKasId(selectedBank.getAkun().getId());            
             
             pembayaranKasBon.setNominal(((Number)edNominal.getValue()).intValue());
             pembayaranKasBon.setKeterangan(edKeterangan.getText());
@@ -639,40 +627,40 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tblPembayaranKasBonFocusGained
 
-    private void cbViaBankPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbViaBankPropertyChange
+    private void cbBankPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cbBankPropertyChange
         
-    }//GEN-LAST:event_cbViaBankPropertyChange
+    }//GEN-LAST:event_cbBankPropertyChange
 
-    private void cbViaBankItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbViaBankItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED && showLoopUpBank){
-            if (cbViaBank.getSelectedIndex() <= 0){
-                bank = null;
-                lblBank.setText("");
-            } else {
-                String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
-                LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
-                Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
-                if (selectedRecord != null) {
-                    try {
-                        // Mengambil nilai dengan nama kolom
-                        String no_rekening = selectedRecord.get("no_rekening").toString();
-                        bank = bankDAO.getBankByNoRekening(no_rekening);
-
-                        if (bank != null){
-                            lblBank.setText(bank.toString());
-                        } else {
-                            lblBank.setText("");
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
-                }
-            }
-        }
-    }//GEN-LAST:event_cbViaBankItemStateChanged
+    private void cbBankItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbBankItemStateChanged
+//        if (evt.getStateChange() == ItemEvent.SELECTED && showLoopUpBank){
+//            if (cbBank.getSelectedIndex() <= 0){
+//                bank = null;
+//                lblBank.setText("");
+//            } else {
+//                String sqlQuery = "select no_rekening, nama_bank, atas_nama from bank";
+//                LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+//                Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+//                if (selectedRecord != null) {
+//                    try {
+//                        // Mengambil nilai dengan nama kolom
+//                        String no_rekening = selectedRecord.get("no_rekening").toString();
+//                        bank = bankDAO.getBankByNoRekening(no_rekening);
+//
+//                        if (bank != null){
+//                            lblBank.setText(bank.toString());
+//                        } else {
+//                            lblBank.setText("");
+//                        }
+//                    } catch (SQLException ex) {
+//                        Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Tidak ada data yang dipilih.");
+//                }
+//            }
+//        }
+    }//GEN-LAST:event_cbBankItemStateChanged
 
     private void btnKasBonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKasBonActionPerformed
         String sqlQuery = "select no_register, b.kode, b.nama , b.alamat , b.no_ktp, nominal, pelunasan, "
@@ -714,7 +702,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
-    private javax.swing.JComboBox<String> cbViaBank;
+    private javax.swing.JComboBox<Bank> cbBank;
     private javax.swing.JTextField eNoRegister;
     private javax.swing.JTextField edAlamat;
     private javax.swing.JTextField edFilter;
@@ -742,7 +730,6 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JLabel lblBank;
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlNextPrev;
@@ -789,15 +776,15 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
             return false;
         }
         
-        if (cbViaBank.getSelectedIndex() < 0){
+        if (cbBank.getSelectedIndex() < 0){
             AppUtils.showWarningDialog("Via bank belum dipilih");
-            cbViaBank.requestFocus();
+            cbBank.requestFocus();
             return false;
         }
         
-        if (cbViaBank.getSelectedIndex() == 1 && bank == null){
+        if (cbBank.getSelectedIndex() < 0){
             AppUtils.showWarningDialog("Bank belum dipilih");
-            cbViaBank.requestFocus();
+            cbBank.requestFocus();
             return false;
         }
         
@@ -852,16 +839,11 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
                         
                         edTanggal.setDate(pembayaranKasBon.getTanggal());
                         
-                        showLoopUpBank = false;
-                        if (pembayaranKasBon.getBankId() == 0){
-                            cbViaBank.setSelectedIndex(0);
-                            lblBank.setText("");
+                        if (pembayaranKasBon.getBankId() > 0){
+                            AppUtils.setSelectedIndexById(cbBank, pembayaranKasBon.getBankId());
                         } else {
-                            cbViaBank.setSelectedIndex(1);
-                            bank = bankDAO.getById(pembayaranKasBon.getBankId());
-                            lblBank.setText(pembayaranKasBon.getBank().toString());
+                          cbBank.setSelectedIndex(-1);
                         }
-                        showLoopUpBank = true;
                         
                         edNominal.setValue(pembayaranKasBon.getNominal());
                         edKeterangan.setText(pembayaranKasBon.getKeterangan());
@@ -911,7 +893,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
 //        edNama.setEnabled(enable);
 //        edAlamat.setEnabled(enable);
         edTanggal.setEnabled(enable);
-        cbViaBank.setEnabled(enable);
+        cbBank.setEnabled(enable);
         edNominal.setEnabled(enable);
         edKeterangan.setEnabled(enable);
     }
@@ -922,5 +904,20 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 7);
         tblPembayaranKasBon.removeColumn(tblPembayaranKasBon.getColumnModel().getColumn(0));
         
+    }
+    
+     private void LoadBank() {
+        try {
+            List<Bank> banks = bankDAO.getAllBank();
+            
+            // Masukkan data ke JComboBox
+            DefaultComboBoxModel<Bank> model = new DefaultComboBoxModel<>();
+            for (Bank b : banks) {
+                model.addElement(b); // Menambahkan objek Perkiraan ke model
+            }
+            cbBank.setModel(model);
+        } catch (SQLException ex) {
+            AppUtils.showWarningDialog("Gagal load bank dengan error : \n" + ex.getMessage());
+        }
     }
 }

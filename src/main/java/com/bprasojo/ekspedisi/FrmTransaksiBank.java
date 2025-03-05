@@ -29,7 +29,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmTransaksiBank extends javax.swing.JInternalFrame {
 

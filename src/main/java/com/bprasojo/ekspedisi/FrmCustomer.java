@@ -19,7 +19,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author USER
  */
 public class FrmCustomer extends javax.swing.JInternalFrame {
 
