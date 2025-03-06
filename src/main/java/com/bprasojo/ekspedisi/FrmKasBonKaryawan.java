@@ -38,8 +38,8 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
      * Creates new form FrmKasBonKaryawan
      */
     
-    Perkiraan jenisKasBon = null;
-    Bank bank = null;
+//    Perkiraan jenisKasBon = null;
+//    Bank bank = null;
     StakeHolder karyawan = null;
     
     PerkiraanDAO perkiraanDAO = null;
@@ -511,7 +511,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
     }
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         kasBonKaryawan = new KasBonKaryawan();
-        bank = null;
+//        bank = null;
         
         AppUtils.setDefaultValues(edNama, edAlamat, edTanggal, edNominal, edKeterangan, cbJenisKasBon);
         
@@ -537,13 +537,10 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             kasBonKaryawan.setSumberDana(cbBank.getSelectedItem().toString());
             kasBonKaryawan.setTanggal(edTanggal.getDate());
             
-            if (cbBank.getSelectedIndex() == 0){
-                kasBonKaryawan.setBankId(0);
-                kasBonKaryawan.setPerkiraanKasId(perkiraanDAO.getPerkiraanKas().getId());
-            } else {
-                kasBonKaryawan.setBankId(bank.getId());
-                kasBonKaryawan.setPerkiraanKasId(bank.getAkun().getId());
-            }
+            Bank selectedBank = (Bank) cbBank.getSelectedItem();
+            kasBonKaryawan.setBankId(selectedBank.getId());
+            kasBonKaryawan.setPerkiraanKasId(selectedBank.getAkun().getId());
+            
             
             kasBonKaryawan.setNominal(((Number)edNominal.getValue()).intValue());
             kasBonKaryawan.setKeterangan(edKeterangan.getText());
@@ -752,19 +749,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
             return false;
         }
         
-//        if (edAlamat.getText().equals("")){
-//            AppUtils.showWarningDialog("Alamat karyawan belum diisi");
-//            edAlamat.requestFocus();
-//            return false;
-//        }
-//        
         if (cbBank.getSelectedIndex() < 0){
-            AppUtils.showWarningDialog("Via bank belum dipilih");
-            cbBank.requestFocus();
-            return false;
-        }
-        
-        if (cbBank.getSelectedIndex() == 1 && bank == null){
             AppUtils.showWarningDialog("Bank belum dipilih");
             cbBank.requestFocus();
             return false;
@@ -814,14 +799,10 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
                         
                         edTanggal.setDate(kasBonKaryawan.getTanggal());
                         
-//                        showLoopUpBank = false;
-                        if (kasBonKaryawan.getBankId() == 0){
-                            cbBank.setSelectedIndex(0);
-//                            lblBank.setText("");
+                      if (kasBonKaryawan.getBankId() > 0){
+                            AppUtils.setSelectedIndexById(cbBank, kasBonKaryawan.getBankId());
                         } else {
-                            cbBank.setSelectedIndex(1);
-                            bank = bankDAO.getById(kasBonKaryawan.getBankId());
-//                            lblBank.setText(kasBonKaryawan.getBank().toString());
+                          cbBank.setSelectedIndex(-1);
                         }
                         
                         edNominal.setValue(kasBonKaryawan.getNominal());

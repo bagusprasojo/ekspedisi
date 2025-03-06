@@ -103,9 +103,6 @@ public class FrmRekapKasBon extends javax.swing.JInternalFrame {
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
         InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/RekapTramsaksiKasBon.jasper");
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String tglAwalFormatted = dateFormat.format(edTglAwal.getDate());
-        String tglAkhirFormatted = dateFormat.format(edTglAkhir.getDate());
         
         
         Map<String, Object> params = new HashMap<>();

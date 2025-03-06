@@ -55,13 +55,14 @@
 	</dataset>
 	<parameter name="p_tglawal" class="java.util.Date"/>
 	<parameter name="p_tglakhir" class="java.util.Date"/>
-	<parameter name="p_periode" class="java.lang.String"/>
 	<parameter name="p_nopolisi" class="java.lang.String"/>
 	<parameter name="p_kendaraan" class="java.lang.String"/>
-	<parameter name="p_pemilik" class="java.lang.String"/>
-	<query language="SQL"><![CDATA[select a.*, b.nopol, 'Lia' as pc 
+	<parameter name="p_driver" class="java.lang.String"/>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
+	<query language="SQL"><![CDATA[select a.*, c.nama as driver, b.nopol
 from transaksi_pembelian_bbm a
 inner join armada b on a.armada_id = b.id
+inner join stake_holder c on a.driver_id = c.id
 where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 and b.nopol =  $P{p_nopolisi}
 
@@ -101,14 +102,45 @@ and b.nopol =  $P{p_nopolisi}
 		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
 	</field>
+	<field name="driver_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="driver_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="driver_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="created_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="updated_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="user_create" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="user_update" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="bank_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="bank_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="bank_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="transaksi_pembelian_bbm"/>
+	</field>
+	<field name="driver" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama"/>
+		<property name="com.jaspersoft.studio.field.label" value="driver"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="stake_holder"/>
+	</field>
 	<field name="nopol" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="nopol"/>
 		<property name="com.jaspersoft.studio.field.label" value="nopol"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="armada"/>
-	</field>
-	<field name="pc" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="pc"/>
-		<property name="com.jaspersoft.studio.field.label" value="pc"/>
 	</field>
 	<variable name="nominal_BBM1" calculation="Sum" class="java.lang.Integer">
 		<expression><![CDATA[$F{nominal_BBM}]]></expression>
@@ -131,7 +163,7 @@ and b.nopol =  $P{p_nopolisi}
 			<expression><![CDATA[new java.util.Date()]]></expression>
 		</element>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
-			<expression><![CDATA["invoice_logo.png"]]></expression>
+			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
 		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
 			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
@@ -145,17 +177,17 @@ and b.nopol =  $P{p_nopolisi}
 			<text><![CDATA[Kab. Sukoharjo, Jawa Tengah]]></text>
 		</element>
 		<element kind="textField" uuid="ad2aee85-1df9-4662-8645-6d37cbf99968" x="0" y="115" width="554" height="15" hTextAlign="Center" vTextAlign="Middle">
-			<expression><![CDATA["No. Polisi : " + $P{p_nopolisi} + " Pemilik : " + $P{p_pemilik} ]]></expression>
+			<expression><![CDATA["No. Polisi : " + $P{p_nopolisi} + " Driver : " + $P{p_driver} ]]></expression>
 		</element>
 		<element kind="textField" uuid="b3b27dbd-b97e-402b-94a2-114dfee9ee21" x="1" y="156" width="554" height="15" hTextAlign="Center" vTextAlign="Middle">
-			<expression><![CDATA[$P{p_periode}]]></expression>
+			<expression><![CDATA["Periode : " + DATEFORMAT($P{p_tglawal},"dd/MM/yyyy") + " s.d. " + DATEFORMAT($P{p_tglakhir},"dd/MM/yyyy")]]></expression>
 		</element>
 		<element kind="textField" uuid="c97276f8-bf8e-4f3e-b37b-2652233dc2db" x="0" y="130" width="554" height="16" hTextAlign="Center" vTextAlign="Middle">
 			<expression><![CDATA["Kendaraan : " + $P{p_kendaraan}]]></expression>
 		</element>
 	</title>
 	<columnHeader height="40">
-		<element kind="staticText" uuid="b7c8e117-a3d8-497f-97d2-c22573632cc2" positionType="Float" x="0" y="0" width="32" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="b7c8e117-a3d8-497f-97d2-c22573632cc2" positionType="Float" x="0" y="0" width="20" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[No]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06f25017-3143-4809-8903-d3f1aa14fca8"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -167,7 +199,7 @@ and b.nopol =  $P{p_nopolisi}
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" x="32" y="0" width="63" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" x="20" y="0" width="59" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Tanggal]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -179,7 +211,7 @@ and b.nopol =  $P{p_nopolisi}
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="c9957f59-7fa0-4039-b6da-fa181fa6732d" positionType="Float" x="95" y="0" width="155" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="c9957f59-7fa0-4039-b6da-fa181fa6732d" positionType="Float" x="182" y="0" width="137" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Keterangan]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -191,11 +223,12 @@ and b.nopol =  $P{p_nopolisi}
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="72577e14-faa9-4a25-b1b0-aa86a49a01d6" positionType="Float" x="250" y="0" width="60" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="72577e14-faa9-4a25-b1b0-aa86a49a01d6" positionType="Float" x="320" y="0" width="50" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[KM
 Awal]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box style="Column header">
 				<pen lineColor="#000000"/>
 				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
@@ -204,11 +237,12 @@ Awal]]></text>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="f3e463b7-fab2-48ed-a68a-a2991876ecbe" positionType="Float" x="310" y="0" width="60" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="f3e463b7-fab2-48ed-a68a-a2991876ecbe" positionType="Float" x="370" y="0" width="50" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[KM
 Akhir]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 			<box style="Column header">
 				<pen lineColor="#000000"/>
 				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
@@ -229,9 +263,22 @@ Akhir]]></text>
 				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="03d6c6be-bbc5-4842-8b9d-c5f13d717b09" positionType="Float" x="370" y="0" width="62" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="03d6c6be-bbc5-4842-8b9d-c5f13d717b09" positionType="Float" x="420" y="0" width="40" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Jarak
 Tempuh (KM)]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box style="Column header">
+				<pen lineColor="#000000"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#666666"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="1dea313c-1336-4d8a-8e04-d06a15f66a20" positionType="Float" x="460" y="0" width="60" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+			<text><![CDATA[Pengisian]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<box style="Column header">
@@ -242,9 +289,9 @@ Tempuh (KM)]]></text>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="1dea313c-1336-4d8a-8e04-d06a15f66a20" positionType="Float" x="432" y="0" width="88" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
-			<text><![CDATA[Pengisian]]></text>
-			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+		<element kind="staticText" uuid="5898ded8-156a-457e-8194-66b1491e6c56" positionType="Float" x="79" y="0" width="103" height="40" forecolor="#000000" backcolor="rgba(245, 31, 27, 0.5764706)" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+			<text><![CDATA[Driver]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<box style="Column header">
 				<pen lineColor="#000000"/>
@@ -257,7 +304,7 @@ Tempuh (KM)]]></text>
 	</columnHeader>
 	<detail>
 		<band height="20">
-			<element kind="textField" uuid="a4151b98-5182-4386-9e42-47254acd60c9" positionType="Float" x="0" y="0" width="32" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+			<element kind="textField" uuid="a4151b98-5182-4386-9e42-47254acd60c9" positionType="Float" x="0" y="0" width="20" height="20" fontName="Arial" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 				<expression><![CDATA[$V{REPORT_COUNT}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06f25017-3143-4809-8903-d3f1aa14fca8"/>
 				<box padding="3" style="Detail">
@@ -267,7 +314,7 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="97b23753-137e-4b1c-a28b-4bff3378ff3c" positionType="Float" x="32" y="0" width="63" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="dd/MM/yy" blankWhenNull="true" bold="false" hTextAlign="Center" style="Detail">
+			<element kind="textField" uuid="97b23753-137e-4b1c-a28b-4bff3378ff3c" positionType="Float" x="20" y="0" width="59" height="20" fontName="Arial" pattern="dd/MM/yy" blankWhenNull="true" bold="false" hTextAlign="Center" style="Detail">
 				<expression><![CDATA[$F{tanggal}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
 				<box padding="3" style="Detail">
@@ -277,7 +324,7 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="95" y="0" width="155" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="182" y="0" width="137" height="20" fontName="Arial" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
 				<expression><![CDATA[$F{keterangan}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
 				<box padding="3" style="Detail">
@@ -287,9 +334,10 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="94674bfa-8196-4cc1-b032-f90550ff4898" positionType="Float" x="250" y="0" width="60" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+			<element kind="textField" uuid="94674bfa-8196-4cc1-b032-f90550ff4898" positionType="Float" x="320" y="0" width="50" height="20" fontName="Arial" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 				<expression><![CDATA[$F{km_terakhir}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -297,9 +345,10 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="42ceed78-3b82-4f0a-851c-76168eab3142" positionType="Float" x="310" y="0" width="60" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+			<element kind="textField" uuid="42ceed78-3b82-4f0a-851c-76168eab3142" positionType="Float" x="370" y="0" width="50" height="20" fontName="Arial" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 				<expression><![CDATA[$F{km_sekarang}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -307,8 +356,8 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="316833a1-5878-4dc5-8bb4-50dfd0514fc5" positionType="Float" x="520" y="0" width="34" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" style="Detail">
-				<expression><![CDATA[$F{pc}]]></expression>
+			<element kind="textField" uuid="316833a1-5878-4dc5-8bb4-50dfd0514fc5" positionType="Float" x="520" y="0" width="34" height="20" fontName="Arial" blankWhenNull="true" bold="false" style="Detail">
+				<expression><![CDATA[$F{user_create}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -317,9 +366,10 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="6bd41126-f668-4279-bce3-f7351f79ef3c" positionType="Float" x="370" y="0" width="62" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+			<element kind="textField" uuid="6bd41126-f668-4279-bce3-f7351f79ef3c" positionType="Float" x="420" y="0" width="40" height="20" fontName="Arial" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 				<expression><![CDATA[$F{km_sekarang} - $F{km_terakhir}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -327,9 +377,11 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="a818ea43-44e6-456e-b9a0-b80fb58a340a" positionType="Float" x="432" y="0" width="88" height="20" fontName="Arial" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
+			<element kind="textField" uuid="a818ea43-44e6-456e-b9a0-b80fb58a340a" positionType="Float" x="460" y="0" width="60" height="20" fontName="Arial" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="false" hTextAlign="Right" style="Detail">
 				<expression><![CDATA[$F{nominal_BBM}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
+				<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -337,11 +389,22 @@ Tempuh (KM)]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
+			<element kind="textField" uuid="845b157d-ade8-4558-8577-ea5e7d90ae40" positionType="Float" x="79" y="0" width="103" height="20" fontName="Arial" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+				<expression><![CDATA[$F{driver}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
+				<box padding="3" style="Detail">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</band>
 	</detail>
 	<lastPageFooter height="76"/>
 	<summary height="160">
-		<element kind="staticText" uuid="4eae1214-84eb-4e98-b3fd-fbf17cccefee" x="0" y="0" width="432" height="20" fontName="DejaVu Sans" fontSize="9.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="staticText" uuid="4eae1214-84eb-4e98-b3fd-fbf17cccefee" x="0" y="0" width="460" height="20" fontName="DejaVu Sans" fontSize="9.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[Total  ]]></text>
 			<box padding="4">
 				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -350,7 +413,7 @@ Tempuh (KM)]]></text>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="textField" uuid="c1e3abf3-b2e5-4102-b7d7-9958e224bb20" x="432" y="0" width="122" height="20" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.###;(#,##0.###)" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="textField" uuid="c1e3abf3-b2e5-4102-b7d7-9958e224bb20" x="460" y="0" width="94" height="20" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.###;(#,##0.###)" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<expression><![CDATA[$V{nominal_BBM1}]]></expression>
 			<box leftPadding="0" rightPadding="35">
 				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -359,13 +422,13 @@ Tempuh (KM)]]></text>
 				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="textField" uuid="c08d8649-c89f-4482-9fb2-d929a7704621" x="2" y="30" width="552" height="18" hTextAlign="Right">
+		<element kind="textField" uuid="c08d8649-c89f-4482-9fb2-d929a7704621" x="0" y="40" width="552" height="18" hTextAlign="Right">
 			<expression><![CDATA["Kab. Sukoharjo, " + DATEFORMAT(TODAY( ),"dd MMM yyyy")]]></expression>
 		</element>
 		<element kind="staticText" uuid="7eb4d9da-1c5a-4a40-abd3-36c18d513efc" x="200" y="60" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[Mengetahui,]]></text>
 		</element>
-		<element kind="staticText" uuid="f48de49d-8f34-4839-8daf-cf176d9f95bf" x="426" y="60" width="100" height="20" hTextAlign="Center">
+		<element kind="staticText" uuid="f48de49d-8f34-4839-8daf-cf176d9f95bf" x="440" y="60" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[Yang membuat]]></text>
 		</element>
 		<element kind="staticText" uuid="4b877a09-e0c9-452c-9b38-1137e2651ee2" x="200" y="100" width="100" height="20" hTextAlign="Center">
@@ -377,10 +440,10 @@ Tempuh (KM)]]></text>
 		<element kind="staticText" uuid="976c5ba0-925b-4605-834f-49b541d71007" x="200" y="120" width="100" height="20" bold="true" hTextAlign="Center">
 			<text><![CDATA[Manager Operasional]]></text>
 		</element>
-		<element kind="staticText" uuid="afa89b34-9e6e-49fb-8e8b-94d270f9ac19" x="426" y="120" width="100" height="20" bold="true" hTextAlign="Center">
+		<element kind="staticText" uuid="afa89b34-9e6e-49fb-8e8b-94d270f9ac19" x="440" y="120" width="100" height="20" bold="true" hTextAlign="Center">
 			<text><![CDATA[Admin]]></text>
 		</element>
-		<element kind="staticText" uuid="0048dffb-a6a8-40ec-980d-65ea0dc5b39b" x="426" y="100" width="100" height="20" hTextAlign="Center">
+		<element kind="staticText" uuid="0048dffb-a6a8-40ec-980d-65ea0dc5b39b" x="440" y="100" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[LIA WAHYUNINGSIH]]></text>
 			<box>
 				<bottomPen lineWidth="1.0"/>

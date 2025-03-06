@@ -5,6 +5,7 @@
 package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -100,15 +101,17 @@ public class FrmRptRekapInvoiceCustomer extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/DaftarInvoice.jasper";
-        
+//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/DaftarInvoice.jasper";
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/DaftarInvoice.jasper");
         Map<String, Object> params = new HashMap<>();
         params.put("p_tglawal", edTglAwal.getDate());
         params.put("p_tglakhir", edTglAkhir.getDate());
+        params.put("REPORT_LOGO", "reports/logo.png");
+        
         
         
         try {
-            AppUtils.showReport(reportPath, params);
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
             Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -57,11 +57,22 @@
 	<parameter name="p_tglakhir" class="java.util.Date"/>
 	<parameter name="p_bank_id" class="java.lang.Integer"/>
 	<parameter name="p_saldo_awal" class="java.lang.Integer"/>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[select a.*, b.nama_bank, b.no_rekening, b.atas_nama from v_mutasi_bank a
 inner join bank b on a.bank_id = b.id
 where date(a.tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )
 and a.bank_id =  $P{p_bank_id} 
 order by a.tanggal]]></query>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
+	</field>
+	<field name="transaksi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="transaksi"/>
+		<property name="com.jaspersoft.studio.field.label" value="transaksi"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
+	</field>
 	<field name="jenis_transaksi" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="jenis_transaksi"/>
 		<property name="com.jaspersoft.studio.field.label" value="jenis_transaksi"/>
@@ -82,7 +93,7 @@ order by a.tanggal]]></query>
 		<property name="com.jaspersoft.studio.field.label" value="bank_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
 	</field>
-	<field name="debet" class="java.lang.Integer">
+	<field name="debet" class="java.lang.Long">
 		<property name="com.jaspersoft.studio.field.name" value="debet"/>
 		<property name="com.jaspersoft.studio.field.label" value="debet"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
@@ -90,6 +101,11 @@ order by a.tanggal]]></query>
 	<field name="kredit" class="java.lang.Long">
 		<property name="com.jaspersoft.studio.field.name" value="kredit"/>
 		<property name="com.jaspersoft.studio.field.label" value="kredit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
+	</field>
+	<field name="user_create" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_create"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
 	</field>
 	<field name="nama_bank" class="java.lang.String">
@@ -129,7 +145,7 @@ order by a.tanggal]]></query>
 			<expression><![CDATA[new java.util.Date()]]></expression>
 		</element>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
-			<expression><![CDATA["invoice_logo.png"]]></expression>
+			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
 		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
 			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
@@ -296,7 +312,7 @@ order by a.tanggal]]></query>
 				</box>
 			</element>
 			<element kind="textField" uuid="316833a1-5878-4dc5-8bb4-50dfd0514fc5" positionType="Float" x="522" y="-1" width="32" height="19" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" bold="false" style="Detail">
-				<expression><![CDATA["Lia"]]></expression>
+				<expression><![CDATA[$F{user_create}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
 				<box padding="2" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -328,28 +344,28 @@ order by a.tanggal]]></query>
 		</band>
 	</detail>
 	<summary height="173">
-		<element kind="staticText" uuid="150a2589-7bcc-46bd-b6cc-10f38eb00a2a" x="200" y="100" width="100" height="20" hTextAlign="Center">
+		<element kind="staticText" uuid="150a2589-7bcc-46bd-b6cc-10f38eb00a2a" x="214" y="90" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[-]]></text>
 			<box>
 				<bottomPen lineWidth="1.0"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="8303ec8e-cb90-4918-98dc-f9c38893dba0" x="200" y="60" width="100" height="20" hTextAlign="Center">
+		<element kind="staticText" uuid="8303ec8e-cb90-4918-98dc-f9c38893dba0" x="214" y="50" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[Mengetahui,]]></text>
 		</element>
-		<element kind="staticText" uuid="9bdfc266-6ffe-416d-8bff-864563f3fde1" x="426" y="120" width="100" height="20" bold="true" hTextAlign="Center">
+		<element kind="staticText" uuid="9bdfc266-6ffe-416d-8bff-864563f3fde1" x="440" y="110" width="100" height="20" bold="true" hTextAlign="Center">
 			<text><![CDATA[Admin]]></text>
 		</element>
-		<element kind="staticText" uuid="061dc2d3-b7ed-4be7-8c22-5b2c743f6dee" x="426" y="100" width="100" height="20" hTextAlign="Center">
+		<element kind="staticText" uuid="061dc2d3-b7ed-4be7-8c22-5b2c743f6dee" x="440" y="90" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[LIA WAHYUNINGSIH]]></text>
 			<box>
 				<bottomPen lineWidth="1.0"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="502f89bc-bdfc-4fa2-8249-fe0a2a881e4a" x="200" y="120" width="100" height="20" bold="true" hTextAlign="Center">
+		<element kind="staticText" uuid="502f89bc-bdfc-4fa2-8249-fe0a2a881e4a" x="214" y="110" width="100" height="20" bold="true" hTextAlign="Center">
 			<text><![CDATA[Manager Operasional]]></text>
 		</element>
-		<element kind="staticText" uuid="3e28b486-da7a-47e6-9dd6-dfe21bfcce3c" x="426" y="60" width="100" height="20" hTextAlign="Center">
+		<element kind="staticText" uuid="3e28b486-da7a-47e6-9dd6-dfe21bfcce3c" x="440" y="50" width="100" height="20" hTextAlign="Center">
 			<text><![CDATA[Yang membuat]]></text>
 		</element>
 		<element kind="textField" uuid="4f2cf2b0-790b-42ec-9161-2c4076e67848" x="2" y="30" width="552" height="18" hTextAlign="Right">

@@ -8,6 +8,7 @@ import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.model.Armada;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -129,57 +130,51 @@ public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(edNoPolisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnNoPolisi))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(edPemilik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(edNoPolisi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNoPolisi))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(edKendaraan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edPemilik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(edTglAwal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTampilkan))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(jLabel2)
+                    .addComponent(edTglAkhir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTampilkan)
+                    .addComponent(jLabel1))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/Blank_A4.jasper";
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/RiwayatPembelianBBM.jasper";
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/RiwayatPembelianBBM.jasper");
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String tglAwalFormatted = dateFormat.format(edTglAwal.getDate());
-        String tglAkhirFormatted = dateFormat.format(edTglAkhir.getDate());
-
-        // 4. Buat string periode
-        String periode = "Periode : " + tglAwalFormatted + " s.d. " + tglAkhirFormatted;
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("p_nopolisi", armada.getNopol());
-        params.put("p_kendaraan", armada.getKendaraan());
-        params.put("p_pemilik", armada.getPemilik());
-        params.put("p_tglawal", edTglAwal.getDate());
-        params.put("p_tglakhir", edTglAkhir.getDate());
-        params.put("p_periode", periode);
+        //        params.put("p_periode", periode);
 
         try {
-            AppUtils.showReport(reportPath, params);
+            Map<String, Object> params = new HashMap<>();
+            params.put("p_nopolisi", armada.getNopol());
+            params.put("p_kendaraan", armada.getKendaraan());
+            params.put("p_driver", armada.getDriver().getNama());
+            params.put("p_tglawal", edTglAwal.getDate());
+            params.put("p_tglakhir", edTglAkhir.getDate());
+
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
-            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+            AppUtils.showErrorDialog("Gagal generate laporan dengan error:\n" + ex.getMessage());
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal generate laporan dengan error:\n" + ex.getMessage());
+        } catch (Exception ex) {
+            AppUtils.showErrorDialog("Gagal generate laporan dengan error:\n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnTampilkanActionPerformed
 

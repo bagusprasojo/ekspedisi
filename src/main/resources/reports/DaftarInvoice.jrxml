@@ -64,6 +64,7 @@
 	</dataset>
 	<parameter name="p_tglawal" class="java.util.Date"/>
 	<parameter name="p_tglakhir" class="java.util.Date"/>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[select a.*, b.nama, b.alamat from tagihan_customer a
 inner join stake_holder b on a.customer_id = b.id
 where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
@@ -144,6 +145,21 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 		<property name="com.jaspersoft.studio.field.label" value="keterangan"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
 	</field>
+	<field name="perkiraan_piutang_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="perkiraan_piutang_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="perkiraan_piutang_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="user_create" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
+	<field name="user_update" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tagihan_customer"/>
+	</field>
 	<field name="nama" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="nama"/>
 		<property name="com.jaspersoft.studio.field.label" value="nama"/>
@@ -187,7 +203,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 			<expression><![CDATA[new java.util.Date()]]></expression>
 		</element>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
-			<expression><![CDATA["invoice_logo.png"]]></expression>
+			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
 		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
 			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
@@ -398,6 +414,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 				</box>
 			</element>
 			<element kind="textField" uuid="316833a1-5878-4dc5-8bb4-50dfd0514fc5" positionType="Float" x="756" y="0" width="42" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" style="Detail">
+				<expression><![CDATA[$F{user_create}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -464,7 +481,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 	</detail>
 	<lastPageFooter height="76"/>
 	<summary height="160">
-		<element kind="staticText" uuid="4eae1214-84eb-4e98-b3fd-fbf17cccefee" x="0" y="0" width="405" height="20" fontName="DejaVu Sans" fontSize="9.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="staticText" uuid="4eae1214-84eb-4e98-b3fd-fbf17cccefee" x="0" y="0" width="405" height="20" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[Total  ]]></text>
 			<box padding="4">
 				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
