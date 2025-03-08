@@ -96,7 +96,7 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
         String sql = "select a.km_sekarang as km_kemarin from transaksi_pembelian_bbm a" +
                      " inner join armada b on a.armada_id = b.id" +
                      " where b.nopol = ? " +
-                     " order by a.tanggal desc limit 1";
+                     " order by a.tanggal desc, a.km_sekarang desc limit 1";
         
         int lastKM = 0;
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -143,7 +143,7 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
                      + " WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.keterangan LIKE ? OR b.nopol LIKE ? OR b.kendaraan LIKE ? OR b.pemilik LIKE ? or c.nama like)";
+            sql += " AND (a.keterangan LIKE ? OR b.nopol LIKE ? OR b.kendaraan LIKE ? OR b.pemilik LIKE ? or c.nama like ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";

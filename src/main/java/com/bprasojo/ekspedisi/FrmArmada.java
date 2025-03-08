@@ -477,6 +477,9 @@ public class FrmArmada extends javax.swing.JInternalFrame {
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         armada = new Armada();
+        edNamaDriver.setText("");
+        edAlamatDriver.setText("");
+        edNoKTPDriver.setText("");
         
         edNoPolisi.setText("");
         edKendaraan.setText("");

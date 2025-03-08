@@ -56,6 +56,7 @@
 		<query language="sql"><![CDATA[]]></query>
 	</dataset>
 	<parameter name="p_tanggal" class="java.util.Date"/>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[select a.*, c.nama as nama_karyawan, c.alamat as alamat_karyawan, b.kode as kode_akun, b.nama as nama_akun
 from kas_bon_karyawan a
 left  join perkiraan b on a.perkiraan_pinjaman_id = b.id
@@ -131,6 +132,16 @@ order by b.kode, a.no_register]]></query>
 	<field name="karyawan_id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="karyawan_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="karyawan_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
+	</field>
+	<field name="user_create" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
+	</field>
+	<field name="user_update" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_update"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="kas_bon_karyawan"/>
 	</field>
 	<field name="nama_karyawan" class="java.lang.String">
@@ -228,7 +239,7 @@ order by b.kode, a.no_register]]></query>
 			<expression><![CDATA[new java.util.Date()]]></expression>
 		</element>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
-			<expression><![CDATA["invoice_logo.png"]]></expression>
+			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
 		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
 			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
@@ -348,7 +359,7 @@ order by b.kode, a.no_register]]></query>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="120" y="0" width="100" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="120" y="0" width="100" height="18" fontName="Arial" fontSize="9.0" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
 				<expression><![CDATA[$F{nama_karyawan}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
 				<box padding="3" style="Detail">
@@ -358,7 +369,7 @@ order by b.kode, a.no_register]]></query>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="04dbaa81-b7a0-4169-a375-5298bf711069" positionType="Float" x="220" y="0" width="100" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+			<element kind="textField" uuid="04dbaa81-b7a0-4169-a375-5298bf711069" positionType="Float" x="220" y="0" width="100" height="18" fontName="Arial" fontSize="9.0" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
 				<expression><![CDATA[$F{alamat_karyawan}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
 				<box padding="3" style="Detail">
@@ -368,7 +379,7 @@ order by b.kode, a.no_register]]></query>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="1e3c8ae8-ab58-4602-b643-dc13c48d9f5d" positionType="Float" x="320" y="0" width="120" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+			<element kind="textField" uuid="1e3c8ae8-ab58-4602-b643-dc13c48d9f5d" positionType="Float" x="320" y="0" width="120" height="18" fontName="Arial" fontSize="9.0" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
 				<expression><![CDATA[$F{keterangan}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
 				<box padding="3" style="Detail">
@@ -389,7 +400,7 @@ order by b.kode, a.no_register]]></query>
 				</box>
 			</element>
 			<element kind="textField" uuid="c0635e8f-81ff-4cb0-a6a2-369d0d0c33a8" positionType="Float" x="522" y="0" width="32" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" bold="false" style="Detail">
-				<expression><![CDATA["Lia"]]></expression>
+				<expression><![CDATA[$F{user_create}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

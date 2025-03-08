@@ -58,6 +58,7 @@
 	<parameter name="p_tglawal" class="java.util.Date"/>
 	<parameter name="p_tglakhir" class="java.util.Date"/>
 	<parameter name="p_no_invoice" class="java.lang.String"/>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[select a.*, b.nama, b.alamat from tagihan_customer a
 inner join stake_holder b on a.customer_id = b.id
 where a.tanggal BETWEEN  $P{p_tglawal}  and $P{p_tglakhir}
@@ -189,7 +190,7 @@ ORDER BY a.no_invoice]]></query>
 					<expression><![CDATA[new java.util.Date()]]></expression>
 				</element>
 				<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
-					<expression><![CDATA["invoice_logo.png"]]></expression>
+					<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 				</element>
 				<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
 					<text><![CDATA[PT. Tampir Baru Logistik]]></text>

@@ -12,6 +12,7 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="p_no_register" class="java.lang.String"/>
+	<parameter name="KW" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[select a.*, b.pekerjaan, c.nama from pembayaran_tagihan_customer a
 inner join tagihan_customer b on a.tagihan_customer_id = b.id
 inner join stake_holder c on b.customer_id = c.id
@@ -106,7 +107,7 @@ where a.no_register =  $P{p_no_register} ]]></query>
 	<detail>
 		<band height="383">
 			<element kind="image" uuid="90ad13a2-127a-4411-8948-22ab55e6328b" stretchType="ContainerHeight" x="0" y="20" width="791" height="339">
-				<expression><![CDATA["gambar-baground-kwitansi-1.jpg"]]></expression>
+				<expression><![CDATA[$P{KW}]]></expression>
 			</element>
 			<element kind="textField" uuid="60194ace-ba53-4681-b74b-8d771474b7f7" x="200" y="50" width="150" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
 				<expression><![CDATA[$F{no_register}]]></expression>

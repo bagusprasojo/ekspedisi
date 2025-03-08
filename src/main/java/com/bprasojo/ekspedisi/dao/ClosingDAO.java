@@ -53,56 +53,154 @@ public class ClosingDAO {
     }
 
     // 🔹 Save (Insert/Update)
-    public void save(Closing closing) throws SQLException {
-        // 1️⃣ Ambil closing terakhir
-        String lastClosingSql = "SELECT tanggal FROM closing ORDER BY tanggal DESC LIMIT 1";
-        Date lastClosingDate = null;
-
-        try (PreparedStatement stmt = conn.prepareStatement(lastClosingSql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                lastClosingDate = rs.getDate("tanggal");
+    
+    private int getLastClosingValue(int bank_id) throws SQLException{
+        int saldo_akhir = 0;
+        
+        String sql = "select saldo_akhir from closing_bank a " +
+                     " where a.bank_id = ? " +
+                     " order by a.tanggal desc limit 1 ";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, bank_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    saldo_akhir = rs.getInt("saldo_akhir");
+                }
+               
             }
         }
+            
+
+            
+        
+        return saldo_akhir;
+    }
+    
+    private void saveClosingBank(Closing closing) throws SQLException {
+        Calendar calendar = Calendar.getInstance();
+
+        // Pastikan closing.getTanggal() mengembalikan objek Date yang valid
+        calendar.setTime(closing.getTanggal()); 
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Karena bulan dimulai dari 0 di Calendar
+
+        String sql = "select a.id as bank_id, SUM(kredit - debet) AS mutasi from bank a " +
+                     " left join v_mutasi_bank b on a.id = b.bank_id and YEAR(b.tanggal) = ? and MONTH(b.tanggal) = ? " +
+                     " GROUP BY a.id ";
 
         Date tanggal = new Date(closing.getTanggal().getTime());
-        // 2️⃣ Cek apakah tanggal yang diinput adalah akhir bulan
-        if (!isLastDayOfMonth(tanggal)) {
-            throw new SQLException("Tanggal closing harus pada akhir bulan!");
-        }
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, year);
+            stmt.setInt(2, month);
 
-        // 3️⃣ Cek apakah bulan berurutan dengan closing terakhir
-        if (lastClosingDate != null && !isNextMonth(lastClosingDate, tanggal)) {
-            throw new SQLException("Closing harus dilakukan secara berurutan tiap bulan!");
-        }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) { // Menggunakan while untuk insert lebih dari satu bank_id
+                    String sqlInsert = "INSERT INTO closing_bank (closing_id, bank_id, tanggal, saldo_akhir) VALUES (?, ?, ?, ?)";
 
-        // 4️⃣ Lakukan INSERT atau UPDATE jika valid
-        String sql;
-        if (closing.getId() == 0) {
-            sql = "INSERT INTO closing (tanggal, keterangan) VALUES (?, ?)";
-        } else {
-            sql = "UPDATE closing SET tanggal = ?, keterangan = ? WHERE id = ?";
-        }
+                    // Gunakan objek PreparedStatement baru untuk query INSERT
+                    try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert)) {
+                        int saldo_last_month = getLastClosingValue(rs.getInt("bank_id"));
+                        int mutasi = rs.getInt("mutasi");
+                        int saldo_akhir = saldo_last_month + mutasi;
+                        
+                        stmtInsert.setInt(1, closing.getId());
+                        stmtInsert.setInt(2, rs.getInt("bank_id"));
+                        stmtInsert.setDate(3, tanggal);
+                        stmtInsert.setInt(4, saldo_akhir);
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDate(1, tanggal);
-            stmt.setString(2, closing.getKeterangan());
-
-            if (closing.getId() != 0) {
-                stmt.setInt(3, closing.getId());
-            }
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (closing.getId() == 0 && affectedRows > 0) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        closing.setId(generatedKeys.getInt(1));
+                        stmtInsert.executeUpdate(); // Menjalankan query INSERT
                     }
                 }
             }
         }
     }
+
+    public java.util.Date getLastClosingDate() throws SQLException {
+        String lastClosingSql = "SELECT tanggal FROM closing ORDER BY tanggal DESC LIMIT 1";
+        java.util.Date lastClosingDate = null;
+
+        try (PreparedStatement stmt = conn.prepareStatement(lastClosingSql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Konversi dari java.sql.Date ke java.util.Date
+                    lastClosingDate = new java.util.Date(rs.getDate("tanggal").getTime());
+                }
+            }
+        }
+
+        return lastClosingDate; // Jika tidak ada data, akan mengembalikan null
+    }
+
+
+    public void save(Closing closing) throws SQLException {
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        try {
+            String lastClosingSql = "SELECT tanggal FROM closing ORDER BY tanggal DESC LIMIT 1";
+            Date lastClosingDate = null;
+
+            try (PreparedStatement stmt = conn.prepareStatement(lastClosingSql)) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        lastClosingDate = rs.getDate("tanggal");
+                    }
+                }
+            }
+
+            Date tanggal = new Date(closing.getTanggal().getTime());
+
+            // 2️⃣ Cek apakah tanggal yang diinput adalah akhir bulan
+            if (!isLastDayOfMonth(tanggal)) {
+                throw new SQLException("Tanggal closing harus pada akhir bulan!");
+            }
+
+            // 3️⃣ Cek apakah bulan berurutan dengan closing terakhir
+            if (lastClosingDate != null && !isNextMonth(lastClosingDate, tanggal)) {
+                throw new SQLException("Closing harus dilakukan secara berurutan tiap bulan!");
+            }
+
+            // 4️⃣ Lakukan INSERT atau UPDATE jika valid
+            String sql;
+            if (closing.getId() == 0) {
+                sql = "INSERT INTO closing (tanggal, keterangan) VALUES (?, ?)";
+            } else {
+                sql = "UPDATE closing SET tanggal = ?, keterangan = ? WHERE id = ?";
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setDate(1, new java.sql.Date(tanggal.getTime())); // Menggunakan java.sql.Date untuk setDate
+                stmt.setString(2, closing.getKeterangan());
+
+                if (closing.getId() != 0) {
+                    stmt.setInt(3, closing.getId());
+                }
+
+                int affectedRows = stmt.executeUpdate();
+
+                if (closing.getId() == 0 && affectedRows > 0) {
+                    try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            closing.setId(generatedKeys.getInt(1));
+                        }
+                    }
+                }
+                
+                deleteClosingBank(closing.getId());
+                saveClosingBank(closing);
+            }
+            
+            conn.commit();
+        } catch (SQLException ex) {
+            // Jika terjadi kesalahan, rollback transaksi
+            conn.rollback();
+            throw ex; // Rethrow exception setelah rollback
+        } finally {
+            // Mengembalikan auto-commit ke status semula
+            conn.setAutoCommit(previousAutoCommit);
+        } 
+    }
+
 
 
     // 🔹 Get by ID
@@ -205,10 +303,30 @@ public class ClosingDAO {
             throw new SQLException("Hanya data closing terakhir yang dapat dihapus!");
         }
 
-        // 3️⃣ Lakukan DELETE jika valid
-        String deleteSql = "DELETE FROM closing WHERE id = ?";
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        
+        try {
+            String deleteSql = "DELETE FROM closing WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+            }
+            
+            deleteClosingBank(id);
+            conn.commit();
+        } catch (SQLException ex) {
+            conn.rollback();
+            throw ex; 
+        } finally {
+            conn.setAutoCommit(previousAutoCommit);
+        } 
+    }
+
+    private void deleteClosingBank(int closingID) throws SQLException {
+        String deleteSql = "DELETE FROM closing_bank WHERE closing_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, closingID);
             stmt.executeUpdate();
         }
     }

@@ -147,6 +147,43 @@ public class AppUtils {
         edTanggal.setDate(firstOfMonth);   
     }
     
+    public static void SetTanggalAwalBulan(JDateChooser edTanggal, int tahun, int bulan) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, tahun);       // Set tahun
+        calendar.set(Calendar.MONTH, bulan - 1);  // Set bulan (bulan dimulai dari 0, jadi dikurangi 1)
+        calendar.set(Calendar.DAY_OF_MONTH, 1);   // Set tanggal ke 1 (awal bulan)
+
+        Date firstOfMonth = calendar.getTime();
+        edTanggal.setDate(firstOfMonth);  // Set tanggal pada JDateChooser
+    }
+
+    public static void SetTanggalAkhirBulan(JDateChooser edTanggal, int tahun, int bulan) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, tahun);       // Set tahun
+        calendar.set(Calendar.MONTH, bulan);  // Set bulan (bulan dimulai dari 0, jadi dikurangi 1)
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Set ke hari terakhir bulan
+
+        Date lastOfMonth = calendar.getTime();
+        edTanggal.setDate(lastOfMonth);  // Set tanggal pada JDateChooser
+    }
+
+    public static void SetTanggalAwalTahun(JDateChooser edTanggal){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, Calendar.JANUARY); // Set bulan ke Januari (bulan ke-0)
+        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set tanggal ke 1
+        Date firstOfYear = calendar.getTime();
+        edTanggal.setDate(firstOfYear);   
+    }
+
+    public static void SetTanggalAkhirTahun(JDateChooser edTanggal){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, Calendar.DECEMBER); // Set bulan ke Desember (bulan ke-11)
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Set tanggal ke hari terakhir bulan Desember
+        Date lastOfYear = calendar.getTime();
+        edTanggal.setDate(lastOfYear);   
+    }
+
+    
     public static void SetTanggalAkhirBulan(JDateChooser edTanggal){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Set ke hari terakhir bulan

@@ -2,15 +2,19 @@ package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
-import java.awt.Component;
+import com.bprasojo.ekspedisi.utils.VersionUtils;
 import java.beans.PropertyVetoException;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -32,6 +36,14 @@ public class MainForm extends javax.swing.JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         setMenuItemsEnabled(false);
+        
+        String mode = System.getProperty("mode", "production"); // Default 'production'
+        if ("production".equals(mode)) {
+            String versi = VersionUtils.getAppVersion();
+            setTitle("Ekspedisi Versi " + versi);
+        } else {
+            setTitle("Ekspedisi Developement Mode");
+        }
     }
 
     /**
@@ -81,6 +93,8 @@ public class MainForm extends javax.swing.JFrame {
         jMenu9 = new javax.swing.JMenu();
         jMenuItem19 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
+        jMenu10 = new javax.swing.JMenu();
+        jMenuItem20 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -315,6 +329,18 @@ public class MainForm extends javax.swing.JFrame {
         jMenu4.setText("Akuntansi");
         jMenuBar1.add(jMenu4);
 
+        jMenu10.setText("Setting");
+
+        jMenuItem20.setText("Back Up Database");
+        jMenuItem20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem20ActionPerformed(evt);
+            }
+        });
+        jMenu10.add(jMenuItem20);
+
+        jMenuBar1.add(jMenu10);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -478,6 +504,75 @@ public class MainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mnLoginActionPerformed
 
+    private void jMenuItem20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem20ActionPerformed
+        String databaseName = "ekspedisi";
+        String password = ""; // Bisa ditanyakan ke user, atau dari input yang lebih aman
+        String user_db = "root";
+
+        String dateFormat = "yyyy-MM-dd_HH-mm-ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        String timestamp = sdf.format(new Date());
+
+        // Folder backup (di folder yang sama dengan file JAR)
+        String backupFolder = System.getProperty("user.dir") + File.separator + "backup";
+        File dir = new File(backupFolder);
+        if (!dir.exists()) {
+            dir.mkdirs();  // Membuat folder backup jika belum ada
+        }
+
+        // Menentukan nama file backup
+        String fileName = "bak_" + databaseName + "_" + timestamp + ".sql";
+        String backupFilePath = backupFolder + File.separator + fileName;
+
+        // Menentukan command untuk menjalankan mysqldump
+        String command = String.format(
+            "mysqldump -u %s %s -r %s", 
+            user_db, databaseName, backupFilePath
+        );
+
+        // Tentukan perintah sesuai dengan platform
+        String os = System.getProperty("os.name").toLowerCase();
+        ProcessBuilder processBuilder;
+
+        if (os.contains("win")) {
+            // Windows
+            processBuilder = new ProcessBuilder("cmd", "/c", command);
+        } else {
+            // Linux/MacOS
+            processBuilder = new ProcessBuilder("bash", "-c", command);
+        }
+
+        // Eksekusi command menggunakan ProcessBuilder
+        try {
+            // Menjalankan perintah
+            Process process = processBuilder.start();
+
+            // Menangani output error dari proses
+            InputStream errorStream = process.getErrorStream();
+            InputStreamReader errorReader = new InputStreamReader(errorStream);
+            BufferedReader bufferedErrorReader = new BufferedReader(errorReader);
+
+            String line;
+            StringBuilder errorOutput = new StringBuilder();
+            while ((line = bufferedErrorReader.readLine()) != null) {
+                errorOutput.append(line).append("\n");
+            }
+
+            int exitCode = process.waitFor();
+
+            // Jika backup berhasil, exitCode = 0
+            if (exitCode == 0) {
+                AppUtils.showInfoDialog("Backup berhasil disimpan di: " + backupFilePath);
+            } else {
+                // Menampilkan error dari output
+                AppUtils.showErrorDialog("Terjadi kesalahan saat melakukan backup.\n" + errorOutput.toString());
+            }
+        } catch (IOException | InterruptedException e) {
+            AppUtils.showErrorDialog("Terjadi kesalahan saat melakukan backup. \n" + e.getMessage());
+        }
+    
+    }//GEN-LAST:event_jMenuItem20ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -536,6 +631,7 @@ public class MainForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane desktopPane;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu10;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
@@ -557,6 +653,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem18;
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem20;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;

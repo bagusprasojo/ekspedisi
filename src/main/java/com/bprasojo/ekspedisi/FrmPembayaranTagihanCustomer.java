@@ -16,6 +16,7 @@ import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.awt.event.ItemEvent;
 import java.beans.PropertyVetoException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -858,12 +859,15 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_edPPHPropertyChange
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/Kwitansi.jasper";
+//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/Kwitansi.jasper";
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/Kwitansi.jasper");
 
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("p_no_register", pembayaranTagihanCustomer.getNoRegister());
-            AppUtils.showReport(reportPath, params);
+            params.put("KW", "reports/kw.jpg");
+            
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
             AppUtils.showErrorDialog("Ada kesalahan dengan error \n" + ex.getMessage());
         }

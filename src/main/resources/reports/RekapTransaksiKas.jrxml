@@ -298,7 +298,7 @@ where date(tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )]]><
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="95" y="0" width="265" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
+			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="95" y="0" width="265" height="20" fontName="Arial" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
 				<expression><![CDATA[$F{kode_akun} + " " + $F{nama_akun} +"," + $F{kendaraan}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
 				<box padding="2" style="Detail">

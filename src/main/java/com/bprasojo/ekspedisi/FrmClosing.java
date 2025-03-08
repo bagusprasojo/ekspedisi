@@ -9,9 +9,12 @@ import com.bprasojo.ekspedisi.model.Closing;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -37,19 +40,22 @@ public class FrmClosing extends javax.swing.JInternalFrame {
     
     public FrmClosing() {
         initComponents();
-        
+
         tableModel = new DefaultTableModel(new String[]{"Id","Tanggal","Keterangan"}, 0);
         tblClosing.setModel(tableModel);
         tblClosing.removeColumn(tblClosing.getColumnModel().getColumn(0));
-        
-        AppUtils.SetTanggalAwalBulan(edTglAwal);
-        AppUtils.SetTanggalAkhirBulan(edTglAkhir);
-        
+
+        AppUtils.SetTanggalAwalTahun(edTglAwal);
+        AppUtils.SetTanggalAkhirTahun(edTglAkhir);
+
+
+
         setStatusTombol("awal");
         SilakanLoadData = true;
+
+        inisialisasiEventTableModel();
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edTanggal,edKeterangan));
         
-        inisialisasiEventTableModel();        
-        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edTanggal,edKeterangan));        
     }
 
     public void loadDataClosing(int page) {
@@ -384,13 +390,32 @@ public class FrmClosing extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        closing = new Closing();
-        
-        AppUtils.SetTanggalAkhirBulan(edTanggal);
-        edKeterangan.setText("");
-        
-        setStatusTombol("tambah");
-        loadDataClosing(currentPage);
+        try {
+            closing = new Closing();
+            
+            Date lastClosingDate = closingDAO.getLastClosingDate();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(lastClosingDate);
+            
+            // Mendapatkan tahun dari Calendar
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH); // JAN = 0
+            if (month == 11){
+                month = 0;
+                year = year + 1;
+            } else {
+                month = month + 1;
+            }
+            
+            AppUtils.SetTanggalAkhirBulan(edTanggal, year, month);
+            
+            edKeterangan.setText("");
+            
+            setStatusTombol("tambah");
+            loadDataClosing(currentPage);
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog(ex.getMessage());
+        }
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void setStatusTombol(String mode){
@@ -423,7 +448,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
             SetEnableKomponenInput(true);
         } else if (mode == "selected"){
             btnNew.setEnabled(true);
-            btnEdit.setEnabled(true);
+            btnEdit.setEnabled(false);
             btnSimpan.setEnabled(false);
             btnBatal.setEnabled(false);
             btnHapus.setEnabled(true);
@@ -441,6 +466,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
             closing.setKeterangan(edKeterangan.getText());
             closingDAO.save(closing);
             AppUtils.showInfoDialog("Data berhasil disimpan");
+            setStatusTombol("awal");
             loadDataClosing(currentPage);
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
@@ -579,8 +605,6 @@ public class FrmClosing extends javax.swing.JInternalFrame {
     }
 
     private boolean validasiInput() {
-        
-        
         return true;
     }
 

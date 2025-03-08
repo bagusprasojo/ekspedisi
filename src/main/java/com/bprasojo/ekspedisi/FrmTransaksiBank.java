@@ -751,8 +751,8 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                     edKredit.setEnabled(true);
                 }
                 case "02" -> {
-                    edDebet.setEnabled(false);
-                    edKredit.setEnabled(true);
+                    edDebet.setEnabled(true);
+                    edKredit.setEnabled(false);
                 }
                 case "03" -> {
                     edDebet.setEnabled(false);
@@ -1035,9 +1035,9 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                     
                 }
                 case "02" -> {
-                    edDebet.setValue(0);
-                    if (nilaiKredit <= 0){
-                        AppUtils.showWarningDialog("Nilai kredit belum diisi");
+                    edKredit.setValue(0);
+                    if (nilaiDebet <= 0){
+                        AppUtils.showWarningDialog("Nilai debet belum diisi");
                         return false;
                     }
                 }

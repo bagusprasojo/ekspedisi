@@ -5,6 +5,7 @@
 package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,14 +83,16 @@ public class FrmSaldoKasbon extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SaldoKasBon.jasper";
+//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SaldoKasBon.jasper";
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/SaldoKasBon.jasper");
         
         Map<String, Object> params = new HashMap<>();
         params.put("p_tanggal", edTanggal.getDate());
+        params.put("REPORT_LOGO", "reports/logo.png");
         
         
         try {
-            AppUtils.showReport(reportPath, params);
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
             Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
         }

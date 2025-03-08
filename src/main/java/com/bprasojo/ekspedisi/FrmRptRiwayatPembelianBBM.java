@@ -167,6 +167,7 @@ public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
             params.put("p_driver", armada.getDriver().getNama());
             params.put("p_tglawal", edTglAwal.getDate());
             params.put("p_tglakhir", edTglAkhir.getDate());
+            params.put("REPORT_LOGO", "reports/logo.png");
 
             AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {

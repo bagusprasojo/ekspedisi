@@ -146,7 +146,7 @@ and b.nopol =  $P{p_nopolisi}
 		<expression><![CDATA[$F{nominal_BBM}]]></expression>
 	</variable>
 	<title height="186" splitType="Stretch">
-		<element kind="staticText" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a" x="0" y="90" width="556" height="25" fontSize="16.0" bold="true" hTextAlign="Center">
+		<element kind="staticText" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a" x="0" y="90" width="556" height="25" fontSize="16.0" italic="true" bold="true" hTextAlign="Center">
 			<text><![CDATA[Riwayat Pembelian BBM]]></text>
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -404,7 +404,7 @@ Tempuh (KM)]]></text>
 	</detail>
 	<lastPageFooter height="76"/>
 	<summary height="160">
-		<element kind="staticText" uuid="4eae1214-84eb-4e98-b3fd-fbf17cccefee" x="0" y="0" width="460" height="20" fontName="DejaVu Sans" fontSize="9.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="staticText" uuid="4eae1214-84eb-4e98-b3fd-fbf17cccefee" x="0" y="0" width="460" height="20" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[Total  ]]></text>
 			<box padding="4">
 				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -413,7 +413,7 @@ Tempuh (KM)]]></text>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="textField" uuid="c1e3abf3-b2e5-4102-b7d7-9958e224bb20" x="460" y="0" width="94" height="20" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.###;(#,##0.###)" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="textField" uuid="c1e3abf3-b2e5-4102-b7d7-9958e224bb20" x="460" y="0" width="94" height="20" fontName="Arial" fontSize="9.0" pattern="#,##0.###;(#,##0.###)" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<expression><![CDATA[$V{nominal_BBM1}]]></expression>
 			<box leftPadding="0" rightPadding="35">
 				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

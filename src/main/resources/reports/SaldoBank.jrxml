@@ -56,14 +56,14 @@
 		<query language="sql"><![CDATA[]]></query>
 	</dataset>
 	<parameter name="p_tanggal" class="java.util.Date"/>
-	<query language="SQL"><![CDATA[SELECT d.kode as kode_akun, d.nama as nama_akun, cb.bank_id, c.no_rekening, c.nama_bank, c.atas_nama, cb.saldo_akhir + COALESCE(SUM(v.kredit - v.debet), 0) AS saldo_akhir_per_bank
-    FROM closing_bank cb
-    LEFT JOIN v_mutasi_bank v ON v.bank_id = cb.bank_id AND v.tanggal BETWEEN cb.tanggal AND  $P{p_tanggal} 
-		left join bank c on cb.bank_id = c.id
-		left join perkiraan d on c.akun_id = d.id
-    WHERE cb.tanggal <=  $P{p_tanggal} 
-    GROUP BY d.kode , d.nama , cb.bank_id, c.no_rekening, c.nama_bank, c.atas_nama, cb.saldo_akhir
-    order by d.kode,  c.no_rekening]]></query>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
+	<query language="SQL"><![CDATA[select c.kode as kode_akun, c.nama as nama_akun , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama, sum(a.kredit - a.debet) as saldo_akhir_per_bank
+from v_mutasi_bank a
+inner join bank b on a.bank_id = b.id
+inner join perkiraan c on b.akun_id = c.id
+WHERE date(a.tanggal) <=$P{p_tanggal} 
+GROUP BY c.kode , c.nama , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama
+ order by c.kode,  b.no_rekening]]></query>
 	<field name="kode_akun" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="kode"/>
 		<property name="com.jaspersoft.studio.field.label" value="kode_akun"/>
@@ -77,7 +77,7 @@
 	<field name="bank_id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="bank_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="bank_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="closing_bank"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_mutasi_bank"/>
 	</field>
 	<field name="no_rekening" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="no_rekening"/>
@@ -137,7 +137,7 @@
 			<expression><![CDATA[new java.util.Date()]]></expression>
 		</element>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
-			<expression><![CDATA["invoice_logo.png"]]></expression>
+			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
 		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
 			<text><![CDATA[PT. Tampir Baru Logistik]]></text>

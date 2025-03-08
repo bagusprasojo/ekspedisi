@@ -392,7 +392,7 @@ where date(a.tanggal) between date($P{p_tglawal}) and date($P{p_tglakhir})
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="94674bfa-8196-4cc1-b032-f90550ff4898" positionType="Float" x="167" y="0" width="93" height="20" fontName="Arial" textAdjust="StretchHeight" blankWhenNull="true" bold="false" hTextAlign="Left" style="Detail">
+			<element kind="textField" uuid="94674bfa-8196-4cc1-b032-f90550ff4898" positionType="Float" x="167" y="0" width="93" height="20" fontName="Arial" blankWhenNull="true" bold="false" hTextAlign="Left" style="Detail">
 				<expression><![CDATA[$F{nama}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2f656f8-61db-46a2-ad8a-300157956aa0"/>
 				<box padding="3" style="Detail">

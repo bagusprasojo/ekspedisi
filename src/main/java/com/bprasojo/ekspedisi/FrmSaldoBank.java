@@ -8,6 +8,7 @@ import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -87,14 +88,17 @@ public class FrmSaldoBank extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SaldoBank.jasper";
+//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SaldoBank.jasper";
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/SaldoBank.jasper");
         
         Map<String, Object> params = new HashMap<>();
         params.put("p_tanggal", edTanggal.getDate());
+        params.put("REPORT_LOGO", "reports/logo.png");
+        
         
         
         try {
-            AppUtils.showReport(reportPath, params);
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
             Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
         }

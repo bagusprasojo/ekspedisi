@@ -16,6 +16,7 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.beans.PropertyVetoException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -694,14 +695,17 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_edPPNPropertyChange
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SlipInvoice.jasper";
+//        String reportPath = "src/main/java/com/bprasojo/ekspedisi/reports/SlipInvoice.jasper";
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/SlipInvoice.jasper");
 
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("p_tglawal", invoice.getTanggal());
             params.put("p_tglakhir", invoice.getTanggal());
             params.put("p_no_invoice", invoice.getNoInvoice());
-            AppUtils.showReport(reportPath, params);
+            params.put("REPORT_LOGO", "reports/logo.png");
+            
+            AppUtils.showReport(jasperStream, params);
         } catch (JRException ex) {
             AppUtils.showErrorDialog("Ada kesalahan dengan error \n" + ex.getMessage());
         }

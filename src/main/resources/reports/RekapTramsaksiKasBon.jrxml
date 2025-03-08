@@ -117,16 +117,16 @@ order by x.kode_akun_pinjaman, x.tanggal, x.no_register]]></query>
 		<property name="com.jaspersoft.studio.field.name" value="user_create"/>
 		<property name="com.jaspersoft.studio.field.label" value="user_create"/>
 	</field>
-	<variable name="V_TOTAL_KELUAR" resetType="Group" incrementType="Report" calculation="Sum" resetGroup="GroupAkun" class="java.lang.Integer">
-		<expression><![CDATA[$F{keluar}]]></expression>
-	</variable>
 	<variable name="V_TOTAL_KELUAR_ALL" calculation="Sum" class="java.lang.Integer">
 		<expression><![CDATA[$F{keluar}]]></expression>
 	</variable>
-	<variable name="V_TOTAL_MASUK" resetType="Group" incrementType="Report" calculation="Sum" resetGroup="GroupAkun" class="java.lang.Integer">
+	<variable name="V_TOTAL_MASUK_ALL" calculation="Sum" class="java.lang.Integer">
 		<expression><![CDATA[$F{masuk}]]></expression>
 	</variable>
-	<variable name="V_TOTAL_MASUK_ALL" calculation="Sum" class="java.lang.Integer">
+	<variable name="V_TOTAL_KELUAR" resetType="Group" calculation="Sum" resetGroup="GroupAkun" class="java.lang.Long">
+		<expression><![CDATA[$F{keluar}]]></expression>
+	</variable>
+	<variable name="V_TOTAL_MASUK" resetType="Group" calculation="Sum" resetGroup="GroupAkun" class="java.lang.Long">
 		<expression><![CDATA[$F{masuk}]]></expression>
 	</variable>
 	<group name="GroupAkun">
@@ -177,14 +177,11 @@ order by x.kode_akun_pinjaman, x.tanggal, x.no_register]]></query>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 				</element>
-				<element kind="textField" uuid="d9be7ff0-c8ac-4f13-a1cc-6271cb4fd4af" positionType="Float" x="350" y="0" width="90" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="true" hTextAlign="Right" style="Detail">
+				<element kind="textField" uuid="86773423-719e-4d86-88e2-2cb4eaac2e80" x="350" y="0" width="90" height="18" hTextAlign="Right">
 					<expression><![CDATA[$V{V_TOTAL_KELUAR}]]></expression>
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
-					<box padding="3" style="Detail">
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3">
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
 					</box>
 				</element>
 			</band>
@@ -417,7 +414,7 @@ order by x.kode_akun_pinjaman, x.tanggal, x.no_register]]></query>
 		<element kind="textField" uuid="e0b88787-dfeb-4308-813f-048f8ecb5531" positionType="Float" x="350" y="0" width="90" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" pattern="#,##0.###;#,##0.###-" blankWhenNull="true" bold="true" hTextAlign="Right" style="Detail">
 			<expression><![CDATA[$V{V_TOTAL_KELUAR_ALL}]]></expression>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
-			<box padding="3" style="Detail">
+			<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="3" style="Detail">
 				<topPen lineWidth="1.0" lineStyle="Double" lineColor="#000000"/>
 				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>

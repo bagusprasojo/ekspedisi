@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.bprasojo</groupId>
     <artifactId>ekspedisi</artifactId>
-    <version>2025.03.01</version>
+    <version>2025.03.02</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -75,6 +75,7 @@
     </dependencies>
 
     <build>
+        <finalName>ekspedisi</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

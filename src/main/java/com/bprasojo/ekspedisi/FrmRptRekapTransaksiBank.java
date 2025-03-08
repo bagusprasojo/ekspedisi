@@ -50,7 +50,7 @@ public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
         btnTampilkan = new javax.swing.JButton();
 
         setClosable(true);
-        setTitle("Rekap Transaksi Kas");
+        setTitle("Rekap Transaksi Bank");
 
         jLabel1.setText("Periode");
 
@@ -106,6 +106,7 @@ public class FrmRptRekapTransaksiBank extends javax.swing.JInternalFrame {
         Map<String, Object> params = new HashMap<>();
         params.put("p_tglawal", edTglAwal.getDate());
         params.put("p_tglakhir", edTglAkhir.getDate());
+        params.put("REPORT_LOGO", "reports/logo.png");
         
         
         try {
