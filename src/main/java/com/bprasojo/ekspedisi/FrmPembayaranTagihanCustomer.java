@@ -65,7 +65,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     public FrmPembayaranTagihanCustomer() {
         initComponents();
         
-        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edInvoice, btnInvoice, edTanggal, cbBank, edNominal, edPPHPersen, edPPH, edTotal, edKeterangan));
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edInvoice, btnInvoice, edTanggal, cbBank, edNominal, edPPHPersen, edPPH, edTotal, edPPNBayar, edKeterangan));
 
         try {
             setMaximum(true);
@@ -144,6 +144,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edKeterangan = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         edAlamat = new javax.swing.JTextArea();
+        jLabel19 = new javax.swing.JLabel();
+        edPPNBayar = new javax.swing.JFormattedTextField();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -408,6 +410,12 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edAlamat.setEnabled(false);
         jScrollPane2.setViewportView(edAlamat);
 
+        jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel19.setText("PPN");
+
+        edPPNBayar.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        edPPNBayar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
         pnlInputLayout.setHorizontalGroup(
@@ -457,87 +465,76 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(6, 6, 6)
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(edNominal)
-                    .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(edPPHPersen)
-                    .addComponent(edTotal)
-                    .addComponent(edPPH)
-                    .addComponent(cbBank, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
-                .addContainerGap(200, Short.MAX_VALUE))
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(edNominal)
+                        .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(edPPHPersen)
+                        .addComponent(edTotal)
+                        .addComponent(edPPH)
+                        .addComponent(jScrollPane3)
+                        .addComponent(edPPNBayar))
+                    .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(156, Short.MAX_VALUE))
         );
+
+        pnlInputLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cbBank, edNominal, edPPH, edPPHPersen, edPPNBayar, edTotal, jScrollPane3});
+
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInputLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(eNoRegister, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jLabel6)))
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(eNoRegister, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel6)
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnInvoice)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel7)
+                    .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edNilaiPekerjaan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel8)
+                    .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edPPN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel16)
+                    .addComponent(edPPHPersen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edPelunasan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel18)
+                    .addComponent(edPPH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel17)
+                    .addComponent(edTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel19)
+                    .addComponent(edPPNBayar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(edInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnInvoice))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13)
-                            .addComponent(edNilaiPekerjaan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(edPPN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edPelunasan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel15))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(edSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(6, 6, 6)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(cbBank, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edPPHPersen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel16))
-                        .addGap(6, 6, 6)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel18)
-                            .addComponent(edPPH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(6, 6, 6)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(edTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel17))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane3))))
-                .addContainerGap())
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel9)
+                    .addComponent(jScrollPane3)))
         );
 
         jPanel1.add(pnlInput, java.awt.BorderLayout.CENTER);
@@ -691,7 +688,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                                     cbBank,
                                     edPPH,
                                     edPPHPersen,
-                                    edTotal);  
+                                    edTotal,
+                                    edPPNBayar);  
         
         
         showLoopUpBank = true;
@@ -720,6 +718,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             pembayaranTagihanCustomer.setNominalKas(((Number)edNominal.getValue()).intValue());
             pembayaranTagihanCustomer.setPphPersen(((Number)edPPHPersen.getValue()).intValue());
             pembayaranTagihanCustomer.setPph(((Number)edPPH.getValue()).intValue());
+            pembayaranTagihanCustomer.setPpn(((Number)edPPNBayar.getValue()).intValue());
             pembayaranTagihanCustomer.setKeterangan(edKeterangan.getText());            
             
             String terbilang = AppUtils.terbilang(pembayaranTagihanCustomer.getNominalKas()) + " Rupiah";
@@ -731,6 +730,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
 
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + pembayaranTagihanCustomer.getNoRegister());
             LoadDataPembayaranTagihanCustomer(currentPage);
+            
+            setStatusTombol("selected");
 
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal menyimpan data dengan error " + ex.getMessage());
@@ -851,11 +852,11 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_cbBankActionPerformed
 
     private void edNominalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edNominalPropertyChange
-        hitungTotal();
+        hitungTotalDanPPNBayar();
     }//GEN-LAST:event_edNominalPropertyChange
 
     private void edPPHPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edPPHPropertyChange
-        hitungTotal();
+        hitungTotalDanPPNBayar();
     }//GEN-LAST:event_edPPHPropertyChange
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
@@ -897,6 +898,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField edPPH;
     private javax.swing.JFormattedTextField edPPHPersen;
     private javax.swing.JFormattedTextField edPPN;
+    private javax.swing.JFormattedTextField edPPNBayar;
     private javax.swing.JFormattedTextField edPelunasan;
     private javax.swing.JFormattedTextField edSaldo;
     private com.toedter.calendar.JDateChooser edTanggal;
@@ -913,6 +915,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -991,6 +994,12 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             edNominal.requestFocus();
             return false;
         }
+
+        if (tagihanCustomer.getPpn() > 0 && (edPPN.getValue() == null || ((Number) edPPN.getValue()).intValue() <= 0)){
+            AppUtils.showWarningDialog("PPN belum diisi");
+//            edNominal.requestFocus();
+            return false;
+        }
         
         int saldo = ((Number) edSaldo.getValue()).intValue();
         int pembayaran = ((Number) edNominal.getValue()).intValue();
@@ -998,8 +1007,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             AppUtils.showWarningDialog("Pembayaran melebihi saldo hutang");
             edNominal.requestFocus();
             return false;
-        }
-        
+        }        
         
         return true;
         
@@ -1039,8 +1047,9 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                         
                         edNominal.setValue(pembayaranTagihanCustomer.getNominalKas());
                         edPPHPersen.setValue(pembayaranTagihanCustomer.getPphPersen());
-                        edPPH.setValue(pembayaranTagihanCustomer.getPph());
-                        hitungTotal();
+                        edPPH.setValue(pembayaranTagihanCustomer.getPph());                        
+                        hitungTotalDanPPNBayar();                        
+                        edPPNBayar.setValue(pembayaranTagihanCustomer.getPpn());
                         
                         edKeterangan.setText(pembayaranTagihanCustomer.getKeterangan());
                         
@@ -1061,6 +1070,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
             int pph = (Integer) row.get("pph");
             int pph_persen = (Integer) row.get("pph_persen");
             int pembayaran = nominal_kas + pph;
+            int ppn = (Integer) row.get("ppn");
+            
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
                         (String) row.get("no_register"),
@@ -1073,6 +1084,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                         AppUtils.NumericFormat(pph_persen),
                         AppUtils.NumericFormat(pph),                        
                         AppUtils.NumericFormat(pembayaran),
+                        AppUtils.NumericFormat(ppn),
                         (String) row.get("keterangan"),
                         (String) row.get("user_create")
                 });
@@ -1089,6 +1101,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         edPPH.setEnabled(enable);
         edPPHPersen.setEnabled(enable);
         edTotal.setEnabled(enable);
+        edPPNBayar.setEnabled(enable);
         edTanggal.setEnabled(enable);
         cbBank.setEnabled(enable);
         edNominal.setEnabled(enable);
@@ -1096,12 +1109,13 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     }
 
     private void InisialisasiTablePembayaranTagihanCustomer() {
-        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "No Invoice", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal Kas/Bank","PPH Persen","PPH","Total", "Keterangan",  "Pc"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Register", "No Invoice", "Nama", "Alamat", "Tanggal", "Suber Dana","Nominal Kas/Bank","PPH Persen","PPH","Total","PPN", "Keterangan",  "Pc"}, 0);
         tblPembayaranKasBon.setModel(tableModel);
         AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 7);
         AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 8);
         AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 9);
         AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 10);
+        AppUtils.SetTableAligmentRight(tblPembayaranKasBon, 11);
         
         tblPembayaranKasBon.removeColumn(tblPembayaranKasBon.getColumnModel().getColumn(0));
         
@@ -1141,7 +1155,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         }
     }
 
-    private void hitungTotal() {
+    private void hitungTotalDanPPNBayar() {
       int nominalKas = 0;
       int pph = 0;
       
@@ -1152,6 +1166,8 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         pph = ((Number)edPPH.getValue()).intValue();
       
       edTotal.setValue(nominalKas + pph);
+      int ppnBayar = (int) (11 * (nominalKas + pph) / 111);
+      edPPNBayar.setValue(ppnBayar);
     }
     
     private void LoadBank() {

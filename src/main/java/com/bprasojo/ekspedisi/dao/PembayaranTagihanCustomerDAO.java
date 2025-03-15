@@ -172,6 +172,7 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
                     pembayaran.setKeterangan(rs.getString("keterangan"));
                     pembayaran.setSumberDana(rs.getString("sumber_dana"));
                     pembayaran.setTerbilang(rs.getString("terbilang"));
+                    pembayaran.setPpn(rs.getInt("ppn"));
                 }
             }
         }
@@ -180,7 +181,7 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
     
     public void save(PembayaranTagihanCustomer pembayaran) throws SQLException {
         if (!validasiClosing(pembayaran.getId(), pembayaran.getTanggal())){
-            throw new SQLException("Data tidak bisa dihapus karena sudah closing");
+            throw new SQLException("Data tidak bisa disimpan karena sudah closing");
         }
         
         boolean previousAutoCommit = conn.getAutoCommit();
@@ -193,10 +194,10 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
                 String no_register = generateNoRegister(pembayaran.getTanggal());
                 pembayaran.setNoRegister(no_register);
                 
-                sql = "INSERT INTO " + _nama_table_ + " (no_register, tagihan_customer_id, tanggal, nominal_kas, pph,pph_persen, perkiraan_kas_id, bank_id, perkiraan_pph_id, keterangan, sumber_dana, terbilang, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
+                sql = "INSERT INTO " + _nama_table_ + " (no_register, tagihan_customer_id, tanggal, nominal_kas, pph,pph_persen, perkiraan_kas_id, bank_id, perkiraan_pph_id, keterangan, sumber_dana, terbilang, ppn, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
             } else {
                 tagihan_customer_old_id = getById(pembayaran.getId()).getTagihanCustomerId();
-                sql = "UPDATE " + _nama_table_ + " SET no_register = ?, tagihan_customer_id = ?, tanggal = ?, nominal_kas = ?, pph = ?,pph_persen = ?, perkiraan_kas_id = ?, bank_id = ?, perkiraan_pph_id = ?, keterangan = ?, sumber_dana = ?, terbilang = ?, user_update = ?  WHERE id = ?";
+                sql = "UPDATE " + _nama_table_ + " SET no_register = ?, tagihan_customer_id = ?, tanggal = ?, nominal_kas = ?, pph = ?,pph_persen = ?, perkiraan_kas_id = ?, bank_id = ?, perkiraan_pph_id = ?, keterangan = ?, sumber_dana = ?, terbilang = ?, ppn=? , user_update = ?  WHERE id = ?";
             }
             
             try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -212,12 +213,13 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
                 stmt.setString(10, pembayaran.getKeterangan());
                 stmt.setString(11, pembayaran.getSumberDana());
                 stmt.setString(12, pembayaran.getTerbilang());
+                stmt.setInt(13, pembayaran.getPpn());
                 
                 if (pembayaran.getId() <= 0) {
-                    stmt.setString(13, pembayaran.getUserCreate());
+                    stmt.setString(14, pembayaran.getUserCreate());
                 } else {
-                    stmt.setString(13, pembayaran.getUserUpdate());
-                    stmt.setInt(14, pembayaran.getId());
+                    stmt.setString(14, pembayaran.getUserUpdate());
+                    stmt.setInt(15, pembayaran.getId());
                 }
                 
                 int affectedRows = stmt.executeUpdate();

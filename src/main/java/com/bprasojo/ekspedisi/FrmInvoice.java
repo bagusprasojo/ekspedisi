@@ -709,6 +709,20 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
         } catch (JRException ex) {
             AppUtils.showErrorDialog("Ada kesalahan dengan error \n" + ex.getMessage());
         }
+        
+        jasperStream = getClass().getClassLoader().getResourceAsStream("reports/KwitansiInvoice.jasper");
+
+        try {
+            Map<String, Object> params = new HashMap<>();
+//            params.put("p_tglawal", invoice.getTanggal());
+//            params.put("p_tglakhir", invoice.getTanggal());
+            params.put("p_no_invoice", invoice.getNoInvoice());
+            params.put("KW", "reports/kw.jpg");
+            
+            AppUtils.showReport(jasperStream, params);
+        } catch (JRException ex) {
+            AppUtils.showErrorDialog("Ada kesalahan dengan error \n" + ex.getMessage());
+        }
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void edNoInvoiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edNoInvoiceActionPerformed

@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -26,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
@@ -122,6 +124,9 @@ public class AppUtils {
     public static void showReport(InputStream sourceStream, Map<String, Object> params) throws JRException{
         try {
             Connection conn  = DatabaseConnection.getConnection();
+            
+            java.util.Locale locale = new Locale( "id", "ID" );            
+            params.put( JRParameter.REPORT_LOCALE, locale );
             
             JasperPrint print = JasperFillManager.fillReport(sourceStream, params, conn);
             JasperViewer viewer = new JasperViewer(print, false);

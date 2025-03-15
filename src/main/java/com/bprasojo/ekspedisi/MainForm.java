@@ -68,7 +68,6 @@ public class MainForm extends javax.swing.JFrame {
         jMenu5 = new javax.swing.JMenu();
         miTransaksiKas = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
@@ -92,7 +91,6 @@ public class MainForm extends javax.swing.JFrame {
         jMenuItem18 = new javax.swing.JMenuItem();
         jMenu9 = new javax.swing.JMenu();
         jMenuItem19 = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
         jMenu10 = new javax.swing.JMenu();
         jMenuItem20 = new javax.swing.JMenuItem();
 
@@ -178,9 +176,6 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu5.add(jMenuItem1);
-
-        jMenuItem2.setText("Jurnal Penyesuaian");
-        jMenu5.add(jMenuItem2);
         jMenu5.add(jSeparator1);
 
         jMenuItem4.setText("Rekap Transaksi Kas");
@@ -325,9 +320,6 @@ public class MainForm extends javax.swing.JFrame {
         jMenu3.add(jMenu9);
 
         jMenuBar1.add(jMenu3);
-
-        jMenu4.setText("Akuntansi");
-        jMenuBar1.add(jMenu4);
 
         jMenu10.setText("Setting");
 
@@ -634,7 +626,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu10;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
@@ -652,7 +643,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem18;
     private javax.swing.JMenuItem jMenuItem19;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem20;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
