@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.bprasojo</groupId>
     <artifactId>ekspedisi</artifactId>
-    <version>2025.03.03</version>
+    <version>2025.03.04</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

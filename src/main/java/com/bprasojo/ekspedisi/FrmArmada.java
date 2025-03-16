@@ -490,6 +490,7 @@ public class FrmArmada extends javax.swing.JInternalFrame {
         
         setStatusTombol("tambah");
         loadDataArmada(currentPage);
+        edNoPolisi.requestFocus();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void setStatusTombol(String mode){
@@ -556,6 +557,8 @@ public class FrmArmada extends javax.swing.JInternalFrame {
             armadaDAO.save(armada);
             AppUtils.showInfoDialog("Data berhasil disimpan");
             loadDataArmada(currentPage);
+            
+            setStatusTombol("selected");
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }

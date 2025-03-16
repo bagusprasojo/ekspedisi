@@ -25,13 +25,17 @@ public class TagihanCustomerDAO extends ParentDAO{
     }
 
     public String generateNoInvoice(java.util.Date inputDate) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-        String yearMonth = sdf.format(inputDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        String year = sdf.format(inputDate);
+        sdf = new SimpleDateFormat("MM");
+        int month = Integer.parseInt(sdf.format(inputDate));
+        
+        String yearMonth = "/" + AppUtils.toRoman(month) + "/INV_TBL/" + year;
 
         // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
-        String sql = "SELECT MAX(SUBSTRING(no_invoice, 11)) AS last_number " +
+        String sql = "SELECT MAX(SUBSTR(no_invoice,1,3)) AS last_number  " +
                      " FROM " + _nama_table_ + 
-                     " WHERE no_invoice LIKE 'INV-" + yearMonth + "%'";
+                     " WHERE no_invoice LIKE '%" + yearMonth + "%'";
 
         try (Statement stmt = conn.createStatement(); 
             ResultSet rs = stmt.executeQuery(sql)) {
@@ -50,7 +54,7 @@ public class TagihanCustomerDAO extends ParentDAO{
             lastNumber++;
 
             // Format nomor bukti baru
-            String noBuktiBaru = "INV-" + yearMonth + String.format("%04d", lastNumber);
+            String noBuktiBaru = String.format("%03d", lastNumber) + yearMonth;
 
             // Kembalikan nomor bukti baru
             return noBuktiBaru;

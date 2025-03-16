@@ -545,6 +545,8 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
 
             AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + kasBonKaryawan.getNoRegister());
             LoadDataKasBon(currentPage);
+            
+            setStatusTombol("selected");
 
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal menyimpan data dengan error :\n" + ex.getMessage());

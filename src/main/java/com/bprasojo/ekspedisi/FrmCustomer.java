@@ -458,6 +458,8 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
         
         setStatusTombol("tambah");
         loadDataStakeHolder(currentPage);
+        
+        edNama.requestFocus();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void setStatusTombol(String mode){
@@ -519,6 +521,8 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
             stakeHolderDAO.save(stakeHolder);
             AppUtils.showInfoDialog("Data berhasil disimpan");
             loadDataStakeHolder(currentPage);
+            
+            setStatusTombol("selected");
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }

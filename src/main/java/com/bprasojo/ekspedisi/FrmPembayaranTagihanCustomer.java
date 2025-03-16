@@ -331,7 +331,6 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
 
         eNoRegister.setEditable(false);
         eNoRegister.setText("Otomatis");
-        eNoRegister.setEnabled(false);
         eNoRegister.setNextFocusableComponent(edAlamat);
 
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);

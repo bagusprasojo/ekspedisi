@@ -9,6 +9,7 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.*;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -35,9 +36,12 @@ public class ParentDAO {
             if (rs.next()) {
                 Timestamp timestamp = rs.getTimestamp("last_closing");
                 
-                return timestamp != null ? new Date(timestamp.getTime()) : null;
+                Calendar cal = Calendar.getInstance();
+                cal.set(2024, 11, 31);
+                return timestamp != null ? new Date(timestamp.getTime()) : cal.getTime();
             }
         }
+        
         return null;
     }
     

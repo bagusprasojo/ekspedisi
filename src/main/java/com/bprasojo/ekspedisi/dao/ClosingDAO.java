@@ -18,15 +18,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClosingDAO {
-    private Connection conn;
+public class ClosingDAO extends ParentDAO{
+//    private Connection conn;
 
     public ClosingDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(ClosingDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
     }
 
     // Cek apakah tanggal adalah akhir bulan
@@ -116,21 +112,21 @@ public class ClosingDAO {
         }
     }
 
-    public java.util.Date getLastClosingDate() throws SQLException {
-        String lastClosingSql = "SELECT tanggal FROM closing ORDER BY tanggal DESC LIMIT 1";
-        java.util.Date lastClosingDate = null;
-
-        try (PreparedStatement stmt = conn.prepareStatement(lastClosingSql)) {
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    // Konversi dari java.sql.Date ke java.util.Date
-                    lastClosingDate = new java.util.Date(rs.getDate("tanggal").getTime());
-                }
-            }
-        }
-
-        return lastClosingDate; // Jika tidak ada data, akan mengembalikan null
-    }
+//    public java.util.Date getLastClosingDate() throws SQLException {
+//        String lastClosingSql = "SELECT tanggal FROM closing ORDER BY tanggal DESC LIMIT 1";
+//        java.util.Date lastClosingDate = null;
+//
+//        try (PreparedStatement stmt = conn.prepareStatement(lastClosingSql)) {
+//            try (ResultSet rs = stmt.executeQuery()) {
+//                if (rs.next()) {
+//                    // Konversi dari java.sql.Date ke java.util.Date
+//                    lastClosingDate = new java.util.Date(rs.getDate("tanggal").getTime());
+//                }
+//            }
+//        }
+//
+//        return lastClosingDate; // Jika tidak ada data, akan mengembalikan null
+//    }
 
 
     public void save(Closing closing) throws SQLException {

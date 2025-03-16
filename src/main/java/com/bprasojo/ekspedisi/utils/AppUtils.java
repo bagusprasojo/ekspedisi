@@ -42,6 +42,30 @@ public class AppUtils {
         
         return Integer.parseInt(formattedDate);
     }
+    
+    public static String toRoman(int num) {
+        // Menyusun pasangan angka dan simbol Romawi dalam array
+        String[] romanNumerals = {
+            "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"
+        };
+        int[] values = {
+            1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1
+        };
+
+        // StringBuilder untuk menyusun hasil
+        StringBuilder roman = new StringBuilder();
+
+        // Proses konversi angka ke angka Romawi
+        for (int i = 0; i < values.length; i++) {
+            while (num >= values[i]) {
+                num -= values[i];
+                roman.append(romanNumerals[i]);
+            }
+        }
+
+        // Mengembalikan hasil dalam bentuk string
+        return roman.toString();
+    }
     public static void setDefaultValues(JComponent... components) {
         for (JComponent component : components) {
             if (component instanceof JFormattedTextField) {

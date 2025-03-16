@@ -642,6 +642,8 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
 
             AppUtils.showInfoDialog("Data berhasil disimpan!");
             LoadDataTransaksiBank(currentPage);
+            
+            setStatusTombol("selected");
 
         } catch (SQLException ex) {
             AppUtils.showErrorDialogSimpan(ex);

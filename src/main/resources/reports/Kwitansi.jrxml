@@ -92,6 +92,21 @@ where a.no_register =  $P{p_no_register} ]]></query>
 		<property name="com.jaspersoft.studio.field.label" value="updated_at"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
 	</field>
+	<field name="ppn" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="ppn"/>
+		<property name="com.jaspersoft.studio.field.label" value="ppn"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="user_create" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_create"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
+	<field name="user_update" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.label" value="user_update"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pembayaran_tagihan_customer"/>
+	</field>
 	<field name="pekerjaan" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="pekerjaan"/>
 		<property name="com.jaspersoft.studio.field.label" value="pekerjaan"/>
@@ -106,41 +121,155 @@ where a.no_register =  $P{p_no_register} ]]></query>
 	<title height="42"/>
 	<detail>
 		<band height="383">
-			<element kind="image" uuid="90ad13a2-127a-4411-8948-22ab55e6328b" stretchType="ContainerHeight" x="0" y="20" width="791" height="339">
-				<expression><![CDATA[$P{KW}]]></expression>
-			</element>
-			<element kind="textField" uuid="60194ace-ba53-4681-b74b-8d771474b7f7" x="200" y="50" width="150" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
-				<expression><![CDATA[$F{no_register}]]></expression>
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			</element>
-			<element kind="textField" uuid="8360b3bc-3e5c-4f42-b9ee-7ea6a10fc30b" x="320" y="70" width="440" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
-				<expression><![CDATA[$F{nama}]]></expression>
-			</element>
-			<element kind="textField" uuid="9a6bb917-c224-4147-89f3-3ceac897088a" x="310" y="91" width="440" height="40" fontSize="14.0" bold="true" vTextAlign="Middle">
-				<expression><![CDATA[$F{terbilang}]]></expression>
-			</element>
-			<element kind="textField" uuid="efd48e24-9775-4883-8e66-f4d854286ec9" x="310" y="135" width="450" height="50" fontSize="14.0" bold="true" vTextAlign="Top">
-				<expression><![CDATA[$F{pekerjaan}]]></expression>
-			</element>
-			<element kind="textField" uuid="4cb06c79-98ea-4934-b5d3-52e296031d73" x="220" y="260" width="240" height="40" fontSize="16.0" pattern="#,##0.###;#,##0.###-" bold="true" vTextAlign="Top">
-				<expression><![CDATA[$F{nominal_kas}]]></expression>
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			</element>
-			<element kind="textField" uuid="343fe8ac-af66-4e8b-81de-7df94e3952a7" x="580" y="270" width="140" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
-				<expression><![CDATA["Lia Wahyuningsih"]]></expression>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			<element kind="frame" uuid="8c4a82d1-7009-4263-ba03-1236eed753e9" x="0" y="-2" width="780" height="360">
+				<element kind="frame" uuid="dab5c0ea-6e26-4e0a-a988-a9246595f62c" x="83" y="63" width="688" height="287">
+					<element kind="textField" uuid="60194ace-ba53-4681-b74b-8d771474b7f7" x="171" y="11" width="150" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
+						<expression><![CDATA[$F{no_register}]]></expression>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</element>
+					<element kind="textField" uuid="8360b3bc-3e5c-4f42-b9ee-7ea6a10fc30b" x="171" y="37" width="509" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
+						<expression><![CDATA[$F{nama}]]></expression>
+					</element>
+					<element kind="textField" uuid="9a6bb917-c224-4147-89f3-3ceac897088a" x="171" y="63" width="508" height="40" fontSize="14.0" bold="true" vTextAlign="Top">
+						<expression><![CDATA[$F{terbilang}]]></expression>
+						<box padding="2">
+							<topPen lineWidth="0.5"/>
+							<leftPen lineWidth="0.5"/>
+							<bottomPen lineWidth="0.5"/>
+							<rightPen lineWidth="0.5"/>
+						</box>
+					</element>
+					<element kind="textField" uuid="efd48e24-9775-4883-8e66-f4d854286ec9" x="170" y="111" width="508" height="50" fontSize="14.0" bold="true" vTextAlign="Top">
+						<expression><![CDATA[$F{pekerjaan}]]></expression>
+					</element>
+					<element kind="textField" uuid="343fe8ac-af66-4e8b-81de-7df94e3952a7" x="496" y="261" width="140" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
+						<expression><![CDATA["Lia Wahyuningsih"]]></expression>
+						<box>
+							<pen lineWidth="1.0"/>
+							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</element>
+					<element kind="textField" uuid="f390e186-3756-432e-85df-3384167cd61e" x="458" y="191" width="214" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
+						<expression><![CDATA["Sukoharjo, " + DATEFORMAT($F{tanggal},"dd MMMM yyyy")]]></expression>
+					</element>
+					<element kind="textField" uuid="23311048-10ed-4d7b-a1ce-d7811f944a35" x="458" y="211" width="214" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
+						<expression><![CDATA["PT. Tampir Baru Logistik"]]></expression>
+					</element>
+					<element kind="staticText" uuid="f48be20a-23d0-48f8-a5b1-4874855e69b1" x="13" y="11" width="125" height="20" fontSize="14.0">
+						<text><![CDATA[Nomor]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</element>
+					<element kind="staticText" uuid="cd182d56-107c-48ae-9d1d-ece73f523033" x="145" y="11" width="19" height="20" fontSize="14.0" hTextAlign="Center">
+						<text><![CDATA[:]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</element>
+					<element kind="staticText" uuid="e58b8808-365b-40f8-89d2-54fde49cf9e2" x="145" y="37" width="19" height="20" fontSize="14.0" hTextAlign="Center">
+						<text><![CDATA[:]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</element>
+					<element kind="staticText" uuid="506f5b06-d9b4-428e-aea0-4072281dbc8c" x="13" y="37" width="125" height="20" fontSize="14.0">
+						<text><![CDATA[Telah terima dari]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</element>
+					<element kind="staticText" uuid="e46af9ad-7126-4b57-8f42-f221f2e5280d" x="145" y="63" width="19" height="20" fontSize="14.0" hTextAlign="Center">
+						<text><![CDATA[:]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+					</element>
+					<element kind="staticText" uuid="6b397e70-47eb-4046-99ac-960b7ea10fc0" x="13" y="63" width="125" height="20" fontSize="14.0">
+						<text><![CDATA[Uang sejumlah]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+					</element>
+					<element kind="staticText" uuid="1df6f13e-aa92-4783-b6e0-3e88dfaf415d" x="145" y="110" width="19" height="20" fontSize="14.0" hTextAlign="Center">
+						<text><![CDATA[:]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+					</element>
+					<element kind="staticText" uuid="aaa460dc-1389-4757-8e2c-5d4158bed61b" x="14" y="110" width="125" height="20" fontSize="14.0">
+						<text><![CDATA[Untuk pembayaran]]></text>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<box>
+							<topPen lineWidth="0.0"/>
+							<leftPen lineWidth="0.0"/>
+							<bottomPen lineWidth="0.0"/>
+							<rightPen lineWidth="0.0"/>
+						</box>
+					</element>
+					<element kind="frame" uuid="b53eb54e-8efe-4d4f-9c9b-0ebedbfe4386" x="14" y="217" width="313" height="52">
+						<element kind="staticText" uuid="2d00ca4d-fce2-4f71-bc64-995fb8bde269" x="0" y="6" width="124" height="40" fontSize="16.0" italic="true" vTextAlign="Middle">
+							<text><![CDATA[Terbilang Rp]]></text>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<box>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="4cb06c79-98ea-4934-b5d3-52e296031d73" x="131" y="6" width="176" height="40" fontSize="16.0" pattern="#,##0.###;#,##0.###-" bold="true" hTextAlign="Right" vTextAlign="Middle">
+							<expression><![CDATA[$F{nominal_kas}]]></expression>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</element>
+						<box>
+							<topPen lineWidth="1.0"/>
+							<bottomPen lineWidth="1.0"/>
+						</box>
+					</element>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="rectangle" uuid="63c37d71-222c-4eff-9c47-d3b5758104d8" mode="Opaque" x="11" y="14" width="58" height="336" backcolor="#F5F4F2"/>
+				<element kind="frame" uuid="47238f1f-9a41-401e-9042-34587ea7296b" x="82" y="14" width="689" height="41">
+					<element kind="staticText" uuid="fe00a89a-c980-459f-a31a-c06fcea5fd11" x="141" y="6" width="390" height="30" fontSize="20.0" bold="true" hTextAlign="Center">
+						<text><![CDATA[KWITANSI]]></text>
+					</element>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<box padding="0">
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
 				</box>
-			</element>
-			<element kind="textField" uuid="f390e186-3756-432e-85df-3384167cd61e" x="542" y="200" width="214" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
-				<expression><![CDATA["Sukoharjo, " + DATEFORMAT($F{tanggal},"dd MMMM yyyy")]]></expression>
-			</element>
-			<element kind="textField" uuid="23311048-10ed-4d7b-a1ce-d7811f944a35" x="542" y="220" width="214" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
-				<expression><![CDATA["PT. Tampir Baru Logistik"]]></expression>
 			</element>
 		</band>
 	</detail>

@@ -572,7 +572,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             AppUtils.showInfoDialog("Data berhasil disimpan!");
             LoadDataTransaksiPembelianBBM(currentPage);
             
-
+            setStatusTombol("selected");
         } catch (SQLException ex) {
             AppUtils.showErrorDialog("Gagal simpan data dengan error : \n" + ex.getMessage());
         }
