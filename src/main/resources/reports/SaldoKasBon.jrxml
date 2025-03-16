@@ -57,13 +57,44 @@
 	</dataset>
 	<parameter name="p_tanggal" class="java.util.Date"/>
 	<parameter name="REPORT_LOGO" class="java.lang.String"/>
-	<query language="SQL"><![CDATA[select a.*, c.nama as nama_karyawan, c.alamat as alamat_karyawan, b.kode as kode_akun, b.nama as nama_akun
+	<query language="SQL"><![CDATA[select d.*, a.*, c.nama as nama_karyawan, c.alamat as alamat_karyawan, b.kode as kode_akun, b.nama as nama_akun
 from kas_bon_karyawan a
 left  join perkiraan b on a.perkiraan_pinjaman_id = b.id
 inner join stake_holder c on a.karyawan_id = c.id
+inner join company d on 1=1
 where date(a.tanggal) <=  $P{p_tanggal} 
 and a.status_lunas = 'Belum'
 order by b.kode, a.no_register]]></query>
+	<field name="id_company" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="nama_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="alamat_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="alamat_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="alamat_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="kabupaten_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kabupaten_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="kabupaten_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="provinsi_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provinsi_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="provinsi_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="kode_pos_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kode_pos_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="kode_pos_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
 	<field name="id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>
 		<property name="com.jaspersoft.studio.field.label" value="id"/>
@@ -241,23 +272,24 @@ order by b.kode, a.no_register]]></query>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
 			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
-		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
-			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
-			<property name="local_mesure_unitheight" value="pixel"/>
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</element>
-		<element kind="staticText" uuid="c226e44d-3bb5-4145-b0b3-903bf1d79fde" x="70" y="25" width="275" height="15">
-			<text><![CDATA[Office : Jl. Sakura Raya no 33, RT 003 RW 005, Mantung]]></text>
-		</element>
-		<element kind="staticText" uuid="b96f7183-44f8-43ad-ba60-43d8fbf50b6e" x="70" y="40" width="205" height="15">
-			<text><![CDATA[Kab. Sukoharjo, Jawa Tengah]]></text>
-		</element>
 		<element kind="textField" uuid="ad2aee85-1df9-4662-8645-6d37cbf99968" x="0" y="115" width="554" height="15" hTextAlign="Center">
 			<expression><![CDATA["Periode : " + DATEFORMAT($P{p_tanggal},"dd/MM/yyyy")]]></expression>
 		</element>
+		<element kind="textField" uuid="48c6c8ad-9b99-4a09-b201-892995cc6b0c" x="67" y="0" width="305" height="25" fontSize="19.0" bold="true">
+			<expression><![CDATA[$F{nama_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="b8820dca-8781-4a77-a83e-adb5271afc10" x="67" y="25" width="305" height="15">
+			<expression><![CDATA["Office : " + $F{alamat_company} +", Kabupaten " +$F{kabupaten_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="c3aad3fc-c90e-474d-bc2a-1d3bf901802b" x="67" y="40" width="305" height="15">
+			<expression><![CDATA[$F{kode_pos_company} +", " + $F{provinsi_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
 	</title>
 	<columnHeader height="20">
-		<element kind="staticText" uuid="b7c8e117-a3d8-497f-97d2-c22573632cc2" positionType="Float" mode="Opaque" x="0" y="0" width="28" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="b7c8e117-a3d8-497f-97d2-c22573632cc2" positionType="Float" mode="Opaque" x="0" y="0" width="28" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[No]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="06f25017-3143-4809-8903-d3f1aa14fca8"/>
 			<box padding="1" style="Column header">
@@ -268,7 +300,7 @@ order by b.kode, a.no_register]]></query>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" mode="Opaque" x="28" y="0" width="92" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="870dc14c-3230-4c19-9306-412ea82038b7" positionType="Float" mode="Opaque" x="28" y="0" width="92" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[No Reg]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="857d7446-0fbe-4571-a222-2d06389e366f"/>
 			<box padding="1" style="Column header">
@@ -279,7 +311,7 @@ order by b.kode, a.no_register]]></query>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="c9957f59-7fa0-4039-b6da-fa181fa6732d" positionType="Float" mode="Opaque" x="120" y="0" width="100" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="c9957f59-7fa0-4039-b6da-fa181fa6732d" positionType="Float" mode="Opaque" x="120" y="0" width="100" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Atas Nama]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
 			<box style="Column header">
@@ -290,7 +322,7 @@ order by b.kode, a.no_register]]></query>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="31e8a6ab-9a66-453f-846d-6009d13cee18" positionType="Float" mode="Opaque" x="522" y="0" width="32" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="31e8a6ab-9a66-453f-846d-6009d13cee18" positionType="Float" mode="Opaque" x="522" y="0" width="32" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Pc]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7f61ac36-e07b-44ed-bbe5-247528a8cba5"/>
 			<box style="Column header">
@@ -301,7 +333,7 @@ order by b.kode, a.no_register]]></query>
 				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="908f402d-0a23-49d0-8e06-cd5a3040e887" positionType="Float" mode="Opaque" x="440" y="0" width="82" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="908f402d-0a23-49d0-8e06-cd5a3040e887" positionType="Float" mode="Opaque" x="440" y="0" width="82" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Saldo]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3059dce9-4f73-4877-86e7-03968dfbd272"/>
 			<box style="Column header">
@@ -312,7 +344,7 @@ order by b.kode, a.no_register]]></query>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="bfadfc33-3870-4dee-9f04-98464ba672ce" positionType="Float" mode="Opaque" x="220" y="0" width="100" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="bfadfc33-3870-4dee-9f04-98464ba672ce" positionType="Float" mode="Opaque" x="220" y="0" width="100" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Alamat]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
 			<box style="Column header">
@@ -323,7 +355,7 @@ order by b.kode, a.no_register]]></query>
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="fe2a8c63-2915-4e34-b863-f007462cdd0a" positionType="Float" mode="Opaque" x="320" y="0" width="120" height="20" forecolor="#000000" backcolor="rgba(229, 241, 251, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+		<element kind="staticText" uuid="fe2a8c63-2915-4e34-b863-f007462cdd0a" positionType="Float" mode="Opaque" x="320" y="0" width="120" height="20" forecolor="#000000" backcolor="rgba(182, 210, 233, 0.5764706)" fontName="Arial" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
 			<text><![CDATA[Keterangan]]></text>
 			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8eea2fe5-4089-4985-ad0f-e620d963cc9e"/>
 			<box style="Column header">

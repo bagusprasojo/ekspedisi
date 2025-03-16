@@ -60,20 +60,53 @@
 	<parameter name="REPORT_LOGO" class="java.lang.String"/>
 	<query language="SQL"><![CDATA[select * from 
 (
-select a.no_register, a.tanggal, b.kode as kode_akun_pinjaman, b.nama as nama_akun_pinjaman , c.kode as kode_akun_kas, c.nama as nama_akun_kas, a.keterangan, a.nominal as keluar, 0 as masuk, a.user_create
+select d.*, e.nama as karyawan, a.no_register, a.tanggal, b.kode as kode_akun_pinjaman, b.nama as nama_akun_pinjaman , c.kode as kode_akun_kas, c.nama as nama_akun_kas, a.keterangan, a.nominal as keluar, 0 as masuk, a.user_create
 from kas_bon_karyawan a
 inner join perkiraan b on a.perkiraan_pinjaman_id = b.id
 inner join perkiraan c on a.perkiraan_kas_id = c.id
+inner join company d on 1=1
+inner join stake_holder e on a.karyawan_id = e.id
 
 union all
 
-select a.no_register, a.tanggal, c.kode, c.nama, d.kode, d.nama, a.keterangan, 0 as keluar, a.nominal as masuk, a.user_create from pembayaran_kas_bon a
+select e.*, f.nama,  a.no_register, a.tanggal, c.kode, c.nama, d.kode, d.nama, a.keterangan, 0 as keluar, a.nominal as masuk, a.user_create 
+from pembayaran_kas_bon a
 inner join kas_bon_karyawan b on a.kas_bon_karyawan_id = b.id
 inner join perkiraan c on b.perkiraan_pinjaman_id  = c.id
 inner join perkiraan d on a.perkiraan_kas_id= d.id
+inner join company e on 1=1
+inner join stake_holder f on b.karyawan_id = f.id
 ) x 
 where x.tanggal BETWEEN  $P{p_tglawal}  and  $P{p_tglakhir} 
 order by x.kode_akun_pinjaman, x.tanggal, x.no_register]]></query>
+	<field name="id_company" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_company"/>
+	</field>
+	<field name="nama_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama_company"/>
+	</field>
+	<field name="alamat_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="alamat_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="alamat_company"/>
+	</field>
+	<field name="kabupaten_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kabupaten_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="kabupaten_company"/>
+	</field>
+	<field name="provinsi_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provinsi_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="provinsi_company"/>
+	</field>
+	<field name="kode_pos_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kode_pos_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="kode_pos_company"/>
+	</field>
+	<field name="karyawan" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="karyawan"/>
+		<property name="com.jaspersoft.studio.field.label" value="karyawan"/>
+	</field>
 	<field name="no_register" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="no_register"/>
 		<property name="com.jaspersoft.studio.field.label" value="no_register"/>
@@ -207,19 +240,20 @@ order by x.kode_akun_pinjaman, x.tanggal, x.no_register]]></query>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
 			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
-		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
-			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
-			<property name="local_mesure_unitheight" value="pixel"/>
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</element>
-		<element kind="staticText" uuid="c226e44d-3bb5-4145-b0b3-903bf1d79fde" x="70" y="25" width="275" height="15">
-			<text><![CDATA[Office : Jl. Sakura Raya no 33, RT 003 RW 005, Mantung]]></text>
-		</element>
-		<element kind="staticText" uuid="b96f7183-44f8-43ad-ba60-43d8fbf50b6e" x="70" y="40" width="205" height="15">
-			<text><![CDATA[Kab. Sukoharjo, Jawa Tengah]]></text>
-		</element>
 		<element kind="textField" uuid="ad2aee85-1df9-4662-8645-6d37cbf99968" x="0" y="115" width="554" height="15" hTextAlign="Center">
 			<expression><![CDATA["Periode : " + DATEFORMAT($P{p_tglawal},"dd/MM/yyyy") + " s.d. " + DATEFORMAT($P{p_tglakhir},"dd/MM/yyyy")]]></expression>
+		</element>
+		<element kind="textField" uuid="c5bc914e-1b64-4c5a-a7c6-9b52d1f8d6f5" x="67" y="0" width="305" height="25" fontSize="19.0" bold="true">
+			<expression><![CDATA[$F{nama_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="cbf0cbf2-9d18-4088-a207-c8509978c2ad" x="67" y="25" width="305" height="15">
+			<expression><![CDATA["Office : " + $F{alamat_company} +", Kabupaten " +$F{kabupaten_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="6301cfca-0c63-482e-a637-1ff855a16d81" x="67" y="40" width="305" height="15">
+			<expression><![CDATA[$F{kode_pos_company} +", " + $F{provinsi_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</element>
 	</title>
 	<columnHeader height="20">
@@ -315,7 +349,7 @@ order by x.kode_akun_pinjaman, x.tanggal, x.no_register]]></query>
 				</box>
 			</element>
 			<element kind="textField" uuid="e1b82c3b-b981-4fb5-b19f-612e885296af" positionType="Float" x="120" y="0" width="230" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" linkType="None" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" bold="false" style="Detail">
-				<expression><![CDATA[$F{no_register} + ", " + $F{keterangan}]]></expression>
+				<expression><![CDATA[$F{no_register} + ", " + $F{karyawan}]]></expression>
 				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1948b4de-f9f5-4969-987d-fe51f5178b2c"/>
 				<box padding="3" style="Detail">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

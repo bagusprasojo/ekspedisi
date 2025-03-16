@@ -58,11 +58,42 @@
 	<parameter name="p_bank_id" class="java.lang.Integer"/>
 	<parameter name="p_saldo_awal" class="java.lang.Integer"/>
 	<parameter name="REPORT_LOGO" class="java.lang.String"/>
-	<query language="SQL"><![CDATA[select a.*, b.nama_bank, b.no_rekening, b.atas_nama from v_mutasi_bank a
+	<query language="SQL"><![CDATA[select c.*, a.*, b.nama_bank, b.no_rekening, b.atas_nama from v_mutasi_bank a
 inner join bank b on a.bank_id = b.id
+inner join company c on 1=1
 where date(a.tanggal) BETWEEN date( $P{p_tglawal} ) and date( $P{p_tglakhir} )
 and a.bank_id =  $P{p_bank_id} 
 order by a.tanggal]]></query>
+	<field name="id_company" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="nama_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="alamat_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="alamat_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="alamat_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="kabupaten_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kabupaten_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="kabupaten_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="provinsi_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provinsi_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="provinsi_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="kode_pos_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kode_pos_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="kode_pos_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
 	<field name="id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>
 		<property name="com.jaspersoft.studio.field.label" value="id"/>
@@ -127,7 +158,7 @@ order by a.tanggal]]></query>
 		<expression><![CDATA[$F{kredit} - $F{debet}]]></expression>
 		<initialValueExpression><![CDATA[$F{kredit}]]></initialValueExpression>
 	</variable>
-	<title height="183" splitType="Stretch">
+	<title height="210" splitType="Stretch">
 		<element kind="staticText" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a" x="0" y="90" width="556" height="25" fontSize="16.0" bold="true" hTextAlign="Center">
 			<text><![CDATA[Rekening Koran]]></text>
 			<property name="local_mesure_unitheight" value="pixel"/>
@@ -147,17 +178,6 @@ order by a.tanggal]]></query>
 		<element kind="image" uuid="94883631-a913-43e2-b182-ab8d77d0181e" x="0" y="0" width="65" height="60" hImageAlign="Center">
 			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
 		</element>
-		<element kind="staticText" uuid="e622555d-198b-4ccd-a4a1-c59c53304058" x="70" y="0" width="275" height="25" fontSize="19.0" bold="true">
-			<text><![CDATA[PT. Tampir Baru Logistik]]></text>
-			<property name="local_mesure_unitheight" value="pixel"/>
-			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-		</element>
-		<element kind="staticText" uuid="c226e44d-3bb5-4145-b0b3-903bf1d79fde" x="70" y="25" width="275" height="15">
-			<text><![CDATA[Office : Jl. Sakura Raya no 33, RT 003 RW 005, Mantung]]></text>
-		</element>
-		<element kind="staticText" uuid="b96f7183-44f8-43ad-ba60-43d8fbf50b6e" x="70" y="40" width="205" height="15">
-			<text><![CDATA[Kab. Sukoharjo, Jawa Tengah]]></text>
-		</element>
 		<element kind="textField" uuid="ad2aee85-1df9-4662-8645-6d37cbf99968" x="0" y="145" width="554" height="15" hTextAlign="Center">
 			<expression><![CDATA["Periode : " + DATEFORMAT($P{p_tglawal},"dd/MM/yyyy") + " s.d. " + DATEFORMAT($P{p_tglakhir},"dd/MM/yyyy")]]></expression>
 		</element>
@@ -166,6 +186,26 @@ order by a.tanggal]]></query>
 		</element>
 		<element kind="textField" uuid="9bc35e9f-fb54-4bf8-b128-6831fb40d79d" x="2" y="130" width="554" height="15" bold="true" hTextAlign="Center">
 			<expression><![CDATA["Atas Nama : " + $F{atas_nama}]]></expression>
+		</element>
+		<element kind="textField" uuid="73d58462-f121-4e5b-b6b6-99afde62ff16" x="67" y="0" width="305" height="25" fontSize="19.0" bold="true">
+			<expression><![CDATA[$F{nama_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="d07cf4b0-b44b-4cb1-94d7-9f7eee4824ad" x="67" y="25" width="305" height="15">
+			<expression><![CDATA["Office : " + $F{alamat_company} +", Kabupaten " +$F{kabupaten_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="dc1feb52-2a95-4b9a-b764-fea2188a7439" x="67" y="40" width="305" height="15">
+			<expression><![CDATA[$F{kode_pos_company} +", " + $F{provinsi_company}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="26f2ae2d-ef0d-40a6-aa8e-6fe547479561" x="0" y="190" width="65" height="20" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Saldo Awal :]]></text>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="9b7a89bf-6450-4b93-a2e1-50940ca3fa8e" x="70" y="190" width="100" height="20" pattern="#,##0.###;#,##0.###-" bold="true" vTextAlign="Middle">
+			<expression><![CDATA[$P{p_saldo_awal}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</element>
 	</title>
 	<columnHeader height="21">
