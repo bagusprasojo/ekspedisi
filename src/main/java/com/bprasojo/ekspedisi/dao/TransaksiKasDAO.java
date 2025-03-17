@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import java.text.SimpleDateFormat;
 
 
 public class TransaksiKasDAO extends ParentDAO{
@@ -60,7 +61,7 @@ public class TransaksiKasDAO extends ParentDAO{
             }
 
             // Set limit and offset for pagination
-            int pageSize = 10; // Sesuaikan dengan kebutuhan Anda
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 
@@ -88,6 +89,60 @@ public class TransaksiKasDAO extends ParentDAO{
         return resultList;
     }
 
+    public String generateNoBukti(java.util.Date inputDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        String yearMonth = sdf.format(inputDate);
+
+        // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
+        String sql = "SELECT MAX(SUBSTRING(no_bukti, 11)) AS last_number " +
+                     "FROM " + _nama_table_ + " " +
+                     "WHERE no_bukti LIKE 'KAS-" + yearMonth + "%'";
+
+        try (Statement stmt = conn.createStatement(); 
+            ResultSet rs = stmt.executeQuery(sql)) {
+            // Inisialisasi nomor urut
+            int lastNumber = 0;
+            
+            // Jika ada data terakhir, ambil nomor urut terakhir
+            if (rs.next()) {
+                String lastNumberStr = rs.getString("last_number");
+                if (lastNumberStr != null) {
+                    lastNumber = Integer.parseInt(lastNumberStr);
+                }
+            }
+            
+            // Increment nomor urut terakhir
+            lastNumber++;
+
+            // Format nomor bukti baru
+            String noBuktiBaru = "KAS-" + yearMonth + String.format("%04d", lastNumber);
+
+            // Kembalikan nomor bukti baru
+            return noBuktiBaru;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public void IsiNoBuktiNull() throws SQLException{
+        String sql = "SELECT * FROM transaksi_kas WHERE ifnull(no_bukti,'') = '' order by tanggal, id";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    TransaksiKas tk = getById(rs.getInt("id"));
+                    if (tk != null){
+                        save(tk);
+                    }
+                
+                }
+                
+            }
+        }
+        
+    }
+    
     public void save(TransaksiKas transaksiKas) throws SQLException {
         
         if (!validasiClosing(transaksiKas.getId(), transaksiKas.getTanggal())){
@@ -97,11 +152,16 @@ public class TransaksiKasDAO extends ParentDAO{
         boolean isInsert = transaksiKas.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO " + _nama_table_ + " (akun_kas_Id, akun_transaksi_id, tanggal, nominal_masuk, nominal_keluar, keterangan, armada_id, bank_id, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+            sql = "INSERT INTO " + _nama_table_ + " (akun_kas_Id, akun_transaksi_id, tanggal, nominal_masuk, nominal_keluar, keterangan, armada_id, bank_id, no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?)";
         } else {
-            sql = "UPDATE " + _nama_table_ + " SET akun_kas_Id = ?, akun_transaksi_id = ?, tanggal = ?, nominal_masuk = ?, nominal_keluar = ?, keterangan = ?, armada_id = ?, bank_id = ?, user_update=? WHERE id = ?";
+            sql = "UPDATE " + _nama_table_ + " SET akun_kas_Id = ?, akun_transaksi_id = ?, tanggal = ?, nominal_masuk = ?, nominal_keluar = ?, keterangan = ?, armada_id = ?, bank_id = ?, no_bukti=?, user_update=? WHERE id = ?";
         }
 
+        if (isInsert  || transaksiKas.getNoBukti().equals("")){
+            String noBukti = generateNoBukti(transaksiKas.getTanggal());
+            transaksiKas.setNoBukti(noBukti);
+        }
+        
         try (PreparedStatement statement = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
             statement.setInt(1, transaksiKas.getAkunKasId());
             statement.setInt(2, transaksiKas.getAkunTransaksiId());
@@ -113,12 +173,13 @@ public class TransaksiKasDAO extends ParentDAO{
             statement.setString(6, transaksiKas.getKeterangan());
             statement.setInt(7, transaksiKas.getArmadaId());
             statement.setInt(8, transaksiKas.getBankId());
-
+            statement.setString(9, transaksiKas.getNoBukti());
+            
             if (isInsert) {
-                statement.setString(9, transaksiKas.getUserCreate());
+                statement.setString(10, transaksiKas.getUserCreate());
             } else {
-                statement.setString(9, transaksiKas.getUserUpdate());
-                statement.setInt(10, transaksiKas.getId()); // ID hanya ditambahkan jika UPDATE
+                statement.setString(10, transaksiKas.getUserUpdate());
+                statement.setInt(11, transaksiKas.getId()); // ID hanya ditambahkan jika UPDATE
             }
 
             statement.executeUpdate();

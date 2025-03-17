@@ -29,6 +29,7 @@ public class TransaksiKas extends  BaseClass{
     private String keterangan;
     private int armadaId; // ID untuk lazy loading
     private Armada armada; // Properti lazy
+    private String noBukti;
     private String userCreate;
     private String userUpdate;
 
@@ -71,8 +72,18 @@ public class TransaksiKas extends  BaseClass{
     public void setNominalMasuk(int nominalMasuk) { this.nominalMasuk = nominalMasuk; }
     public int getNominalKeluar() { return nominalKeluar; }
     public void setNominalKeluar(int nominalKeluar) { this.nominalKeluar = nominalKeluar; }
+    
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
+    
+    public String getNoBukti() { 
+        if (noBukti == null){
+            noBukti = "";
+        }
+        return noBukti; 
+    }
+    public void setNoBukti(String noBukti) { this.noBukti = noBukti; }
+    
     public int getArmadaId() { return armadaId; }
     public void setArmadaId(int armadaId) { 
         this.armadaId = armadaId; 
