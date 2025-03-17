@@ -57,27 +57,22 @@
 	</dataset>
 	<parameter name="p_tanggal" class="java.util.Date"/>
 	<parameter name="REPORT_LOGO" class="java.lang.String"/>
-	<query language="SQL"><![CDATA[select d.*,  c.kode as kode_akun, c.nama as nama_akun , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama, sum(a.kredit - a.debet) as saldo_akhir_per_bank
+	<query language="SQL"><![CDATA[select d.alamat_company, d.id_company,d.kabupaten_company,d.kode_pos_company, d.nama_company, d.provinsi_company,  c.kode as kode_akun, c.nama as nama_akun , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama, sum(a.kredit - a.debet) as saldo_akhir_per_bank
 from v_mutasi_bank a
 inner join bank b on a.bank_id = b.id
 inner join perkiraan c on b.akun_id = c.id
 inner join company d on 1=1
 WHERE date(a.tanggal) <=$P{p_tanggal} 
-GROUP BY c.kode , c.nama , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama
+GROUP BY d.alamat_company, d.id_company,d.kabupaten_company,d.kode_pos_company, d.nama_company, d.provinsi_company,  c.kode , c.nama , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama
  order by c.kode,  b.no_rekening]]></query>
-	<field name="id_company" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="id_company"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_company"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
-	</field>
-	<field name="nama_company" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="nama_company"/>
-		<property name="com.jaspersoft.studio.field.label" value="nama_company"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
-	</field>
 	<field name="alamat_company" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="alamat_company"/>
 		<property name="com.jaspersoft.studio.field.label" value="alamat_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="id_company" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_company"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
 	</field>
 	<field name="kabupaten_company" class="java.lang.String">
@@ -85,14 +80,19 @@ GROUP BY c.kode , c.nama , a.bank_id, b.no_rekening, b.nama_bank, b.atas_nama
 		<property name="com.jaspersoft.studio.field.label" value="kabupaten_company"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
 	</field>
-	<field name="provinsi_company" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="provinsi_company"/>
-		<property name="com.jaspersoft.studio.field.label" value="provinsi_company"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
-	</field>
 	<field name="kode_pos_company" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="kode_pos_company"/>
 		<property name="com.jaspersoft.studio.field.label" value="kode_pos_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="nama_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama_company"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="provinsi_company" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provinsi_company"/>
+		<property name="com.jaspersoft.studio.field.label" value="provinsi_company"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
 	</field>
 	<field name="kode_akun" class="java.lang.String">

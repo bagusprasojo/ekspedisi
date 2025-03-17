@@ -37,7 +37,7 @@ public class ParentDAO {
                 Timestamp timestamp = rs.getTimestamp("last_closing");
                 
                 Calendar cal = Calendar.getInstance();
-                cal.set(2024, 11, 31);
+                cal.set(2024, 10, 30);
                 return timestamp != null ? new Date(timestamp.getTime()) : cal.getTime();
             }
         }
