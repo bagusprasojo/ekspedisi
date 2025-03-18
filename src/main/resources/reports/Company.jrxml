@@ -1,0 +1,65 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Company" language="javascript" columnCount="1" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="801d7a05-4aee-4d3f-bb5d-20d401118dc2">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Ekspedisi"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="REPORT_LOGO" class="java.lang.String"/>
+	<query language="SQL"><![CDATA[select * from company]]></query>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="nama" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nama"/>
+		<property name="com.jaspersoft.studio.field.label" value="nama"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="alamat" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="alamat"/>
+		<property name="com.jaspersoft.studio.field.label" value="alamat"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="kabupaten" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kabupaten"/>
+		<property name="com.jaspersoft.studio.field.label" value="kabupaten"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="provinsi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provinsi"/>
+		<property name="com.jaspersoft.studio.field.label" value="provinsi"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<field name="kode_pos" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="kode_pos"/>
+		<property name="com.jaspersoft.studio.field.label" value="kode_pos"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="company"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="60" splitType="Stretch">
+		<element kind="image" uuid="ae5004f0-daeb-4369-8a2b-0e52fe4207ac" x="0" y="0" width="65" height="60" hImageAlign="Center">
+			<expression><![CDATA[$P{REPORT_LOGO}]]></expression>
+		</element>
+		<element kind="textField" uuid="3635d20a-079d-4c63-ab2e-e5781f84de07" x="67" y="0" width="305" height="25" fontSize="19.0" bold="true">
+			<expression><![CDATA[$F{nama}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="3c3710f3-df77-4ae4-8b45-bec24dc5ee80" x="67" y="25" width="305" height="15">
+			<expression><![CDATA["Office : " + $F{alamat} +", Kabupaten " +$F{kabupaten}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="339012fa-6f10-426e-92e6-06221f1dcb63" x="67" y="40" width="305" height="15">
+			<expression><![CDATA[$F{kode_pos} +", " + $F{provinsi}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</title>
+</jasperReport>
