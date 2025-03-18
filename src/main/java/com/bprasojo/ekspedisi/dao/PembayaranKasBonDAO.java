@@ -217,7 +217,7 @@ public class PembayaranKasBonDAO extends ParentDAO{
                     + " WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.no_register like ?, c.nama like ? or c.alamat like ? or b.sumber_dana like ? or b.keterangan LIKE ? or b.no_register LIKE ?)";
+            sql += " AND (a.no_register like ? or c.nama like ? or c.alamat like ? or b.sumber_dana like ? or b.keterangan LIKE ? or b.no_register LIKE ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
