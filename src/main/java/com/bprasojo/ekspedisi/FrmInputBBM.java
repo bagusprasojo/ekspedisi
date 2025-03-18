@@ -538,14 +538,20 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        transBeliBBM = new TransaksiPembelianBBM();
-        armada = null;
-        driver = null;
-        
-        AppUtils.setDefaultValues(edNopol, edKendaraan, edDriver, cbBank, edTanggal, edKMTerakhir, edKMSekarang, edPembelianBBM, edKeterangan);
-        
-        
-        setStatusTombol("tambah");
+        try {
+            transaksiPembelianBBMDAO.IsiNoBuktiNull();
+            
+            transBeliBBM = new TransaksiPembelianBBM();
+            armada = null;
+            driver = null;
+            
+            AppUtils.setDefaultValues(edNopol, edKendaraan, edDriver, cbBank, edTanggal, edKMTerakhir, edKMSekarang, edPembelianBBM, edKeterangan);
+            
+            
+            setStatusTombol("tambah");
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmInputBBM.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -812,6 +818,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
+                        (String) row.get("no_bukti"),
                         (String) row.get("nopol"),
                         (String) row.get("kendaraan"),
                         (String) row.get("pemilik"),
@@ -929,13 +936,13 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     }
 
     private void InisialisasiTableInputBBM() {
-        tableModel = new DefaultTableModel(new String[]{"ID","No Polisi","Kendaraan","Pemilik","Driver","Bank","Tanggal","KM Terakhir","KM Sekarang","Jarak Tempuh","Pembelian BBM","Keterangan", "Pc"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Bukti", "No Polisi","Kendaraan","Pemilik","Driver","Bank","Tanggal","KM Terakhir","KM Sekarang","Jarak Tempuh","Pembelian BBM","Keterangan", "Pc"}, 0);
         tblInputBBM.setModel(tableModel);
         
-        AppUtils.SetTableAligmentRight(tblInputBBM, 7);
         AppUtils.SetTableAligmentRight(tblInputBBM, 8);
         AppUtils.SetTableAligmentRight(tblInputBBM, 9);
         AppUtils.SetTableAligmentRight(tblInputBBM, 10);
+        AppUtils.SetTableAligmentRight(tblInputBBM, 11);
         
         tblInputBBM.removeColumn(tblInputBBM.getColumnModel().getColumn(0));
     }

@@ -575,7 +575,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             
             transaksiKasDAO.save(transaksiKas);
             
-            AppUtils.showInfoDialog("Data berhasil disimpan!");
+            AppUtils.showInfoDialog("Data berhasil disimpan dengan No Bukti " + transaksiKas.getNoBukti());
             LoadDataTransaksiKas(currentPage);
             
             setStatusTombol("selected");

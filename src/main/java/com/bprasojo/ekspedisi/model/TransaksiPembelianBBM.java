@@ -25,7 +25,7 @@ public class TransaksiPembelianBBM extends BaseClass{
     private String userCreate;
     private String userUpdate;
     private int bankId;
-
+    private String noBukti;
     
     private transient Armada armada; // Lazy loading
     private transient StakeHolder driver;
@@ -34,7 +34,7 @@ public class TransaksiPembelianBBM extends BaseClass{
 
     public TransaksiPembelianBBM() {}
 
-    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId, String userCreate, String userUpdate, int bankId) {
+    public TransaksiPembelianBBM(int id, int armadaId, Date tanggal, int kmTerakhir, int kmSekarang, int nominalBBM, String keterangan, int driverId, String userCreate, String userUpdate, int bankId, String noBukti) {
         this.id = id;
         this.armadaId = armadaId;
         this.tanggal = tanggal;
@@ -46,6 +46,7 @@ public class TransaksiPembelianBBM extends BaseClass{
         this.userCreate = userCreate;
         this.userUpdate = userUpdate;
         this.bankId = bankId;
+        this.noBukti = noBukti;
     }
 
     // Getter & Setter
@@ -85,7 +86,14 @@ public class TransaksiPembelianBBM extends BaseClass{
 
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
-
+    
+    public String getNoBukti() { 
+        if (noBukti == null)
+            noBukti = "";
+        
+        return noBukti; 
+    }
+    public void setNoBukti(String noBukti) { this.noBukti = noBukti; }
 
     public String getUserCreate() { return userCreate; }
     public void setUserCreate(String userCreate) { this.userCreate = userCreate; }

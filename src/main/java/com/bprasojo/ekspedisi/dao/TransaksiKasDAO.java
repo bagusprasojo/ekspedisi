@@ -211,29 +211,49 @@ public class TransaksiKasDAO extends ParentDAO{
     }
 
     // Mendapatkan satu data TransaksiKas berdasarkan ID
+    // Method untuk memetakan ResultSet ke objek TransaksiKas
+    private TransaksiKas mapResultSetToTransaksiKas(ResultSet resultSet) throws SQLException {
+        TransaksiKas transaksiKas = new TransaksiKas();
+        transaksiKas.setId(resultSet.getInt("id"));
+        transaksiKas.setAkunKasId(resultSet.getInt("akun_Kas_Id"));
+        transaksiKas.setAkunTransaksiId(resultSet.getInt("akun_Transaksi_Id"));
+        transaksiKas.setTanggal(resultSet.getDate("tanggal"));
+        transaksiKas.setNominalMasuk(resultSet.getInt("nominal_Masuk"));
+        transaksiKas.setNominalKeluar(resultSet.getInt("nominal_Keluar"));
+        transaksiKas.setKeterangan(resultSet.getString("keterangan"));
+        transaksiKas.setArmadaId(resultSet.getInt("armada_Id"));
+        transaksiKas.setBankId(resultSet.getInt("bank_Id"));
+        return transaksiKas;
+    }
+
+    // Method untuk mengambil data berdasarkan ID
     public TransaksiKas getById(int id) throws SQLException {
         String sql = "SELECT * FROM transaksi_kas WHERE id = ?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    TransaksiKas transaksiKas = new TransaksiKas();
-                    transaksiKas.setId(resultSet.getInt("id"));
-                    transaksiKas.setAkunKasId(resultSet.getInt("akun_Kas_Id"));
-                    transaksiKas.setAkunTransaksiId(resultSet.getInt("akun_Transaksi_Id"));
-                    transaksiKas.setTanggal(resultSet.getDate("tanggal"));
-                    transaksiKas.setNominalMasuk(resultSet.getInt("nominal_Masuk"));
-                    transaksiKas.setNominalKeluar(resultSet.getInt("nominal_Keluar"));
-                    transaksiKas.setKeterangan(resultSet.getString("keterangan"));
-                    transaksiKas.setArmadaId(resultSet.getInt("armada_Id"));
-                    transaksiKas.setBankId(resultSet.getInt("bank_Id"));
-                    
-                    return transaksiKas;
+                    return mapResultSetToTransaksiKas(resultSet); // Menggunakan metode pemetaan
                 }
             }
         }
         return null;
     }
+
+    // Method untuk mengambil data berdasarkan NoBukti
+    public TransaksiKas getByNoBukti(String noBukti) throws SQLException {
+        String sql = "SELECT * FROM transaksi_kas WHERE no_bukti = ?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, noBukti);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToTransaksiKas(resultSet); // Menggunakan metode pemetaan
+                }
+            }
+        }
+        return null;
+    }
+
 
     // Mendapatkan semua data TransaksiKas
     public List<TransaksiKas> getAll(PerkiraanDAO perkiraanDAO, ArmadaDAO armadaDAO) throws SQLException {

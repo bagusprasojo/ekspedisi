@@ -7,9 +7,11 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
+import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +25,59 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
         _nama_table_ = "transaksi_pembelian_bbm";
     }
 
+    public String generateNoBukti(java.util.Date inputDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        String yearMonth = sdf.format(inputDate);
+
+        // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
+        String sql = "SELECT MAX(SUBSTRING(no_bukti, 11)) AS last_number " +
+                     "FROM " + _nama_table_ + " " +
+                     "WHERE no_bukti LIKE 'BBM-" + yearMonth + "%'";
+
+        try (Statement stmt = conn.createStatement(); 
+            ResultSet rs = stmt.executeQuery(sql)) {
+            // Inisialisasi nomor urut
+            int lastNumber = 0;
+            
+            // Jika ada data terakhir, ambil nomor urut terakhir
+            if (rs.next()) {
+                String lastNumberStr = rs.getString("last_number");
+                if (lastNumberStr != null) {
+                    lastNumber = Integer.parseInt(lastNumberStr);
+                }
+            }
+            
+            // Increment nomor urut terakhir
+            lastNumber++;
+
+            // Format nomor bukti baru
+            String noBuktiBaru = "BBM-" + yearMonth + String.format("%04d", lastNumber);
+
+            // Kembalikan nomor bukti baru
+            return noBuktiBaru;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public void IsiNoBuktiNull() throws SQLException{
+        String sql = "SELECT * FROM " + _nama_table_ + " WHERE ifnull(no_bukti,'') = '' order by tanggal, id";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    TransaksiPembelianBBM bbm = getById(rs.getInt("id"));
+                    if (bbm != null){
+                        save(bbm);
+                    }
+                
+                }
+                
+            }
+        }
+        
+    }
     // Menyimpan atau memperbarui data transaksi pembelian BBM
     public void save(TransaksiPembelianBBM transaksi) throws SQLException {
         if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
@@ -33,11 +88,16 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
         boolean isInsert = transaksi.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO " + _nama_table_ + " (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , user_create) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
+            sql = "INSERT INTO " + _nama_table_ + " (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)";
         } else {
-            sql = "UPDATE " + _nama_table_ + " SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , user_update =?  WHERE id = ?";
+            sql = "UPDATE " + _nama_table_ + " SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , no_bukti=?, user_update =?  WHERE id = ?";
         }
 
+        if (isInsert  || transaksi.getNoBukti().equals("")){
+            String noBukti = generateNoBukti(transaksi.getTanggal());
+            transaksi.setNoBukti(noBukti);            
+            
+        }
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
             stmt.setInt(1, transaksi.getArmadaId());
             stmt.setDate(2, new java.sql.Date(transaksi.getTanggal().getTime()));
@@ -47,12 +107,13 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
             stmt.setString(6, transaksi.getKeterangan());
             stmt.setInt(7, transaksi.getDriverId());
             stmt.setInt(8, transaksi.getBankId());
+            stmt.setString(9, transaksi.getNoBukti());
 
             if (isInsert) {
-                stmt.setString(9, transaksi.getUserCreate());
+                stmt.setString(10, transaksi.getUserCreate());
             } else {
-                stmt.setString(9, transaksi.getUserUpdate());
-                stmt.setInt(10, transaksi.getId());
+                stmt.setString(10, transaksi.getUserUpdate());
+                stmt.setInt(11, transaksi.getId());
             }
 
             stmt.executeUpdate();
@@ -67,30 +128,50 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
         }
     }
 
-    // Mengambil transaksi berdasarkan ID
+    // Method untuk memetakan ResultSet ke objek TransaksiPembelianBBM
+    private TransaksiPembelianBBM mapResultSetToTransaksiPembelianBBM(ResultSet rs) throws SQLException {
+        return new TransaksiPembelianBBM(
+            rs.getInt("id"),
+            rs.getInt("armada_Id"),
+            rs.getDate("tanggal"),
+            rs.getInt("km_terakhir"),
+            rs.getInt("km_sekarang"),
+            rs.getInt("nominal_BBM"),
+            rs.getString("keterangan"),
+            rs.getInt("driver_id"),
+            rs.getString("user_create"),
+            rs.getString("user_update"),
+            rs.getInt("bank_id"),
+            rs.getString("no_bukti")
+        );
+    }
+
+    // Method untuk mengambil data berdasarkan ID
     public TransaksiPembelianBBM getById(int id) throws SQLException {
         String sql = "SELECT * FROM transaksi_pembelian_bbm WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new TransaksiPembelianBBM(
-                    rs.getInt("id"),
-                    rs.getInt("armada_Id"),
-                    rs.getDate("tanggal"),
-                    rs.getInt("km_terakhir"),
-                    rs.getInt("km_sekarang"),
-                    rs.getInt("nominal_BBM"),
-                    rs.getString("keterangan"),
-                    rs.getInt("driver_id"),
-                    rs.getString("user_create"),
-                    rs.getString("user_update"),
-                    rs.getInt("bank_id")
-                );
+                return mapResultSetToTransaksiPembelianBBM(rs); // Menggunakan metode pemetaan
             }
         }
         return null;
     }
+
+    // Method untuk mengambil data berdasarkan NoBukti
+    public TransaksiPembelianBBM getByNoBukti(String noBukti) throws SQLException {
+        String sql = "SELECT * FROM transaksi_pembelian_bbm WHERE no_bukti = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, noBukti);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToTransaksiPembelianBBM(rs); // Menggunakan metode pemetaan
+            }
+        }
+        return null;
+    }
+
     
     public Integer getLastKM(String nopol) throws SQLException {
         String sql = "select a.km_sekarang as km_kemarin from transaksi_pembelian_bbm a" +
@@ -143,7 +224,7 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
                      + " WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.keterangan LIKE ? OR b.nopol LIKE ? OR b.kendaraan LIKE ? OR b.pemilik LIKE ? or c.nama like ?)";
+            sql += " AND (a.no_bukti like ? or a.keterangan LIKE ? OR b.nopol LIKE ? OR b.kendaraan LIKE ? OR b.pemilik LIKE ? or c.nama like ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
@@ -157,7 +238,7 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
 
             // Set filter parameters if present
             if (filter != null && !filter.trim().isEmpty()) {
-                for (int i = 0; i < 5; i++) { // Filter untuk 4 kolom
+                for (int i = 0; i < 6; i++) { // Filter untuk 4 kolom
                     stmt.setString(paramIndex++, "%" + filter + "%");
                 }
             }
