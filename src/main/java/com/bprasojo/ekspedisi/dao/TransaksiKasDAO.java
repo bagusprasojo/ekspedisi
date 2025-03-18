@@ -41,7 +41,7 @@ public class TransaksiKasDAO extends ParentDAO{
                      + "WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ? OR c.no_rekening LIKE ? OR d.nopol LIKE ?)";
+            sql += " AND (a.no_bukti like ? or a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ? OR c.no_rekening LIKE ? OR d.nopol LIKE ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
@@ -55,7 +55,7 @@ public class TransaksiKasDAO extends ParentDAO{
 
             // Set filter parameters if present
             if (filter != null && !filter.trim().isEmpty()) {
-                for (int i = 0; i < 5; i++) { // Filter untuk 5 kolom
+                for (int i = 0; i < 6; i++) { // Filter untuk 5 kolom
                     stmt.setString(paramIndex++, "%" + filter + "%");
                 }
             }
