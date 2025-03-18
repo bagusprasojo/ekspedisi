@@ -580,16 +580,22 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        transaksiBank  = new TransaksiBank();
-        
-        bank = null;
-        
-        AppUtils.setDefaultValues(edNoRek, edAtasNama, edBank, edSaldoAkhir, edTanggal, cbJenisTransaksi, edDebet, edKredit, edUraian, cbBankTujuan, edBiayaAdmBank);
-        
-        cbBankTujuan.setSelectedIndex(-1);
-        edBiayaAdmBank.setValue(0);
-
-        setStatusTombol("tambah");
+        try {
+            transaksiBankDAO.IsiNoBuktiNull();
+            
+            transaksiBank  = new TransaksiBank();
+            
+            bank = null;
+            
+            AppUtils.setDefaultValues(edNoRek, edAtasNama, edBank, edSaldoAkhir, edTanggal, cbJenisTransaksi, edDebet, edKredit, edUraian, cbBankTujuan, edBiayaAdmBank);
+            
+            cbBankTujuan.setSelectedIndex(-1);
+            edBiayaAdmBank.setValue(0);
+            
+            setStatusTombol("tambah");
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -640,7 +646,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
             
             transaksiBankDAO.save(transaksiBank);
 
-            AppUtils.showInfoDialog("Data berhasil disimpan!");
+            AppUtils.showInfoDialog("Data berhasil disimpan dengan no bukti " + transaksiBank.getNoBukti());
             LoadDataTransaksiBank(currentPage);
             
             setStatusTombol("selected");
@@ -1092,6 +1098,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         for (Map<String, Object> row : result) {
             tableModel.addRow(new Object[]{
                         (Integer) row.get("id"),
+                        (String) row.get("no_bukti"),
                         AppUtils.DateFormatShort((Date) row.get("tanggal")),
                         (String) row.get("no_rekening"),
                         (String) row.get("nama_bank"),
@@ -1125,11 +1132,11 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     }
 
     private void InisialisasiTableTransaksiBank() {
-        tableModel = new DefaultTableModel(new String[]{"ID","Tanggal", "No Rek", "Nama Bank","Atas Nama", "Kode","Transaksi", "Debet", "Kredit","Adm. Bank", "Keterangan","User"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"ID","No Bukti","Tanggal", "No Rek", "Nama Bank","Atas Nama", "Kode","Transaksi", "Debet", "Kredit","Adm. Bank", "Keterangan","User"}, 0);
         tblTransaksiBank.setModel(tableModel);
-        AppUtils.SetTableAligmentRight(tblTransaksiBank, 7);
         AppUtils.SetTableAligmentRight(tblTransaksiBank, 8);
         AppUtils.SetTableAligmentRight(tblTransaksiBank, 9);
+        AppUtils.SetTableAligmentRight(tblTransaksiBank, 10);
         tblTransaksiBank.removeColumn(tblTransaksiBank.getColumnModel().getColumn(0));
     }
 }

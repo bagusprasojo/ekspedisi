@@ -167,7 +167,7 @@ public class KasBonKaryawanDAO extends ParentDAO{
             }
 
             // Set limit and offset for pagination
-            int pageSize = 10; // Sesuaikan dengan kebutuhan Anda
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 

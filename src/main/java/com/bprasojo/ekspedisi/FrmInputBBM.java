@@ -575,7 +575,8 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
             
             transaksiPembelianBBMDAO.save(transBeliBBM);
             
-            AppUtils.showInfoDialog("Data berhasil disimpan!");
+            AppUtils.showInfoDialog("Data berhasil disimpan dengan No Bukti " + transBeliBBM.getNoBukti());
+            
             LoadDataTransaksiPembelianBBM(currentPage);
             
             setStatusTombol("selected");

@@ -8,8 +8,10 @@ package com.bprasojo.ekspedisi.dao;
  *
  */
 import com.bprasojo.ekspedisi.model.TransaksiBank;
+import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +26,43 @@ public class TransaksiBankDAO extends ParentDAO{
     }
 
     // Menyimpan atau memperbarui transaksi bank
+    public String generateNoBukti(java.util.Date inputDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        String yearMonth = sdf.format(inputDate);
+
+        // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
+        String sql = "SELECT MAX(SUBSTRING(no_bukti, 11)) AS last_number " +
+                     "FROM " + _nama_table_ + " " +
+                     "WHERE no_bukti LIKE 'BNK-" + yearMonth + "%'";
+
+        try (Statement stmt = conn.createStatement(); 
+            ResultSet rs = stmt.executeQuery(sql)) {
+            // Inisialisasi nomor urut
+            int lastNumber = 0;
+            
+            // Jika ada data terakhir, ambil nomor urut terakhir
+            if (rs.next()) {
+                String lastNumberStr = rs.getString("last_number");
+                if (lastNumberStr != null) {
+                    lastNumber = Integer.parseInt(lastNumberStr);
+                }
+            }
+            
+            // Increment nomor urut terakhir
+            lastNumber++;
+
+            // Format nomor bukti baru
+            String noBuktiBaru = "BNK-" + yearMonth + String.format("%04d", lastNumber);
+
+            // Kembalikan nomor bukti baru
+            return noBuktiBaru;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public void save(TransaksiBank transaksi) throws SQLException {
         if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
             throw new SQLException("Data tidak bisa disimpan karena sudah closing");
@@ -33,11 +72,16 @@ public class TransaksiBankDAO extends ParentDAO{
         boolean isInsert = transaksi.getId() == 0;
 
         if (isInsert) {
-            sql = "INSERT INTO " + _nama_table_ + " (tanggal, bank_utama_id, jenis_transaksi_id, debet, kredit, bank_tujuan_id, akun_utama_id, akun_tujuan_id, biaya_adm_bank, uraian, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
+            sql = "INSERT INTO " + _nama_table_ + " (tanggal, bank_utama_id, jenis_transaksi_id, debet, kredit, bank_tujuan_id, akun_utama_id, akun_tujuan_id, biaya_adm_bank, uraian, no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
         } else {
-            sql = "UPDATE " + _nama_table_ + " SET tanggal = ?, bank_utama_id = ?, jenis_transaksi_id = ?, debet = ?, kredit = ?, bank_tujuan_id = ?, akun_utama_id = ?, akun_tujuan_id = ?, biaya_adm_bank=?, uraian = ?, user_update =?  WHERE id = ?";
+            sql = "UPDATE " + _nama_table_ + " SET tanggal = ?, bank_utama_id = ?, jenis_transaksi_id = ?, debet = ?, kredit = ?, bank_tujuan_id = ?, akun_utama_id = ?, akun_tujuan_id = ?, biaya_adm_bank=?, uraian = ?, no_bukti=?, user_update =?  WHERE id = ?";
         }
 
+        if (isInsert || transaksi.getNoBukti().equals("")){
+            String noBukti = generateNoBukti(transaksi.getTanggal());
+            transaksi.setNoBukti(noBukti);
+        }
+        
         try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
             stmt.setDate(1, new java.sql.Date(transaksi.getTanggal().getTime()));
             stmt.setInt(2, transaksi.getBankUtamaId());
@@ -49,12 +93,13 @@ public class TransaksiBankDAO extends ParentDAO{
             stmt.setInt(8, transaksi.getAkunTujuanId());
             stmt.setInt(9, transaksi.getBiayaAdmBank());
             stmt.setString(10, transaksi.getUraian());
+            stmt.setString(11, transaksi.getNoBukti());
 
             if (isInsert) {
-                stmt.setString(11, transaksi.getUserCreate());
+                stmt.setString(12, transaksi.getUserCreate());
             } else {
-                stmt.setString(11, transaksi.getUserUpdate());
-                stmt.setInt(12, transaksi.getId());
+                stmt.setString(12, transaksi.getUserUpdate());
+                stmt.setInt(13, transaksi.getId());
             }
 
             stmt.executeUpdate();
@@ -68,19 +113,38 @@ public class TransaksiBankDAO extends ParentDAO{
             }
         }
     }
+    
+    public void IsiNoBuktiNull() throws SQLException{
+        String sql = "SELECT * FROM "+ _nama_table_ +" WHERE ifnull(no_bukti,'') = '' order by tanggal, id";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    TransaksiBank tb = getById(rs.getInt("id"));
+                    if (tb != null){
+                        save(tb);
+                    }
+                
+                }
+                
+            }
+        }
+        
+    }
+    private TransaksiBank getByQuery(String query, Object param) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            if (param instanceof Integer) {
+                stmt.setInt(1, (Integer) param);
+            } else if (param instanceof String) {
+                stmt.setString(1, (String) param);
+            }
 
-    // Mengambil transaksi berdasarkan ID
-    public TransaksiBank getById(int id) throws SQLException {
-        String sql = "SELECT * FROM transaksi_bank WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new TransaksiBank(
                     rs.getInt("id"),
                     rs.getDate("tanggal"),
                     rs.getInt("bank_utama_id"),
-                    rs.getInt("jenis_transaksi_id"),                        
+                    rs.getInt("jenis_transaksi_id"),
                     rs.getInt("debet"),
                     rs.getInt("kredit"),
                     rs.getInt("bank_tujuan_id"),
@@ -89,12 +153,25 @@ public class TransaksiBankDAO extends ParentDAO{
                     rs.getInt("biaya_adm_bank"),
                     rs.getString("uraian"),
                     rs.getString("user_create"),
-                    rs.getString("user_update")
+                    rs.getString("user_update"),
+                    rs.getString("no_bukti")
                 );
             }
         }
         return null;
     }
+
+    
+    public TransaksiBank getById(int id) throws SQLException {
+        String sql = "SELECT * FROM transaksi_bank WHERE id = ?";
+        return getByQuery(sql, id);
+    }
+
+    public TransaksiBank getByNoBukti(String noBukti) throws SQLException {
+        String sql = "SELECT * FROM transaksi_bank WHERE no_bukti = ?";
+        return getByQuery(sql, noBukti);
+    }
+
     
     public List<Map<String, Object>> getTransaksiBankByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -106,7 +183,7 @@ public class TransaksiBankDAO extends ParentDAO{
                      + " WHERE a.tanggal BETWEEN ? AND ?"; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.uraian LIKE ? OR b.no_rekening LIKE ? OR b.nama_bank LIKE ? OR b.atas_nama LIKE ? OR c.kode LIKE ? OR c.nama LIKE ?)";
+            sql += " AND (a.no_bukti like ? or a.uraian LIKE ? OR b.no_rekening LIKE ? OR b.nama_bank LIKE ? OR b.atas_nama LIKE ? OR c.kode LIKE ? OR c.nama LIKE ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
@@ -120,13 +197,13 @@ public class TransaksiBankDAO extends ParentDAO{
 
             // Set filter parameters if present
             if (filter != null && !filter.trim().isEmpty()) {
-                for (int i = 0; i < 6; i++) { // Filter untuk 5 kolom
+                for (int i = 0; i < 7; i++) { // Filter untuk 5 kolom
                     stmt.setString(paramIndex++, "%" + filter + "%");
                 }
             }
 
             // Set limit and offset for pagination
-            int pageSize = 10; // Sesuaikan dengan kebutuhan Anda
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 

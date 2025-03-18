@@ -28,7 +28,8 @@ public class TransaksiBank extends BaseClass{
     private int biayaAdmBank;
     private String userCreate;
     private String userUpdate;
-
+    private String noBukti;
+    
     private transient Bank bankUtama; // Lazy loading
     private transient Bank bankTujuan; // Lazy loading
     private transient Perkiraan akunUtama; // Lazy loading
@@ -37,7 +38,7 @@ public class TransaksiBank extends BaseClass{
 
     public TransaksiBank() {}
 
-    public TransaksiBank(int id, Date tanggal, int bankUtamaId, int jenisTransaksiid, int debet, int kredit, int bankTujuanId, int akunUtamaId, int akunTujuanId, int biayaAdmBank, String uraian, String userCreate, String userUpdate) {
+    public TransaksiBank(int id, Date tanggal, int bankUtamaId, int jenisTransaksiid, int debet, int kredit, int bankTujuanId, int akunUtamaId, int akunTujuanId, int biayaAdmBank, String uraian, String userCreate, String userUpdate, String noBukti) {
         this.id = id;
         this.tanggal = tanggal;
         this.bankUtamaId = bankUtamaId;
@@ -51,9 +52,11 @@ public class TransaksiBank extends BaseClass{
         this.uraian = uraian;
         this.userCreate = userCreate;
         this.userUpdate = userUpdate;
+        this.noBukti = noBukti;
     }
 
     // Getter & Setter
+    @Override
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     
@@ -62,6 +65,14 @@ public class TransaksiBank extends BaseClass{
     
     public String getUraian() { return uraian; }
     public void setUraian(String uraian) { this.uraian = uraian; }
+    
+    public String getNoBukti() { 
+        if (noBukti == null){
+            noBukti = "";
+        }
+        return noBukti; 
+    }
+    public void setNoBukti(String noBukti) { this.noBukti = noBukti; }
 
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }

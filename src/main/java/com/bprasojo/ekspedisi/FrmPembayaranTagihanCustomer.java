@@ -1001,7 +1001,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
         }
         
         int saldo = ((Number) edSaldo.getValue()).intValue();
-        int pembayaran = ((Number) edNominal.getValue()).intValue();
+        int pembayaran = ((Number) edTotal.getValue()).intValue();
         if (saldo < pembayaran){
             AppUtils.showWarningDialog("Pembayaran melebihi saldo hutang");
             edNominal.requestFocus();
