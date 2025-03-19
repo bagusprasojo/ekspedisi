@@ -9,21 +9,24 @@ public class Jurnal {
     private int id;
     private String noJurnal;
     private Date tanggal;
-    private int idTransaksi;
+    private int transaksiId;
     private String transaksi;
-    private String user;
+    private String userCreate;
+    private String userUpdate;
 
     private transient List<JurnalDetail> jurnalDetails; // Lazy loading
 
     public Jurnal() {}
 
-    public Jurnal(int id, String noJurnal, Date tanggal, int idTransaksi, String transaksi, String user) {
+    public Jurnal(int id, String noJurnal, Date tanggal, int idTransaksi, String transaksi, String userCreate, String userUpdate) {
         this.id = id;
         this.noJurnal = noJurnal;
         this.tanggal = tanggal;
-        this.idTransaksi = idTransaksi;
+        this.transaksiId = idTransaksi;
         this.transaksi = transaksi;
-        this.user = user;
+        this.userCreate = userCreate;
+        this.userUpdate = userUpdate;
+        
     }
 
     // Getter & Setter
@@ -36,14 +39,11 @@ public class Jurnal {
     public Date getTanggal() { return tanggal; }
     public void setTanggal(Date tanggal) { this.tanggal = tanggal; }
 
-    public int getIdTransaksi() { return idTransaksi; }
-    public void setIdTransaksi(int idTransaksi) { this.idTransaksi = idTransaksi; }
+    public int getTransaksiId() { return transaksiId; }
+    public void setTransaksiId(int transaksiId) { this.transaksiId = transaksiId; }
 
     public String getTransaksi() { return transaksi; }
     public void setTransaksi(String transaksi) { this.transaksi = transaksi; }
-
-    public String getUser() { return user; }
-    public void setUser(String user) { this.user = user; }
 
     // Lazy Load JurnalDetails
     public List<JurnalDetail> getJurnalDetails() throws SQLException {
@@ -53,4 +53,10 @@ public class Jurnal {
         }
         return jurnalDetails;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }

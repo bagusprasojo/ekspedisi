@@ -127,7 +127,12 @@ public class KasBonKaryawanDAO extends ParentDAO{
     }    
 
     public void delete(int id) throws SQLException {
-        if (!validasiClosing(id, AppUtils.now())){
+        KasBonKaryawan kb = getById(id);
+        if (kb == null){
+            return;
+        }
+        
+        if (!validasiClosing(id, kb.getTanggal())){
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         

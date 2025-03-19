@@ -176,7 +176,12 @@ public class PembayaranKasBonDAO extends ParentDAO{
     
 
     public void delete(int id) throws SQLException {
-        if (!validasiClosing(id, AppUtils.now())){
+        PembayaranKasBon pkb = getById(id);
+        if (pkb == null){
+            return;
+        }
+        
+        if (!validasiClosing(id, pkb.getTanggal())){
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         

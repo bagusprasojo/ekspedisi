@@ -128,7 +128,12 @@ public class TagihanCustomerDAO extends ParentDAO{
 
     // Hapus data
     public void delete(int id) throws SQLException {
-        if (!validasiClosing(id, AppUtils.now())){
+        TagihanCustomer tc = getById(id);
+        if (tc == null){
+            return;
+        }
+        
+        if (!validasiClosing(id, tc.getTanggal())){
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         

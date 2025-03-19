@@ -7,7 +7,6 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.PembayaranTagihanCustomer;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
 import com.bprasojo.ekspedisi.utils.AppUtils;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PembayaranTagihanCustomerDAO extends ParentDAO{
     
@@ -103,7 +100,12 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
     }
     
     public void delete(int id) throws SQLException {
-        if (!validasiClosing(id, AppUtils.now())){
+        PembayaranTagihanCustomer ptc = getById(id);
+        if (ptc == null){
+            return;
+        }
+        
+        if (!validasiClosing(id, ptc.getTanggal())){
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         

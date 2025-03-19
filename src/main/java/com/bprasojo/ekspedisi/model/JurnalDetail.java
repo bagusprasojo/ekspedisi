@@ -7,16 +7,15 @@ public class JurnalDetail {
     private int id;
     private int jurnalId;
     private int perkiraanId;
-    private double debet;
-    private double kredit;
+    private int debet;
+    private int kredit;
 
     private transient Perkiraan perkiraan; // Lazy Loading
 
     public JurnalDetail() {}
 
-    public JurnalDetail(int id, int jurnalId, int perkiraanId, double debet, double kredit) {
+    public JurnalDetail(int id, int perkiraanId, int debet, int kredit) {
         this.id = id;
-        this.jurnalId = jurnalId;
         this.perkiraanId = perkiraanId;
         this.debet = debet;
         this.kredit = kredit;
@@ -32,11 +31,11 @@ public class JurnalDetail {
     public int getPerkiraanId() { return perkiraanId; }
     public void setPerkiraanId(int perkiraanId) { this.perkiraanId = perkiraanId; }
 
-    public double getDebet() { return debet; }
-    public void setDebet(double debet) { this.debet = debet; }
+    public int getDebet() { return debet; }
+    public void setDebet(int debet) { this.debet = debet; }
 
-    public double getKredit() { return kredit; }
-    public void setKredit(double kredit) { this.kredit = kredit; }
+    public int getKredit() { return kredit; }
+    public void setKredit(int kredit) { this.kredit = kredit; }
 
     // Lazy Load Perkiraan
     public Perkiraan getPerkiraan() throws SQLException {

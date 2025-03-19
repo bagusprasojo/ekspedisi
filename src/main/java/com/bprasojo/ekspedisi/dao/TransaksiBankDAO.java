@@ -232,7 +232,12 @@ public class TransaksiBankDAO extends ParentDAO{
     }
     
     public void delete(int id) throws SQLException {
-        if (!validasiClosing(id, AppUtils.now())){
+        TransaksiBank tb = getById(id);
+        if (tb == null){
+            return;
+        }
+        
+        if (!validasiClosing(id, tb.getTanggal())){
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         

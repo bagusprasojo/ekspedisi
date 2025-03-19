@@ -7,7 +7,6 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
-import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
@@ -274,7 +273,12 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
 
     // Menghapus transaksi berdasarkan ID
     public void delete(int id) throws SQLException {
-        if (!validasiClosing(id, AppUtils.now())){
+        TransaksiPembelianBBM tpb = getById(id);
+        if (tpb == null){
+            return;
+        }
+        
+        if (!validasiClosing(id, tpb.getTanggal())){
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         
