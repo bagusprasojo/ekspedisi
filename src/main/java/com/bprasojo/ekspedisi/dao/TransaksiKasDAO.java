@@ -15,17 +15,20 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.text.SimpleDateFormat;
 
 
 public class TransaksiKasDAO extends ParentDAO{
-    private JurnalDAO jurnalDAO = new JurnalDAO();
+
+    private final JurnalDAO jurnalDAO;
+    
 
     // Constructor untuk inisialisasi koneksi database
     public TransaksiKasDAO() {
         super();
         _nama_table_ = "transaksi_kas";
+        
+        jurnalDAO = new JurnalDAO();
     }
     
     public void saveJurnal(TransaksiKas transaksi) throws SQLException{
@@ -241,17 +244,34 @@ public class TransaksiKasDAO extends ParentDAO{
     public void delete(int id) throws SQLException {
         TransaksiKas tk = getById(id);
         
-        if (tk != null){
-            if (!validasiClosing(id, tk.getTanggal())){
-                throw new SQLException("Transaksi tidak bisa dihapus karena sudah closing");
-            }
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        try {
+            if (tk != null){
+                if (!validasiClosing(id, tk.getTanggal())){
+                    throw new SQLException("Transaksi tidak bisa dihapus karena sudah closing");
+                }
 
-            String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setInt(1, id);
-                statement.executeUpdate();
+                String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setInt(1, id);
+                    statement.executeUpdate();
+                }
+                
+                jurnalDAO.deleteByTransId(tk.getId(), tk.getClass().getName());
             }
+            
+            
+            conn.commit();
+        } catch (SQLException ex) {
+            // Jika terjadi kesalahan, rollback transaksi
+            conn.rollback();
+            throw ex; // Rethrow exception setelah rollback
+        } finally {
+            // Mengembalikan auto-commit ke status semula
+            conn.setAutoCommit(previousAutoCommit);
         }
+        
     }
 
     // Mendapatkan satu data TransaksiKas berdasarkan ID

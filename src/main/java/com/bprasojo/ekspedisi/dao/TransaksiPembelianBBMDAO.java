@@ -7,6 +7,9 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
+import com.bprasojo.ekspedisi.model.Config;
+import com.bprasojo.ekspedisi.model.Jurnal;
+import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
@@ -17,13 +20,42 @@ import java.util.List;
 import java.util.Map;
 
 public class TransaksiPembelianBBMDAO extends ParentDAO {
+
+    private final JurnalDAO jurnalDAO;
+    private final ConfigDAO configDAO;
     
 
     public TransaksiPembelianBBMDAO() {
         super();
         _nama_table_ = "transaksi_pembelian_bbm";
+        
+        jurnalDAO = new JurnalDAO();
+        configDAO = new ConfigDAO();
     }
 
+    public void saveJurnal(TransaksiPembelianBBM transaksi) throws SQLException{
+        Jurnal jurnal = new Jurnal();
+        jurnal.setTransaksiId(transaksi.getId());
+        jurnal.setNoJurnal(transaksi.getNoBukti());
+        jurnal.setNoJurnal(transaksi.getNoBukti());
+        jurnal.setTanggal(transaksi.getTanggal());
+        jurnal.setTransaksi(transaksi.getClass().getName());
+        jurnal.setUserCreate(transaksi.getUserCreate());
+        jurnal.setUserUpdate(transaksi.getUserUpdate());        
+        
+        JurnalDetail jdD, jdK;
+        
+        int perkiraanBBMId = Integer.parseInt(configDAO.getByKode("AKUN_BBM_ID").getNilai());
+        jdD = new JurnalDetail(0, perkiraanBBMId, transaksi.getNominalBBM(), 0);
+        jdK = new JurnalDetail(0, transaksi.getBank().getAkun().getId(), 0, transaksi.getNominalBBM());
+        
+        jurnal.getJurnalDetails().add(jdD);
+        jurnal.getJurnalDetails().add(jdK);
+        
+        jurnalDAO.deleteByTransId(transaksi.getId(), transaksi.getClass().getName());
+        jurnalDAO.save(jurnal);
+        
+    }
     public String generateNoBukti(java.util.Date inputDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         String yearMonth = sdf.format(inputDate);
@@ -83,47 +115,62 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
             throw new SQLException("Data tidak bisa disimpan karena sudah closing");
         }
         
-        String sql;
-        boolean isInsert = transaksi.getId() == 0;
-
-        if (isInsert) {
-            sql = "INSERT INTO " + _nama_table_ + " (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)";
-        } else {
-            sql = "UPDATE " + _nama_table_ + " SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , no_bukti=?, user_update =?  WHERE id = ?";
-        }
-
-        if (isInsert  || transaksi.getNoBukti().equals("")){
-            String noBukti = generateNoBukti(transaksi.getTanggal());
-            transaksi.setNoBukti(noBukti);            
-            
-        }
-        try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
-            stmt.setInt(1, transaksi.getArmadaId());
-            stmt.setDate(2, new java.sql.Date(transaksi.getTanggal().getTime()));
-            stmt.setInt(3, transaksi.getKmTerakhir());
-            stmt.setInt(4, transaksi.getKmSekarang());
-            stmt.setDouble(5, transaksi.getNominalBBM());
-            stmt.setString(6, transaksi.getKeterangan());
-            stmt.setInt(7, transaksi.getDriverId());
-            stmt.setInt(8, transaksi.getBankId());
-            stmt.setString(9, transaksi.getNoBukti());
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        try {
+            String sql;
+        
+            boolean isInsert = transaksi.getId() == 0;
 
             if (isInsert) {
-                stmt.setString(10, transaksi.getUserCreate());
+                sql = "INSERT INTO " + _nama_table_ + " (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)";
             } else {
-                stmt.setString(10, transaksi.getUserUpdate());
-                stmt.setInt(11, transaksi.getId());
+                sql = "UPDATE " + _nama_table_ + " SET armada_Id = ?, tanggal = ?, km_Terakhir = ?, km_Sekarang = ?, nominal_BBM = ?, keterangan = ?, driver_id=?, bank_id=? , no_bukti=?, user_update =?  WHERE id = ?";
             }
 
-            stmt.executeUpdate();
+            if (isInsert  || transaksi.getNoBukti().equals("")){
+                String noBukti = generateNoBukti(transaksi.getTanggal());
+                transaksi.setNoBukti(noBukti);            
 
-            if (isInsert) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        transaksi.setId(generatedKeys.getInt(1));
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(sql, isInsert ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
+                stmt.setInt(1, transaksi.getArmadaId());
+                stmt.setDate(2, new java.sql.Date(transaksi.getTanggal().getTime()));
+                stmt.setInt(3, transaksi.getKmTerakhir());
+                stmt.setInt(4, transaksi.getKmSekarang());
+                stmt.setDouble(5, transaksi.getNominalBBM());
+                stmt.setString(6, transaksi.getKeterangan());
+                stmt.setInt(7, transaksi.getDriverId());
+                stmt.setInt(8, transaksi.getBankId());
+                stmt.setString(9, transaksi.getNoBukti());
+
+                if (isInsert) {
+                    stmt.setString(10, transaksi.getUserCreate());
+                } else {
+                    stmt.setString(10, transaksi.getUserUpdate());
+                    stmt.setInt(11, transaksi.getId());
+                }
+
+                stmt.executeUpdate();
+
+                if (isInsert) {
+                    try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            transaksi.setId(generatedKeys.getInt(1));
+                        }
                     }
                 }
             }
+            
+            saveJurnal(transaksi);
+            conn.commit();
+        } catch (SQLException ex) {
+            // Jika terjadi kesalahan, rollback transaksi
+            conn.rollback();
+            throw ex; // Rethrow exception setelah rollback
+        } finally {
+            // Mengembalikan auto-commit ke status semula
+            conn.setAutoCommit(previousAutoCommit);
         }
     }
 
@@ -243,7 +290,7 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
             }
 
             // Set limit and offset for pagination
-            int pageSize = 10; // Sesuaikan dengan kebutuhan Anda
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
             stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
             stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
 
@@ -282,10 +329,24 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         
-        String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        try {
+            String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+            }
+            
+            jurnalDAO.deleteByTransId(id, tpb.getClass().getName());
+            conn.commit();
+        } catch (SQLException ex) {
+            // Jika terjadi kesalahan, rollback transaksi
+            conn.rollback();
+            throw ex; // Rethrow exception setelah rollback
+        } finally {
+            // Mengembalikan auto-commit ke status semula
+            conn.setAutoCommit(previousAutoCommit);
         }
     }
 }

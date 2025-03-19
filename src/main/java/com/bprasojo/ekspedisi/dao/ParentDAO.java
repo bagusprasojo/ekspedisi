@@ -18,6 +18,8 @@ import java.util.Date;
 public class ParentDAO {
     protected Connection conn;
     protected String _nama_table_;
+//    protected ConfigDAO configDAO;
+//    protected JurnalDAO jurnalDAO;
     
     public ParentDAO(){
         try {
@@ -25,6 +27,9 @@ public class ParentDAO {
         } catch (SQLException ex) {
             Logger.getLogger(ParentDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+//        configDAO = new ConfigDAO();
+//        jurnalDAO = new JurnalDAO();
     } 
     
     public Date getLastClosingDate() throws SQLException {
