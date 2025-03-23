@@ -241,6 +241,7 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
                 }
             }
             updatePelunasanTagihanCustomer(pembayaran.getTagihanCustomer());
+            conn.commit();
             
         } catch (SQLException ex) {
             // Jika terjadi kesalahan, rollback transaksi
