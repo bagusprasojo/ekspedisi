@@ -108,6 +108,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         btnBatal = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
+        btnJurnal = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         pnlInput = new javax.swing.JPanel();
         edNamaAkun = new javax.swing.JTextField();
@@ -238,6 +239,16 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             }
         });
         jToolBar1.add(btnKeluar);
+
+        btnJurnal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/jurnal.png"))); // NOI18N
+        btnJurnal.setText("Jurnal");
+        btnJurnal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnJurnal.setFocusable(false);
+        btnJurnal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnJurnal.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnJurnal.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnJurnal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(btnJurnal);
 
         getContentPane().add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 
@@ -689,6 +700,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnHapusArmada;
+    private javax.swing.JButton btnJurnal;
     private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnNext;

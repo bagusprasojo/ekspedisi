@@ -242,6 +242,8 @@ public class TransaksiKasDAO extends ParentDAO{
     
 
     // Menghapus data TransaksiKas
+    
+    
     public void delete(int id) throws SQLException {
         TransaksiKas tk = getById(id);
         

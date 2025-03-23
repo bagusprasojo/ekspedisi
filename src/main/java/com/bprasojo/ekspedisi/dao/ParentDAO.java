@@ -92,4 +92,24 @@ public class ParentDAO {
         return true;
     }
     
+    public boolean isSudaJurnal(String noBukti) throws SQLException{
+        if (noBukti.equals("")){
+            return true;
+        }
+        
+        String sql = "select count(1) as jml from jurnal where no_jurnal = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, noBukti);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getInt("jml") > 0){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
 }
