@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -137,7 +138,9 @@ public class AppUtils {
             Connection conn  = DatabaseConnection.getConnection();
             
             JasperPrint print = JasperFillManager.fillReport(sourceFileName, params, conn);
-            JasperViewer viewer = new JasperViewer(print, false);
+            JasperViewer viewer = new JasperViewer(print, false);     
+            
+            viewer.setExtendedState(JFrame.MAXIMIZED_BOTH);
             viewer.setVisible(true);
         } catch (SQLException ex) {
             ex.printStackTrace();

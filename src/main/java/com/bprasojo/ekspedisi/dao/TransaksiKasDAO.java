@@ -34,10 +34,11 @@ public class TransaksiKasDAO extends ParentDAO{
     public void saveJurnal(TransaksiKas transaksi) throws SQLException{
         Jurnal jurnal = new Jurnal();
         jurnal.setTransaksiId(transaksi.getId());
-        jurnal.setNoJurnal(transaksi.getNoBukti());
+        
         jurnal.setNoJurnal(transaksi.getNoBukti());
         jurnal.setTanggal(transaksi.getTanggal());
         jurnal.setTransaksi(transaksi.getClass().getName());
+        jurnal.setKeterangan(transaksi.getKeterangan());
         jurnal.setUserCreate(transaksi.getUserCreate());
         jurnal.setUserUpdate(transaksi.getUserUpdate());        
         

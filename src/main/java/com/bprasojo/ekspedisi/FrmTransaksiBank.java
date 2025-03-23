@@ -983,11 +983,12 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     
     private void LoadJenisTransaksi() {
         try {
-            List<JenisTransaksi> jenisTransaksis = jenisTransaksiDAO.getAll();
+            List<Map<String, Object>> result  = jenisTransaksiDAO.getJenisTransaksiByPage(1, "", 2000);
             
             // Masukkan data ke JComboBox
             DefaultComboBoxModel<JenisTransaksi> model = new DefaultComboBoxModel<>();
-            for (JenisTransaksi jt : jenisTransaksis) {
+            for (Map<String, Object> row : result) {
+                JenisTransaksi jt = jenisTransaksiDAO.getById((Integer) row.get("id"));
                 model.addElement(jt); // Menambahkan objek Perkiraan ke model
             }
             cbJenisTransaksi.setModel(model);

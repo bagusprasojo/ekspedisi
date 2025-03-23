@@ -15,6 +15,8 @@ public class JenisTransaksi extends BaseClass{
     private String kode;
     private String nama;
     private int akunId;
+    private String userCreate;
+    private String userUpdate;
 
     private transient Perkiraan akun; // Lazy loading
 
@@ -56,5 +58,11 @@ public class JenisTransaksi extends BaseClass{
     public String toString() {
         return kode + '-' + nama ;
     }
+    
+    public String getUserCreate() { return userCreate; }
+    public void setUserCreate(String userCreate) { this.userCreate = userCreate; }
+    
+    public String getUserUpdate() { return userUpdate; }
+    public void setUserUpdate(String userUpdate) { this.userUpdate = userUpdate; }
 }
 

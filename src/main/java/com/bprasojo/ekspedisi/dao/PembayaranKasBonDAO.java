@@ -7,32 +7,48 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
+import com.bprasojo.ekspedisi.model.Jurnal;
+import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import com.bprasojo.ekspedisi.model.PembayaranKasBon;
-import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PembayaranKasBonDAO extends ParentDAO{
-    private Connection conn;
-
+    private final JurnalDAO jurnalDAO;
     public PembayaranKasBonDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(PembayaranKasBonDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        super();
         _nama_table_ = "pembayaran_kas_bon";
+        
+        jurnalDAO = new JurnalDAO();
     }
 
+    public void saveJurnal(PembayaranKasBon transaksi) throws SQLException{
+        Jurnal jurnal = new Jurnal();
+        jurnal.setTransaksiId(transaksi.getId());
+        
+        jurnal.setNoJurnal(transaksi.getNoRegister());
+        jurnal.setTanggal(transaksi.getTanggal());
+        jurnal.setTransaksi(transaksi.getClass().getName());
+        jurnal.setKeterangan(transaksi.getKeterangan());
+        jurnal.setUserCreate(transaksi.getUserCreate());
+        jurnal.setUserUpdate(transaksi.getUserUpdate());        
+        
+        JurnalDetail jdD, jdK;        
+        jdD = new JurnalDetail(0, transaksi.getBank().getAkun().getId(), transaksi.getNominal(), 0);
+        jdK = new JurnalDetail(0, transaksi.getKasBonKaryawan().getPerkiraanPinjamanId(), 0, transaksi.getNominal());
+        
+        jurnal.getJurnalDetails().add(jdD);
+        jurnal.getJurnalDetails().add(jdK);
+        
+        jurnalDAO.deleteByTransId(transaksi.getId(), transaksi.getClass().getName());
+        jurnalDAO.save(jurnal);
+        
+    }
     public void save(PembayaranKasBon pembayaranKasBon) throws SQLException {
         if (!validasiClosing(pembayaranKasBon.getId(), pembayaranKasBon.getTanggal())){
             throw new SQLException("Data tidak bisa disimpan karena sudah closing");
@@ -100,6 +116,7 @@ public class PembayaranKasBonDAO extends ParentDAO{
                 }
             }
             updatePelunasanKasBonKaryawan(pembayaranKasBon.getKasBonKaryawan());
+            saveJurnal(pembayaranKasBon);
             conn.commit();
         } catch (SQLException ex) {
             // Jika terjadi kesalahan, rollback transaksi
@@ -194,11 +211,11 @@ public class PembayaranKasBonDAO extends ParentDAO{
             PembayaranKasBon pembayaranKasBon = getById(id);
             
             KasBonKaryawan kbk = pembayaranKasBon.getKasBonKaryawan();           
+            jurnalDAO.deleteByTransId(pkb.getId(), pkb.getClass().getName());
             
             stmt.setInt(1, id);
             stmt.executeUpdate();
             updatePelunasanKasBonKaryawan(kbk);
-            
             
             
             conn.commit();

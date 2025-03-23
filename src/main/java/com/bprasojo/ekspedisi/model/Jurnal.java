@@ -11,6 +11,7 @@ public class Jurnal {
     private Date tanggal;
     private int transaksiId;
     private String transaksi;
+    private String keterangan;
     private String userCreate;
     private String userUpdate;
 
@@ -18,12 +19,13 @@ public class Jurnal {
 
     public Jurnal() {}
 
-    public Jurnal(int id, String noJurnal, Date tanggal, int idTransaksi, String transaksi, String userCreate, String userUpdate) {
+    public Jurnal(int id, String noJurnal, Date tanggal, int idTransaksi, String transaksi, String keterangan, String userCreate, String userUpdate) {
         this.id = id;
         this.noJurnal = noJurnal;
         this.tanggal = tanggal;
         this.transaksiId = idTransaksi;
         this.transaksi = transaksi;
+        this.keterangan = keterangan;
         this.userCreate = userCreate;
         this.userUpdate = userUpdate;
         
@@ -44,6 +46,9 @@ public class Jurnal {
 
     public String getTransaksi() { return transaksi; }
     public void setTransaksi(String transaksi) { this.transaksi = transaksi; }
+    
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
 
     // Lazy Load JurnalDetails
     public List<JurnalDetail> getJurnalDetails() throws SQLException {

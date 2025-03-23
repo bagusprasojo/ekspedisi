@@ -91,9 +91,9 @@ public class JurnalDAO extends ParentDAO{
         boolean isInsert = jurnal.getId() == 0;
 
         if (isInsert ) {            
-            sql = "INSERT INTO " + _nama_table_ + " (no_jurnal, tanggal, transaksi_id, transaksi, user_create) VALUES (?, ?, ?, ?, ?)";
+            sql = "INSERT INTO " + _nama_table_ + " (no_jurnal, tanggal, transaksi_id, transaksi, keterangan,  user_create) VALUES (?, ?, ?, ?, ?, ?)";
         } else {
-            sql = "UPDATE " + _nama_table_ + " SET no_jurnal = ?, tanggal = ?, transaksi_id = ?, transaksi = ?, user_update = ? WHERE id = ?";
+            sql = "UPDATE " + _nama_table_ + " SET no_jurnal = ?, tanggal = ?, transaksi_id = ?, transaksi = ?, keterangan = ?, user_update = ? WHERE id = ?";
         }
 
         if (isInsert && jurnal.getNoJurnal().equals("")){
@@ -106,12 +106,13 @@ public class JurnalDAO extends ParentDAO{
             statement.setDate(2, new java.sql.Date(jurnal.getTanggal().getTime()));
             statement.setInt(3, jurnal.getTransaksiId());
             statement.setString(4, jurnal.getTransaksi());
+            statement.setString(5, jurnal.getKeterangan());
             
             if (isInsert){
-                statement.setString(5, jurnal.getUserCreate());
+                statement.setString(6, jurnal.getUserCreate());
             } else {
-                statement.setString(5, jurnal.getUserUpdate());
-                statement.setInt(6, jurnal.getId()); 
+                statement.setString(7, jurnal.getUserUpdate());
+                statement.setInt(8, jurnal.getId()); 
             }
 
             statement.executeUpdate();
@@ -150,6 +151,7 @@ public class JurnalDAO extends ParentDAO{
                         rs.getDate("tanggal"),
                         rs.getInt("transaksi_id"),
                         rs.getString("transaksi"),
+                        rs.getString("keterangan"),
                         rs.getString("user_create"),
                         rs.getString("user_update")
                     );
@@ -189,6 +191,7 @@ public class JurnalDAO extends ParentDAO{
                     rs.getDate("tanggal"),
                     rs.getInt("transaksi_id"),
                     rs.getString("transaksi"),
+                    rs.getString("keterangan"),
                     rs.getString("user_create"),
                     rs.getString("user_update")
                 ));

@@ -7,8 +7,11 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
+import com.bprasojo.ekspedisi.model.Jurnal;
+import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.PembayaranTagihanCustomer;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
+import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -19,7 +22,8 @@ import java.util.Map;
 
 public class PembayaranTagihanCustomerDAO extends ParentDAO{
     
-
+    private final JurnalDAO jurnalDAO = new JurnalDAO();
+    private final ConfigDAO configDAO = new ConfigDAO();
     public PembayaranTagihanCustomerDAO() {
         super();
         _nama_table_ = "pembayaran_tagihan_customer";
@@ -124,8 +128,7 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
             stmt.setInt(1, id);
             stmt.executeUpdate();
             updatePelunasanTagihanCustomer(tc);
-            
-            
+            jurnalDAO.deleteByTransId(ptc.getId(), ptc.getClass().getName());
             
             conn.commit();
         } catch (SQLException ex) {
@@ -179,6 +182,34 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
             }
         }
         return pembayaran;
+    }
+    
+    public void saveJurnal(PembayaranTagihanCustomer transaksi) throws SQLException{
+        Jurnal jurnal = new Jurnal();
+        jurnal.setTransaksiId(transaksi.getId());
+        
+        jurnal.setNoJurnal(transaksi.getNoRegister());
+        jurnal.setTanggal(transaksi.getTanggal());
+        jurnal.setTransaksi(transaksi.getClass().getName());
+        jurnal.setKeterangan(transaksi.getKeterangan());
+        jurnal.setUserCreate(transaksi.getUserCreate());
+        jurnal.setUserUpdate(transaksi.getUserUpdate());        
+        
+        JurnalDetail jdD, jdK, jdPPH;
+        int perkiraanPPHId  = Integer.parseInt(configDAO.getByKode("AKUN_PPH_ID").getNilai());
+        
+        jdD = new JurnalDetail(0, transaksi.getBank().getAkun().getId(), transaksi.getNominalKas(), 0);
+        jdPPH = new JurnalDetail(0, perkiraanPPHId, transaksi.getPph(), 0);
+        jdK = new JurnalDetail(0, transaksi.getTagihanCustomer().getPerkiraanPiutangId(), 0, transaksi.getTotal());
+        
+        
+        jurnal.getJurnalDetails().add(jdD);
+        jurnal.getJurnalDetails().add(jdPPH);
+        jurnal.getJurnalDetails().add(jdK);
+        
+        jurnalDAO.deleteByTransId(transaksi.getId(), transaksi.getClass().getName());
+        jurnalDAO.save(jurnal);
+        
     }
     
     public void save(PembayaranTagihanCustomer pembayaran) throws SQLException {
@@ -241,8 +272,12 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
                 if (tc != null){
                     updatePelunasanTagihanCustomer(tc);
                 }
-            }
+            }            
+            
             updatePelunasanTagihanCustomer(pembayaran.getTagihanCustomer());
+            saveJurnal(pembayaran);
+            
+            conn.commit();
             
         } catch (SQLException ex) {
             // Jika terjadi kesalahan, rollback transaksi

@@ -7,7 +7,10 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
+import com.bprasojo.ekspedisi.model.Jurnal;
+import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
+import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -17,11 +20,16 @@ import java.util.List;
 import java.util.Map;
 
 public class TagihanCustomerDAO extends ParentDAO{
+
+    private final JurnalDAO jurnalDAO;
 //    private Connection conn;
 
+    private final ConfigDAO configDAO = new ConfigDAO();
     public TagihanCustomerDAO() {
         super();
         _nama_table_ = "tagihan_customer";
+        
+        jurnalDAO = new JurnalDAO();
     }
 
     public String generateNoInvoice(java.util.Date inputDate) {
@@ -64,6 +72,36 @@ public class TagihanCustomerDAO extends ParentDAO{
             return null;
         }
     }
+    
+    public void saveJurnal(TagihanCustomer transaksi) throws SQLException{
+        Jurnal jurnal = new Jurnal();
+        jurnal.setTransaksiId(transaksi.getId());
+        
+        jurnal.setNoJurnal(transaksi.getNoInvoice());
+        jurnal.setTanggal(transaksi.getTanggal());
+        jurnal.setTransaksi(transaksi.getClass().getName());
+        jurnal.setKeterangan(transaksi.getKeterangan());
+        jurnal.setUserCreate(transaksi.getUserCreate());
+        jurnal.setUserUpdate(transaksi.getUserUpdate());        
+        
+
+        JurnalDetail jdD, jdK, jdPPN;
+        int perkiraanPendapatanJasaId  = Integer.parseInt(configDAO.getByKode("AKUN_PENDAPATAN_JASA").getNilai());
+        int perkiraanPPNId  = Integer.parseInt(configDAO.getByKode("AKUN_PPN_ID").getNilai());
+        
+        jdD = new JurnalDetail(0, transaksi.getPerkiraanPiutangId(), transaksi.getNilaiPekerjaan() + transaksi.getPpn(), 0);
+        jdK = new JurnalDetail(0, perkiraanPendapatanJasaId, 0, transaksi.getNilaiPekerjaan());
+        jdPPN = new JurnalDetail(0, perkiraanPPNId, 0, transaksi.getPpn());
+        
+        
+        jurnal.getJurnalDetails().add(jdD);
+        jurnal.getJurnalDetails().add(jdK);
+        jurnal.getJurnalDetails().add(jdPPN);
+        
+        jurnalDAO.deleteByTransId(transaksi.getId(), transaksi.getClass().getName());
+        jurnalDAO.save(jurnal);
+        
+    }
     // Simpan atau Update
     public void save(TagihanCustomer tagihan) throws SQLException {
         if (!validasiClosing(tagihan.getId(), tagihan.getTanggal())){
@@ -76,53 +114,67 @@ public class TagihanCustomerDAO extends ParentDAO{
             throw new SQLException("Invoice tidak bisa diubah karena sudah ada pembayaran");
         }
         
-        if (tagihan.getNilaiPekerjaan() <= tagihan.getPelunasan()){
-            tagihan.setStatusLunas("Lunas");
-        } else {
-            tagihan.setStatusLunas("Belum");
-        }
-        
-        boolean isInsert = tagihan.getId() == 0; 
-        if (isInsert) {
-            tagihan.setNoInvoice(generateNoInvoice(tagihan.getTanggal()));
-            sql = "INSERT INTO " + _nama_table_ + " (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan, perkiraan_piutang_id, user_create) " +
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
-        } else {
-            sql = "UPDATE " + _nama_table_ + " SET customer_id=?, no_invoice=?, tanggal=?, pekerjaan=?, nilai_pekerjaan=?, ppn_persen=?, ppn=?, total=?, terbilang=?, pelunasan=?, status_lunas=?, keterangan=?, perkiraan_piutang_id=?, user_update=? WHERE id=?";
-        }
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, tagihan.getCustomerId());
-            stmt.setString(2, tagihan.getNoInvoice());
-            
-            Date tanggal = new Date(tagihan.getTanggal().getTime());
-            stmt.setDate(3, tanggal);
-            stmt.setString(4, tagihan.getPekerjaan());
-            stmt.setInt(5, tagihan.getNilaiPekerjaan());
-            stmt.setInt(6, tagihan.getPpnPersen());
-            stmt.setInt(7, tagihan.getPpn());
-            stmt.setInt(8, tagihan.getTotal());
-            stmt.setString(9, tagihan.getTerbilang());
-            stmt.setInt(10, tagihan.getPelunasan());
-            stmt.setString(11, tagihan.getStatusLunas());
-            stmt.setString(12, tagihan.getKeterangan());
-            stmt.setInt(13, tagihan.getPerkiraanPiutangId());
-            
-            if (tagihan.getId() <= 0) {
-                stmt.setString(14, tagihan.getUserCreate());
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        try {
+            if (tagihan.getNilaiPekerjaan() <= tagihan.getPelunasan()){
+                tagihan.setStatusLunas("Lunas");
             } else {
-                stmt.setString(14, tagihan.getUserUpdate());
-                stmt.setInt(15, tagihan.getId());
+                tagihan.setStatusLunas("Belum");
             }
 
-            stmt.executeUpdate();
+            boolean isInsert = tagihan.getId() == 0; 
             if (isInsert) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        tagihan.setId(generatedKeys.getInt(1));
+                tagihan.setNoInvoice(generateNoInvoice(tagihan.getTanggal()));
+                sql = "INSERT INTO " + _nama_table_ + " (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan, perkiraan_piutang_id, user_create) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
+            } else {
+                sql = "UPDATE " + _nama_table_ + " SET customer_id=?, no_invoice=?, tanggal=?, pekerjaan=?, nilai_pekerjaan=?, ppn_persen=?, ppn=?, total=?, terbilang=?, pelunasan=?, status_lunas=?, keterangan=?, perkiraan_piutang_id=?, user_update=? WHERE id=?";
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setInt(1, tagihan.getCustomerId());
+                stmt.setString(2, tagihan.getNoInvoice());
+
+                Date tanggal = new Date(tagihan.getTanggal().getTime());
+                stmt.setDate(3, tanggal);
+                stmt.setString(4, tagihan.getPekerjaan());
+                stmt.setInt(5, tagihan.getNilaiPekerjaan());
+                stmt.setInt(6, tagihan.getPpnPersen());
+                stmt.setInt(7, tagihan.getPpn());
+                stmt.setInt(8, tagihan.getTotal());
+                stmt.setString(9, tagihan.getTerbilang());
+                stmt.setInt(10, tagihan.getPelunasan());
+                stmt.setString(11, tagihan.getStatusLunas());
+                stmt.setString(12, tagihan.getKeterangan());
+                stmt.setInt(13, tagihan.getPerkiraanPiutangId());
+
+                if (tagihan.getId() <= 0) {
+                    stmt.setString(14, tagihan.getUserCreate());
+                } else {
+                    stmt.setString(14, tagihan.getUserUpdate());
+                    stmt.setInt(15, tagihan.getId());
+                }
+
+                stmt.executeUpdate();
+                if (isInsert) {
+                    try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            tagihan.setId(generatedKeys.getInt(1));
+                        }
                     }
                 }
             }
+            saveJurnal(tagihan);
+            
+            conn.commit();
+        } catch (SQLException ex) {
+            // Jika terjadi kesalahan, rollback transaksi
+            conn.rollback();
+            throw ex; // Rethrow exception setelah rollback
+        } finally {
+            // Mengembalikan auto-commit ke status semula
+            conn.setAutoCommit(previousAutoCommit);
         }
     }
 
@@ -137,19 +189,33 @@ public class TagihanCustomerDAO extends ParentDAO{
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         
-        TagihanCustomer invoice = getById(id);
-        if (invoice == null){
-            throw new SQLException("Data invoice tidak ditemukan");
-        }
-        
-        if (invoice.getPelunasan() > 0){
-            throw new SQLException("Data invoice tidak bisa dihapus karena sudah ada pembayaran");
-        }
-        
-        String sql = "DELETE FROM " + _nama_table_ + " WHERE id=?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
+        boolean previousAutoCommit = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        try {
+            TagihanCustomer invoice = getById(id);
+            if (invoice == null){
+                throw new SQLException("Data invoice tidak ditemukan");
+            }
+
+            if (invoice.getPelunasan() > 0){
+                throw new SQLException("Data invoice tidak bisa dihapus karena sudah ada pembayaran");
+            }
+
+            String sql = "DELETE FROM " + _nama_table_ + " WHERE id=?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+            }
+            
+            jurnalDAO.deleteByTransId(invoice.getId(), invoice.getClass().getName());
+            conn.commit();
+        } catch (SQLException ex) {
+            // Jika terjadi kesalahan, rollback transaksi
+            conn.rollback();
+            throw ex; // Rethrow exception setelah rollback
+        } finally {
+            // Mengembalikan auto-commit ke status semula
+            conn.setAutoCommit(previousAutoCommit);
         }
     }
 

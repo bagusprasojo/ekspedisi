@@ -94,6 +94,8 @@ public class MainForm extends javax.swing.JFrame {
         jMenu4 = new javax.swing.JMenu();
         jMenuItem21 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem22 = new javax.swing.JMenuItem();
         jMenu10 = new javax.swing.JMenu();
         jMenuItem20 = new javax.swing.JMenuItem();
 
@@ -336,6 +338,15 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu4.add(jMenuItem2);
+        jMenu4.add(jSeparator5);
+
+        jMenuItem22.setText("Jenis Transaksi");
+        jMenuItem22.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem22ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem22);
 
         jMenuBar1.add(jMenu4);
 
@@ -589,6 +600,12 @@ public class MainForm extends javax.swing.JFrame {
         frmDaftarJurnal.setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jMenuItem22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem22ActionPerformed
+        FrmJenisTransaksi frmJenisTransaksi = new FrmJenisTransaksi(user);
+        desktopPane.add(frmJenisTransaksi);
+        frmJenisTransaksi.setVisible(true);
+    }//GEN-LAST:event_jMenuItem22ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -671,6 +688,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem20;
     private javax.swing.JMenuItem jMenuItem21;
+    private javax.swing.JMenuItem jMenuItem22;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
@@ -682,6 +700,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
     private javax.swing.JMenuItem miTransaksiKas;
