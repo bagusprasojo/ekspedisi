@@ -86,13 +86,13 @@ public class AppUtils {
     }
     
     public static void showErrorDialogSimpan(Exception ex) {
-        String message = "Transaksi tidak bisa disimpan karena : \n " +
+        String message = "Ada kesalahan simpan data dengan error: \n" +
                          ex.getMessage();
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
     public static void showErrorDialogHapus(Exception ex) {
-        String message = "Transaksi tidak bisa dihapus karena : \n " +
+        String message = "Ada kesalahan hapus data dengan error: \n" +
                          ex.getMessage();
         JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

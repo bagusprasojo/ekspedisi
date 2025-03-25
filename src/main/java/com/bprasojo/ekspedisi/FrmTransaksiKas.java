@@ -7,6 +7,7 @@ package com.bprasojo.ekspedisi;
 import com.bprasojo.ekspedisi.dao.ArmadaDAO;
 import com.bprasojo.ekspedisi.dao.BankDAO;
 import com.bprasojo.ekspedisi.dao.ConfigDAO;
+import com.bprasojo.ekspedisi.dao.JurnalDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.dao.TransaksiKasDAO;
 import com.bprasojo.ekspedisi.model.Armada;
@@ -18,6 +19,7 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.beans.PropertyVetoException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -248,6 +250,11 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         btnJurnal.setMaximumSize(new java.awt.Dimension(60, 70));
         btnJurnal.setMinimumSize(new java.awt.Dimension(60, 70));
         btnJurnal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnJurnal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJurnalActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnJurnal);
 
         getContentPane().add(jToolBar1, java.awt.BorderLayout.PAGE_START);
@@ -693,6 +700,42 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
+    private void btnJurnalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJurnalActionPerformed
+        if (transaksiKas == null) {
+            AppUtils.showErrorDialog("Tidak ada transaksi yang akan dijurnal");
+            return;
+        }
+
+        try {
+            // Cek apakah transaksi sudah dijurnal
+            if (transaksiKasDAO.isSudahJurnal(transaksiKas.getNoBukti())) {
+                boolean userConfirmed = AppUtils.showConfirmDialog(
+                    "Transaksi ini sudah dijurnal. \nApakah anda yakin akan menjurnal ulang?");
+
+                if (!userConfirmed) return;
+            }
+
+            // Proses jurnal
+            Connection conn = transaksiKasDAO.getConnection();
+            boolean previousAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+
+            try {
+                transaksiKasDAO.saveJurnal(transaksiKas);
+                conn.commit();
+                setStatusTombol("selected");
+                AppUtils.showInfoDialog("Berhasil simpan jurnal");
+            } catch (SQLException ex) {
+                conn.rollback();
+                AppUtils.showErrorDialogSimpan(ex);
+            } finally {
+                conn.setAutoCommit(previousAutoCommit);
+            }
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialogSimpan(ex);
+        }
+    }//GEN-LAST:event_btnJurnalActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAkunTransaksi;
@@ -737,7 +780,9 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     // End of variables declaration//GEN-END:variables
 
     private void setStatusTombol(String mode){
-        if (mode == "awal"){
+        btnJurnal.setEnabled(false);
+        
+        if ("awal".equals(mode)){
             btnNew.setEnabled(true);
             btnEdit.setEnabled(false);
             btnSimpan.setEnabled(false);
@@ -746,7 +791,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             pnlInput.setEnabled(false);
             
             SetEnableKomponenInput(false);
-        } else if (mode == "tambah"){
+        } else if ("tambah".equals(mode)){
             btnNew.setEnabled(false);
             btnEdit.setEnabled(false);
             btnSimpan.setEnabled(true);
@@ -755,16 +800,17 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
             pnlInput.setEnabled(true);
             
             SetEnableKomponenInput(true);
-        } else if (mode == "edit"){
+        } else if ("edit".equals(mode)){
             btnNew.setEnabled(false);
             btnEdit.setEnabled(false);
             btnSimpan.setEnabled(true);
             btnBatal.setEnabled(true);
             btnHapus.setEnabled(true);
             pnlInput.setEnabled(true);
+            btnJurnal.setEnabled(true);
             
             SetEnableKomponenInput(true);
-        } else if (mode == "selected"){
+        } else if ("selected".equals(mode)){
             btnNew.setEnabled(true);
             btnEdit.setEnabled(true);
             btnSimpan.setEnabled(false);

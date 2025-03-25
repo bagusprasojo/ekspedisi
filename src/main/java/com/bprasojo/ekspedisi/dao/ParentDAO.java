@@ -32,6 +32,9 @@ public class ParentDAO {
 //        jurnalDAO = new JurnalDAO();
     } 
     
+    public Connection getConnection(){
+        return conn;
+    }
     public Date getLastClosingDate() throws SQLException {
         String sql = "SELECT MAX(tanggal) AS last_closing FROM closing";
         
@@ -92,7 +95,7 @@ public class ParentDAO {
         return true;
     }
     
-    public boolean isSudaJurnal(String noBukti) throws SQLException{
+    public boolean isSudahJurnal(String noBukti) throws SQLException{
         if (noBukti.equals("")){
             return true;
         }

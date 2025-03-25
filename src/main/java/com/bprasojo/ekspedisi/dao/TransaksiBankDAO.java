@@ -29,6 +29,10 @@ public class TransaksiBankDAO extends ParentDAO{
     }
 
     public void saveJurnal(TransaksiBank transaksi) throws SQLException{
+        if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
+            throw new SQLException("Data tidak bisa dijurnal karena sudah closing");
+        }
+        
         Jurnal jurnal = new Jurnal();
         jurnal.setTransaksiId(transaksi.getId());
         jurnal.setNoJurnal(transaksi.getNoBukti());

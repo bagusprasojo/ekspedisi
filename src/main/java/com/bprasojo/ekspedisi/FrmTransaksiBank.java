@@ -14,6 +14,7 @@ import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -118,6 +119,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         btnBatal = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
+        btnJurnal = new javax.swing.JButton();
         pnlInput = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         edNoRek = new javax.swing.JTextField();
@@ -366,6 +368,21 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
             }
         });
         jToolBar1.add(btnKeluar);
+
+        btnJurnal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/jurnal.png"))); // NOI18N
+        btnJurnal.setText("Jurnal");
+        btnJurnal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnJurnal.setFocusable(false);
+        btnJurnal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnJurnal.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnJurnal.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnJurnal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnJurnal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJurnalActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnJurnal);
 
         jPanel1.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
@@ -672,7 +689,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
                 setStatusTombol("awal");
                 LoadDataTransaksiBank(currentPage);
             } catch (SQLException ex) {
-                Logger.getLogger(FrmTransaksiBank.class.getName()).log(Level.SEVERE, null, ex);
+                AppUtils.showErrorDialogHapus(ex);
             }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
@@ -820,12 +837,49 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
         bankTujuan = (Bank) cbBankTujuan.getSelectedItem();
     }//GEN-LAST:event_cbBankTujuanItemStateChanged
 
+    private void btnJurnalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJurnalActionPerformed
+        if (transaksiBank == null) {
+            AppUtils.showErrorDialog("Tidak ada transaksi yang akan dijurnal");
+            return;
+        }
+
+        try {
+            // Cek apakah transaksi sudah dijurnal
+            if (transaksiBankDAO.isSudahJurnal(transaksiBank.getNoBukti())) {
+                boolean userConfirmed = AppUtils.showConfirmDialog(
+                    "Transaksi ini sudah dijurnal. \nApakah anda yakin akan menjurnal ulang?");
+
+                if (!userConfirmed) return;
+            }
+
+            // Proses jurnal
+            Connection conn = transaksiBankDAO.getConnection();
+            boolean previousAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+
+            try {
+                transaksiBankDAO.saveJurnal(transaksiBank);
+                conn.commit();
+                setStatusTombol("selected");
+                AppUtils.showInfoDialog("Berhasil simpan jurnal");
+            } catch (SQLException ex) {
+                conn.rollback();
+                AppUtils.showErrorDialogSimpan(ex);
+            } finally {
+                conn.setAutoCommit(previousAutoCommit);
+            }
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialogSimpan(ex);
+        }
+    }//GEN-LAST:event_btnJurnalActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnJurnal;
     private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnLihatBank;
     private javax.swing.JButton btnNew;
@@ -939,45 +993,50 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     }
     
     private void setStatusTombol(String mode){
+        btnJurnal.setEnabled(false);
+        
         frmMode = mode;
-        if (frmMode == "awal"){
-            btnNew.setEnabled(true);
-            btnEdit.setEnabled(false);
-            btnSimpan.setEnabled(false);
-            btnBatal.setEnabled(false);
-            btnHapus.setEnabled(false);
-            pnlInput.setEnabled(false);
-            
-            enableKomponenInput(false);
-            
-            
-        } else if (frmMode == "tambah"){
-            btnNew.setEnabled(false);
-            btnEdit.setEnabled(false);
-            btnSimpan.setEnabled(true);
-            btnBatal.setEnabled(true);
-            btnHapus.setEnabled(false);
-            pnlInput.setEnabled(true);
-            
-            enableKomponenInput(true);
-        } else if (frmMode == "edit"){
-            btnNew.setEnabled(false);
-            btnEdit.setEnabled(false);
-            btnSimpan.setEnabled(true);
-            btnBatal.setEnabled(true);
-            btnHapus.setEnabled(true);
-            pnlInput.setEnabled(true);
-            
-            enableKomponenInput(true);
-        } else if (frmMode == "selected"){
-            btnNew.setEnabled(true);
-            btnEdit.setEnabled(true);
-            btnSimpan.setEnabled(false);
-            btnBatal.setEnabled(false);
-            btnHapus.setEnabled(true);
-            pnlInput.setEnabled(false);
-            
-            enableKomponenInput(false);
+        if (null != frmMode)switch (frmMode) {
+            case "awal" -> {
+                btnNew.setEnabled(true);
+                btnEdit.setEnabled(false);
+                btnSimpan.setEnabled(false);
+                btnBatal.setEnabled(false);
+                btnHapus.setEnabled(false);
+                pnlInput.setEnabled(false);
+                enableKomponenInput(false);
+            }
+            case "tambah" -> {
+                btnNew.setEnabled(false);
+                btnEdit.setEnabled(false);
+                btnSimpan.setEnabled(true);
+                btnBatal.setEnabled(true);
+                btnHapus.setEnabled(false);
+                pnlInput.setEnabled(true);
+                enableKomponenInput(true);
+            }
+            case "edit" -> {
+                btnNew.setEnabled(false);
+                btnEdit.setEnabled(false);
+                btnSimpan.setEnabled(true);
+                btnBatal.setEnabled(true);
+                btnHapus.setEnabled(true);
+                pnlInput.setEnabled(true);
+                
+                btnJurnal.setEnabled(true);
+                enableKomponenInput(true);
+            }
+            case "selected" -> {
+                btnNew.setEnabled(true);
+                btnEdit.setEnabled(true);
+                btnSimpan.setEnabled(false);
+                btnBatal.setEnabled(false);
+                btnHapus.setEnabled(true);
+                pnlInput.setEnabled(false);
+                enableKomponenInput(false);
+            }
+            default -> {
+            }
         }
     }
     

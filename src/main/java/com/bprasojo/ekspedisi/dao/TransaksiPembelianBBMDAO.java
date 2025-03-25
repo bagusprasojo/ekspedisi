@@ -7,11 +7,9 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
-import com.bprasojo.ekspedisi.model.Config;
 import com.bprasojo.ekspedisi.model.Jurnal;
 import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.TransaksiPembelianBBM;
-import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +32,10 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
     }
 
     public void saveJurnal(TransaksiPembelianBBM transaksi) throws SQLException{
+        if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
+            throw new SQLException("Data tidak bisa dijurnal karena sudah closing");
+        }
+        
         Jurnal jurnal = new Jurnal();
         jurnal.setTransaksiId(transaksi.getId());
         jurnal.setNoJurnal(transaksi.getNoBukti());
