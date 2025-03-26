@@ -64,13 +64,15 @@ public class JurnalDAO extends ParentDAO{
                 throw new SQLException("Transaksi tidak bisa dihapus karena sudah closing");
             }
 
+            deleteJurnalDetail(jur.getId());
+            
             String sql = "DELETE FROM " + _nama_table_ + " WHERE id = ?";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setInt(1, id);
                 statement.executeUpdate();
             }
             
-            deleteJurnalDetail(jur.getId());
+            
         }
     }
     
