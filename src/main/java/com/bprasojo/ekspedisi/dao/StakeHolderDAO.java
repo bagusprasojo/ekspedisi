@@ -7,28 +7,42 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.StakeHolder;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class StakeHolderDAO {
-    private Connection conn;
+public class StakeHolderDAO extends ParentDAO{
+//    private Connection conn;
 
     public StakeHolderDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(StakeHolderDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "stake_holder";
     }
 
     // Simpan atau Edit Data
+    
+    public int getAllSHCount(String jenis) {
+        int count = 0;
+        String sql = "SELECT count(id) as count FROM " + _nama_table_ + " WHERE jenis = ?"; 
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, jenis);  // Menetapkan parameter jenis
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) { // Mengambil hasil dari query
+                    count = rs.getInt("count");
+                }
+            }
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal mengambil data count\n" + ex.getMessage());
+        }
+
+        return count;
+    }
+
     private String generateKode(String jenis){
         long kode_int = System.currentTimeMillis()/1000;
         if (jenis.equals("Customer")){

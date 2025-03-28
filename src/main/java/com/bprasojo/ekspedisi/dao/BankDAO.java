@@ -4,6 +4,7 @@ import com.bprasojo.ekspedisi.database.DBUtils;
 import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.Perkiraan;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +14,26 @@ import java.util.logging.Logger;
 /**
  * Data Access Object untuk Bank
  */
-public class BankDAO {
-    private Connection conn;
+public class BankDAO extends ParentDAO{
+//    private Connection conn;
 
     // Konstruktor
     public BankDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "bank";
     }
 
     // Tambah Bank
+    public Bank getRandomBank(){
+        try {
+            return getById(getRandomID());
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog(ex.getMessage());
+        }
+        
+        return null;
+    }
+    
     public void addBank(Bank bank) throws SQLException {
         String query = "INSERT INTO bank (no_rekening, nama_bank, atas_nama, keterangan, akun_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {

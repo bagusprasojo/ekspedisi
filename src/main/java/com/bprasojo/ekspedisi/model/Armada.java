@@ -5,7 +5,6 @@
 package com.bprasojo.ekspedisi.model;
 
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
-import com.bprasojo.ekspedisi.model.StakeHolder;
 import java.sql.SQLException;
 
 /**

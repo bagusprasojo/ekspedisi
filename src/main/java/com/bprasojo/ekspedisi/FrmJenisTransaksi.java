@@ -127,7 +127,7 @@ public class FrmJenisTransaksi extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
-        setTitle("Kas Bon Karyawan");
+        setTitle("Jenis Transaksi");
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 

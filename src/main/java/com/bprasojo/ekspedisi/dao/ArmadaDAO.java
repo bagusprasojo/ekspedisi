@@ -22,21 +22,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ArmadaDAO {
-    private Connection conn;
+public class ArmadaDAO extends ParentDAO{
+//    private Connection conn;
 
     public ArmadaDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "armada";
+        
     }
     
-    protected Connection getConnection(){
-        return this.conn;
-    
-    }
+//    protected Connection getConnection(){
+//        return this.conn;
+//    
+//    }
     public List<Map<String, Object>> getArmadaByPage(int page, String filter, int pageSize) throws SQLException {
         List<Map<String, Object>> resultList = new ArrayList<>();
         

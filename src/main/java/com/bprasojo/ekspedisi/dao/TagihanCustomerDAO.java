@@ -10,7 +10,6 @@ package com.bprasojo.ekspedisi.dao;
 import com.bprasojo.ekspedisi.model.Jurnal;
 import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
-import com.bprasojo.ekspedisi.model.TransaksiKas;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;

@@ -7,27 +7,28 @@ package com.bprasojo.ekspedisi.dao;
 /**
  *
  */
-import com.bprasojo.ekspedisi.database.DatabaseConnection;
 import com.bprasojo.ekspedisi.model.Perkiraan;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class PerkiraanDAO {
+public class PerkiraanDAO extends ParentDAO{
     
-    private Connection conn;
-
-    // Konstruktor untuk menghubungkan ke database
     public PerkiraanDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            Logger.getLogger(ArmadaDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        super();
+        _nama_table_ = "perkiraan";
     }
 
+    public Perkiraan getRandomPerkiraan(){
+        try {
+            return getById(getRandomID());
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog(ex.getMessage());
+        }
+        
+        return null;
+    }
     // Menambah Perkiraan
     public void addPerkiraan(Perkiraan perkiraan) throws SQLException {
         String query = "INSERT INTO perkiraan (kode, nama, parent_id, golongan, kelompok, level, saldo_normal) VALUES (?, ?, ?, ?, ?, ?, ?)";

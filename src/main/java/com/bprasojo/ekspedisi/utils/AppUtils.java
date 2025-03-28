@@ -199,6 +199,23 @@ public class AppUtils {
         edTanggal.setDate(lastOfMonth);  // Set tanggal pada JDateChooser
     }
 
+    public static Date getTanggalAwalTahun(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, Calendar.JANUARY); // Set bulan ke Januari (bulan ke-0)
+        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set tanggal ke 1
+        Date firstOfYear = calendar.getTime();
+        
+        return firstOfYear;
+    }
+    
+    public static Date getTanggalAkhirTahun(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, Calendar.DECEMBER); // Set bulan ke Desember (bulan ke-11)
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)); // Set tanggal ke hari terakhir bulan Desember
+        Date lastOfYear = calendar.getTime();
+        
+        return lastOfYear;
+    }
     public static void SetTanggalAwalTahun(JDateChooser edTanggal){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH, Calendar.JANUARY); // Set bulan ke Januari (bulan ke-0)

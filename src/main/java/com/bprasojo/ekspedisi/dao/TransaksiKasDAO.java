@@ -326,29 +326,5 @@ public class TransaksiKasDAO extends ParentDAO{
         }
         return null;
     }
-
-
-    // Mendapatkan semua data TransaksiKas
-    public List<TransaksiKas> getAll(PerkiraanDAO perkiraanDAO, ArmadaDAO armadaDAO) throws SQLException {
-        List<TransaksiKas> transaksiKasList = new ArrayList<>();
-        String sql = "SELECT * FROM transaksi_kas";
-        try (Statement statement = conn.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                TransaksiKas transaksiKas = new TransaksiKas();
-                transaksiKas.setId(resultSet.getInt("id"));
-                transaksiKas.setAkunKasId(resultSet.getInt("akun_Kas_Id"));
-                transaksiKas.setAkunTransaksiId(resultSet.getInt("akun_Transaksi_Id"));
-                transaksiKas.setTanggal(resultSet.getDate("tanggal"));
-                transaksiKas.setNominalMasuk(resultSet.getInt("nominal_Masuk"));
-                transaksiKas.setNominalKeluar(resultSet.getInt("nominal_Keluar"));
-                transaksiKas.setKeterangan(resultSet.getString("keterangan"));
-                transaksiKas.setArmadaId(resultSet.getInt("armada_Id"));
-                transaksiKas.setBankId(resultSet.getInt("bank_Id"));
-                transaksiKasList.add(transaksiKas);
-            }
-        }
-        return transaksiKasList;
-    }
 }
 

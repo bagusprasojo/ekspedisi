@@ -9,8 +9,11 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -35,6 +38,135 @@ public class ParentDAO {
     public Connection getConnection(){
         return conn;
     }
+    
+    public int getAllDataCount(){
+        int count = 0;
+        String sql = "SELECT count(id) as count FROM " + _nama_table_;        
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Menyimpan semua id yang ditemukan ke dalam list
+            while (rs.next()) {
+                count = rs.getInt("count");
+            }
+
+            
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
+        }
+
+        return count;
+    
+    }
+    
+    public int getAllDataCountPeriod(Date tgl1, Date tgl2) {
+        int count = 0;
+        String sql = "SELECT count(id) as count FROM " + _nama_table_ 
+                     + " WHERE date(tanggal) BETWEEN ? AND ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, new java.sql.Date(tgl1.getTime()));
+            stmt.setDate(2, new java.sql.Date(tgl2.getTime()));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Menyimpan count yang ditemukan
+                if (rs.next()) {
+                    count = rs.getInt("count");
+                }
+            }
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal getAllDataCountPeriod\n" + ex.getMessage());
+        }
+
+        return count;
+    }
+
+    public int getRandomIDSudahClosing() throws SQLException {
+        int id = 0;
+        Date tglClosing = getLastClosingDate();
+        String sql = "SELECT id FROM " + _nama_table_ + " where tanggal <= ?";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, new java.sql.Date(tglClosing.getTime()));
+        
+             try (ResultSet rs = stmt.executeQuery()) {
+                // Menyimpan semua id yang ditemukan ke dalam list
+                while (rs.next()) {
+                    ids.add(rs.getInt("id"));
+                }
+
+                // Memilih id secara acak dari list jika ada id yang ditemukan
+                if (!ids.isEmpty()) {
+                    Random rand = new Random();
+                    id = ids.get(rand.nextInt(ids.size()));
+                }
+            }
+
+            
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
+        }
+
+        return id;
+    }
+    
+    public int getRandomID() {
+        int id = 0;
+        String sql = "SELECT id FROM " + _nama_table_;
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Menyimpan semua id yang ditemukan ke dalam list
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+
+            // Memilih id secara acak dari list jika ada id yang ditemukan
+            if (!ids.isEmpty()) {
+                Random rand = new Random();
+                id = ids.get(rand.nextInt(ids.size()));
+            }
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
+        }
+
+        return id;
+    }
+    
+    public int getRandomIDPeriod(Date tgl1, Date tgl2) {
+        int id = 0;
+        String sql = "SELECT id FROM " + _nama_table_ + " where date(tanggal) between ? and ?";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, new java.sql.Date(tgl1.getTime()));
+            stmt.setDate(2, new java.sql.Date(tgl2.getTime()));
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("id"));
+                }
+            }
+
+            if (!ids.isEmpty()) {
+                Random rand = new Random();
+                id = ids.get(rand.nextInt(ids.size()));
+            }
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
+        }
+
+        return id;
+    }
+    
     public Date getLastClosingDate() throws SQLException {
         String sql = "SELECT MAX(tanggal) AS last_closing FROM closing";
         

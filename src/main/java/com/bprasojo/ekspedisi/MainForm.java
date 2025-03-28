@@ -44,6 +44,8 @@ public class MainForm extends javax.swing.JFrame {
         } else {
             setTitle("Ekspedisi Developement Mode");
         }
+        
+        miPerkiraan.setVisible(false);
     }
 
     /**
@@ -92,7 +94,7 @@ public class MainForm extends javax.swing.JFrame {
         jMenu9 = new javax.swing.JMenu();
         jMenuItem19 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
-        jMenuItem21 = new javax.swing.JMenuItem();
+        miPerkiraan = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jMenuItem22 = new javax.swing.JMenuItem();
@@ -328,8 +330,13 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenu4.setText("Akuntansi");
 
-        jMenuItem21.setText("Perkiraan / Akun");
-        jMenu4.add(jMenuItem21);
+        miPerkiraan.setText("Perkiraan / Akun");
+        miPerkiraan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miPerkiraanActionPerformed(evt);
+            }
+        });
+        jMenu4.add(miPerkiraan);
 
         jMenuItem2.setText("Daftar Jurnal");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -604,7 +611,15 @@ public class MainForm extends javax.swing.JFrame {
         FrmJenisTransaksi frmJenisTransaksi = new FrmJenisTransaksi(user);
         desktopPane.add(frmJenisTransaksi);
         frmJenisTransaksi.setVisible(true);
+        
+        
     }//GEN-LAST:event_jMenuItem22ActionPerformed
+
+    private void miPerkiraanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miPerkiraanActionPerformed
+        FrmPerkiraan frmPerkiraan = new FrmPerkiraan(user);
+        desktopPane.add(frmPerkiraan);
+        frmPerkiraan.setVisible(true);
+    }//GEN-LAST:event_miPerkiraanActionPerformed
 
     /**
      * @param args the command line arguments
@@ -687,7 +702,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem20;
-    private javax.swing.JMenuItem jMenuItem21;
     private javax.swing.JMenuItem jMenuItem22;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -703,6 +717,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
+    private javax.swing.JMenuItem miPerkiraan;
     private javax.swing.JMenuItem miTransaksiKas;
     private javax.swing.JMenuItem mnLogin;
     // End of variables declaration//GEN-END:variables

@@ -51,6 +51,28 @@ public class Jurnal {
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
 
     // Lazy Load JurnalDetails
+    
+    public int getDebet() throws SQLException {
+        List<JurnalDetail> list = getJurnalDetails();
+        
+        int totalDebet = 0;
+        for (JurnalDetail jurnalDetail : list) {
+            totalDebet += jurnalDetail.getDebet(); // Misalnya getDebet() adalah method di JurnalDetail
+        }
+
+        return totalDebet;
+    }
+    
+    public int getKredit() throws SQLException {
+        List<JurnalDetail> list = getJurnalDetails();
+        
+        int totalKredit = 0;
+        for (JurnalDetail jurnalDetail : list) {
+            totalKredit += jurnalDetail.getKredit(); // Misalnya getDebet() adalah method di JurnalDetail
+        }
+
+        return totalKredit;
+    }
     public List<JurnalDetail> getJurnalDetails() throws SQLException {
         if (jurnalDetails == null) {
             JurnalDetailDAO detailDAO = new JurnalDetailDAO();
