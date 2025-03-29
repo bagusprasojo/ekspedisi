@@ -15,15 +15,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JenisTransaksiDAO {
-    private Connection conn;
-
+public class JenisTransaksiDAO extends ParentDAO{
     public JenisTransaksiDAO() {
-        try {
-            this.conn = DatabaseConnection.getConnection();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        super();
+        _nama_table_ = "jenis_transaksi";
     }
 
     public void delete(int id) throws SQLException {
@@ -68,11 +63,14 @@ public class JenisTransaksiDAO {
         }
     }
 
-    // Ambil JenisTransaksi berdasarkan ID
-    public JenisTransaksi getById(int id) throws SQLException {
-        String sql = "SELECT * FROM jenis_transaksi WHERE id = ?";
+    // Fungsi umum untuk mengambil JenisTransaksi berdasarkan parameter tertentu (ID atau Kode)
+    private JenisTransaksi getByParameter(String sql, Object param) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            if (param instanceof Integer) {
+                stmt.setInt(1, (Integer) param);
+            } else if (param instanceof String) {
+                stmt.setString(1, (String) param);
+            }
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new JenisTransaksi(
@@ -85,6 +83,19 @@ public class JenisTransaksiDAO {
         }
         return null;
     }
+
+    // Fungsi untuk mendapatkan JenisTransaksi berdasarkan ID
+    public JenisTransaksi getById(int id) throws SQLException {
+        String sql = "SELECT * FROM jenis_transaksi WHERE id = ?";
+        return getByParameter(sql, id);
+    }
+
+    // Fungsi untuk mendapatkan JenisTransaksi berdasarkan Kode
+    public JenisTransaksi getByKode(String kode) throws SQLException {
+        String sql = "SELECT * FROM jenis_transaksi WHERE kode = ?";
+        return getByParameter(sql, kode);
+    }
+
 
     public List<Map<String, Object>> getJenisTransaksiByPage(int page, String filter, int pageSize) throws SQLException {
         List<Map<String, Object>> resultList = new ArrayList<>();
