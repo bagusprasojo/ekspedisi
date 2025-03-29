@@ -196,7 +196,7 @@ public class KasBonKaryawanDAO extends ParentDAO{
                     + " WHERE a.tanggal BETWEEN ? AND ? "; 
 
         if (filter != null && !filter.trim().isEmpty()) {
-            sql += " AND (a.status_lunas like ? or c.nama like ? or c.alamat like ? or a.sumber_dana like ? or a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ?)";
+            sql += " AND (a.no_register like ? or a.status_lunas like ? or c.nama like ? or c.alamat like ? or a.sumber_dana like ? or a.keterangan LIKE ? OR b.kode LIKE ? OR b.nama LIKE ?)";
         }
 
         sql += " order by a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
@@ -210,7 +210,7 @@ public class KasBonKaryawanDAO extends ParentDAO{
 
             // Set filter parameters if present
             if (filter != null && !filter.trim().isEmpty()) {
-                for (int i = 0; i < 7; i++) { // Filter untuk 5 kolom
+                for (int i = 0; i < 8; i++) { // Filter untuk 5 kolom
                     stmt.setString(paramIndex++, "%" + filter + "%");
                 }
             }

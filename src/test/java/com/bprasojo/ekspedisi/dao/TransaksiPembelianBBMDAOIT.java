@@ -25,7 +25,6 @@ public class TransaksiPembelianBBMDAOIT {
     static TransaksiPembelianBBMDAO instance;
     static BankDAO instanceBank;
     static ArmadaDAO instanceArmada;
-    static PerkiraanDAO instancePerkiraan;
     static JurnalDAO instanceJurnal;
     static StakeHolderDAO instanceSH;
     
