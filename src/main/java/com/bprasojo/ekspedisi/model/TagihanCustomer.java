@@ -98,11 +98,9 @@ public class TagihanCustomer {
     public void setPpn(int ppn) { this.ppn = ppn; }
 
     public int getTotal() { 
-        int total = nilaiPekerjaan + ppn;
-        return total; 
+        return nilaiPekerjaan + ppn;
     }
-//    public void setTotal(int total) { this.total = total; }
-
+    
     public String getTerbilang() { return terbilang; }
     public void setTerbilang(String terbilang) { this.terbilang = terbilang; }
 

@@ -351,6 +351,32 @@ public class TagihanCustomerDAO extends ParentDAO{
 
         return id;
     }
+    
+    
+    
+    public int getRandomIDBelumLunas() throws SQLException {
+        int id = 0;
+        String sql = "SELECT id FROM " + _nama_table_ + " where status_lunas ='Belum' ";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Menyimpan semua id yang ditemukan ke dalam list
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+
+            // Memilih id secara acak dari list jika ada id yang ditemukan
+            if (!ids.isEmpty()) {
+                Random rand = new Random();
+                id = ids.get(rand.nextInt(ids.size()));
+            }
+
+        }
+
+        return id;
+    }
 
 }
 
