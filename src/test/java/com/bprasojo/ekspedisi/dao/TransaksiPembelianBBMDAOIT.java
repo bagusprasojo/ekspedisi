@@ -112,6 +112,21 @@ public class TransaksiPembelianBBMDAOIT {
     }
     
     @Test
+    @Order(8)
+    public void testSaveClosingUpdateSekarang() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveClosingUpdateSekarang");
+        TransaksiPembelianBBM transaksi = instance.getById(instance.getRandomIDSudahClosing());
+        transaksi.setTanggal(AppUtils.now());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("sudah closing"));        
+    }
+    
+    @Test
     @Order(10)
     public void testSaveUpdate() throws Exception {
         System.out.println(this.getClass().getName() + ": testSaveUpdate");

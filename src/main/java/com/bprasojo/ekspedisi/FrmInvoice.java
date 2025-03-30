@@ -589,7 +589,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
             invoice.setNilaiPekerjaan(((Number) edNilaiPekerjaan.getValue()).intValue());
             invoice.setPpn(((Number) edPPN.getValue()).intValue());
             invoice.setPpnPersen(12);
-            invoice.setTotal(((Number) edTotal.getValue()).intValue());
+//            invoice.setTotal(((Number) edTotal.getValue()).intValue());
             invoice.setTanggal(edTanggal.getDate());
             invoice.setPekerjaan(edPekerjaan.getText().trim());
             invoice.setKeterangan(edKeterangan.getText());

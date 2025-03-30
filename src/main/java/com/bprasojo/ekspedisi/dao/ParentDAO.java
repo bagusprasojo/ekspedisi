@@ -114,7 +114,7 @@ public class ParentDAO {
         return id;
     }
     
-    public int getRandomID() {
+    public int getRandomID() throws SQLException {
         int id = 0;
         String sql = "SELECT id FROM " + _nama_table_;
         List<Integer> ids = new ArrayList<>();
@@ -133,14 +133,12 @@ public class ParentDAO {
                 id = ids.get(rand.nextInt(ids.size()));
             }
 
-        } catch (SQLException ex) {
-            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
         }
 
         return id;
     }
     
-    public int getRandomIDPeriod(Date tgl1, Date tgl2) {
+    public int getRandomIDPeriod(Date tgl1, Date tgl2) throws SQLException {
         int id = 0;
         String sql = "SELECT id FROM " + _nama_table_ + " where date(tanggal) between ? and ?";
         List<Integer> ids = new ArrayList<>();
@@ -160,8 +158,6 @@ public class ParentDAO {
                 id = ids.get(rand.nextInt(ids.size()));
             }
 
-        } catch (SQLException ex) {
-            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
         }
 
         return id;

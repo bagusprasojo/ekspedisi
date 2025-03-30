@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class TagihanCustomerDAO extends ParentDAO{
 
@@ -188,6 +189,10 @@ public class TagihanCustomerDAO extends ParentDAO{
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         
+        if (tc.getPelunasan() > 0){
+            throw new SQLException("Data sudah dibayar, tidak bisa dihapus/ubah");
+        }
+        
         boolean previousAutoCommit = conn.getAutoCommit();
         conn.setAutoCommit(false);
         try {
@@ -239,7 +244,7 @@ public class TagihanCustomerDAO extends ParentDAO{
                         rs.getInt("nilai_pekerjaan"),
                         rs.getInt("ppn_persen"),
                         rs.getInt("ppn"),
-                        rs.getInt("total"),
+//                        rs.getInt("total"),
                         rs.getString("terbilang"),
                         rs.getInt("pelunasan"),
                         rs.getString("status_lunas"),
@@ -314,6 +319,37 @@ public class TagihanCustomerDAO extends ParentDAO{
         }
 
         return resultList;
+    }
+    
+    public int getRandomIDSudahDibayar() throws SQLException {
+        int id = 0;
+        java.util.Date tglClosing = getLastClosingDate();
+        String sql = "SELECT id FROM " + _nama_table_ + " where tanggal > ? and pelunasan > 0";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, new java.sql.Date(tglClosing.getTime()));
+        
+             try (ResultSet rs = stmt.executeQuery()) {
+                // Menyimpan semua id yang ditemukan ke dalam list
+                while (rs.next()) {
+                    ids.add(rs.getInt("id"));
+                }
+
+                // Memilih id secara acak dari list jika ada id yang ditemukan
+                if (!ids.isEmpty()) {
+                    Random rand = new Random();
+                    id = ids.get(rand.nextInt(ids.size()));
+                }
+            }
+
+            
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
+        }
+
+        return id;
     }
 
 }

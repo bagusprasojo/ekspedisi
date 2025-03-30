@@ -8,9 +8,6 @@ import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.Jurnal;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
 import com.bprasojo.ekspedisi.utils.AppUtils;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -119,6 +116,22 @@ public class KasBonKaryawanDAOIT {
     }
     
     @Test
+    @Order(12)
+    public void testSaveClosingUpdateSekarang() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveClosingUpdateSekarang");
+        
+        KasBonKaryawan transaksi = instance.getById(instance.getRandomIDSudahClosing());        
+        transaksi.setTanggal(AppUtils.now());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("sudah closing"));        
+    }
+    
+    @Test
     @Order(10)
     public void testSaveClosing() throws Exception {
         System.out.println(this.getClass().getName() + ": testSaveClosing");
@@ -132,6 +145,22 @@ public class KasBonKaryawanDAOIT {
 
         System.out.println("Message : " + exception.getMessage());
         assertTrue(exception.getMessage().contains("sudah closing"));        
+    }
+    
+    @Test
+    @Order(13)
+    public void testSaveDibayar() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveDibayar");
+        
+        
+        KasBonKaryawan transaksi = instance.getById(instance.getRandomIDSudahDibayar());        
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("sudah dibayar"));        
     }
 
     
@@ -199,6 +228,21 @@ public class KasBonKaryawanDAOIT {
 
         System.out.println("Message : " + exception.getMessage());
         assertTrue(exception.getMessage().contains("sudah closing"));        
+        
+    }
+
+    @Test
+    @Order(40)
+    public void testDeleteDibayar() throws Exception {
+        System.out.println(this.getClass().getName() + ": testDeleteDibayar");
+        int id = instance.getRandomIDSudahDibayar();
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.delete(id);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("sudah dibayar"));        
         
     }    
     

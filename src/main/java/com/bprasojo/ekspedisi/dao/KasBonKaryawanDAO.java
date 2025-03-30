@@ -10,12 +10,14 @@ package com.bprasojo.ekspedisi.dao;
 import com.bprasojo.ekspedisi.model.Jurnal;
 import com.bprasojo.ekspedisi.model.JurnalDetail;
 import com.bprasojo.ekspedisi.model.KasBonKaryawan;
+import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class KasBonKaryawanDAO extends ParentDAO{
     
@@ -49,10 +51,21 @@ public class KasBonKaryawanDAO extends ParentDAO{
         
     }
     public void save(KasBonKaryawan kasBonKaryawan) throws SQLException {
+//        if (kasBonKaryawan.getId() > 0){
+//            KasBonKaryawan kbk = getById(kasBonKaryawan.getId());
+//            
+//            if (!validasiClosing(kbk.getId(), kbk.getTanggal())){
+//                throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+//            }
+//        }
+        
         if (!validasiClosing(kasBonKaryawan.getId(), kasBonKaryawan.getTanggal())){
             throw new SQLException("Data tidak bisa disimpan karena sudah closing");
         }
         
+        if (kasBonKaryawan.getPelunasan() > 0){
+            throw new SQLException("Data sudah dibayar, tidak bisa dihapus/ubah");
+        }
         boolean previousAutoCommit = conn.getAutoCommit();
         conn.setAutoCommit(false);
         try {
@@ -166,6 +179,9 @@ public class KasBonKaryawanDAO extends ParentDAO{
             throw new SQLException("Data tidak bisa dihapus karena sudah closing");
         }
         
+        if (kb.getPelunasan() > 0){
+            throw new SQLException("Data sudah dibayar, tidak bisa dihapus/ubah");
+        }
         boolean previousAutoCommit = conn.getAutoCommit();
         conn.setAutoCommit(false);
         try {
@@ -280,6 +296,61 @@ public class KasBonKaryawanDAO extends ParentDAO{
             e.printStackTrace();
             return null;
         }
+    }
+    
+    public int getRandomIDSudahDibayar() throws SQLException {
+        int id = 0;
+        java.util.Date tglClosing = getLastClosingDate();
+        String sql = "SELECT id FROM " + _nama_table_ + " where tanggal > ? and pelunasan > 0";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setDate(1, new java.sql.Date(tglClosing.getTime()));
+        
+             try (ResultSet rs = stmt.executeQuery()) {
+                // Menyimpan semua id yang ditemukan ke dalam list
+                while (rs.next()) {
+                    ids.add(rs.getInt("id"));
+                }
+
+                // Memilih id secara acak dari list jika ada id yang ditemukan
+                if (!ids.isEmpty()) {
+                    Random rand = new Random();
+                    id = ids.get(rand.nextInt(ids.size()));
+                }
+            }
+
+            
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal get random ID\n" + ex.getMessage());
+        }
+
+        return id;
+    }
+    
+    public int getRandomIDBelumLunas() throws SQLException {
+        int id = 0;
+        String sql = "SELECT id FROM " + _nama_table_ + " where status_lunas ='Belum' ";
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Menyimpan semua id yang ditemukan ke dalam list
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+
+            // Memilih id secara acak dari list jika ada id yang ditemukan
+            if (!ids.isEmpty()) {
+                Random rand = new Random();
+                id = ids.get(rand.nextInt(ids.size()));
+            }
+
+        }
+
+        return id;
     }
 }
 

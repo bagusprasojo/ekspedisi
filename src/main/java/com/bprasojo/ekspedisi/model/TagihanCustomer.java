@@ -21,7 +21,7 @@ public class TagihanCustomer {
     private int nilaiPekerjaan;
     private int ppnPersen;
     private int ppn;
-    private int total;
+//    private int total;
     private String terbilang;
     private int pelunasan;
     private String statusLunas;
@@ -37,7 +37,7 @@ public class TagihanCustomer {
     public TagihanCustomer() {}
 
     public TagihanCustomer(int id, int customerId, String noInvoice, Date tanggal, String pekerjaan,
-                           int nilaiPekerjaan, int ppnPersen, int ppn, int total,
+                           int nilaiPekerjaan, int ppnPersen, int ppn, 
                            String terbilang, int pelunasan, String statusLunas, String keterangan, int perkiraanPiutangId, String userCreate, String userUpdate) {
         this.id = id;
         this.customerId = customerId;
@@ -47,7 +47,7 @@ public class TagihanCustomer {
         this.nilaiPekerjaan = nilaiPekerjaan;
         this.ppnPersen = ppnPersen;
         this.ppn = ppn;
-        this.total = total;
+//        this.total = total;
         this.terbilang = terbilang;
         this.pelunasan = pelunasan;
         this.statusLunas = statusLunas;
@@ -97,8 +97,11 @@ public class TagihanCustomer {
     public int getPpn() { return ppn; }
     public void setPpn(int ppn) { this.ppn = ppn; }
 
-    public int getTotal() { return total; }
-    public void setTotal(int total) { this.total = total; }
+    public int getTotal() { 
+        int total = nilaiPekerjaan + ppn;
+        return total; 
+    }
+//    public void setTotal(int total) { this.total = total; }
 
     public String getTerbilang() { return terbilang; }
     public void setTerbilang(String terbilang) { this.terbilang = terbilang; }
@@ -126,7 +129,7 @@ public class TagihanCustomer {
     }
     
     public Integer getSaldo(){
-        return total - pelunasan;
+        return getTotal() - pelunasan;
     }
     
     public String getUserCreate() { return userCreate; }

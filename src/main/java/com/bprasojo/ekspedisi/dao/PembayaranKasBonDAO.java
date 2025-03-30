@@ -164,10 +164,14 @@ public class PembayaranKasBonDAO extends ParentDAO{
                 
     }
     
-    public PembayaranKasBon getById(int id) throws SQLException {
-        String sql = "SELECT * FROM pembayaran_kas_bon WHERE id = ?";
+    private PembayaranKasBon getByQuery(String sql, Object param) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            if (param instanceof Integer) {
+                stmt.setInt(1, (Integer) param);
+            } else if (param instanceof String) {
+                stmt.setString(1, (String) param);
+            }
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new PembayaranKasBon(
@@ -182,13 +186,23 @@ public class PembayaranKasBonDAO extends ParentDAO{
                         rs.getString("no_register"),
                         rs.getString("user_create"),
                         rs.getString("user_update")
-                            
                     );
                 }
             }
         }
         return null;
     }
+
+    public PembayaranKasBon getById(int id) throws SQLException {
+        String sql = "SELECT * FROM pembayaran_kas_bon WHERE id = ?";
+        return getByQuery(sql, id);
+    }
+
+    public PembayaranKasBon getByNoRegister(String noRegister) throws SQLException {
+        String sql = "SELECT * FROM pembayaran_kas_bon WHERE no_register = ?";
+        return getByQuery(sql, noRegister);
+    }
+
 
     
 

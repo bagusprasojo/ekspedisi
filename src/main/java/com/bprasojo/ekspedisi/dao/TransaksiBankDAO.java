@@ -108,6 +108,14 @@ public class TransaksiBankDAO extends ParentDAO{
     }
     
     public void save(TransaksiBank transaksi) throws SQLException {
+        if (transaksi.getId() > 0){
+            TransaksiBank tb = getById(transaksi.getId());
+            
+            if (!validasiClosing(tb.getId(), tb.getTanggal())){
+                throw new SQLException("Data tidak bisa disimpan karena sudah closing");
+            }
+        }
+        
         if (!validasiClosing(transaksi.getId(), transaksi.getTanggal())){
             throw new SQLException("Data tidak bisa disimpan karena sudah closing");
         }

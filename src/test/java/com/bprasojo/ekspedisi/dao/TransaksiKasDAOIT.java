@@ -152,6 +152,22 @@ public class TransaksiKasDAOIT {
 
         System.out.println("Message : " + exception.getMessage());
         assertTrue(exception.getMessage().contains("sudah closing"));        
+    }
+    
+    @Test
+    @Order(4)    
+    public void testSaveClosingUpdateSekarang() throws Exception {
+        System.out.println("TransaksiKasDAOTest : testSaveClosingUpdateSekarang");
+        
+        TransaksiKas tk = instance.getById(instance.getRandomIDSudahClosing());
+        tk.setTanggal(AppUtils.now());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(tk);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("sudah closing"));        
         
         
         
