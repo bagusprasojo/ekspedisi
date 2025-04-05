@@ -615,7 +615,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
     private void btnAkunTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAkunTransaksiActionPerformed
         String sqlQuery = "SELECT " +
                             " concat(REPEAT(' ', level * 4), kode) as kode_akun, " +
-                            " concat(REPEAT(' ', level * 4), nama) as nama_akun " +
+                            " concat(REPEAT(' ', level * 4), nama) as nama_akun, id " +
                             " FROM perkiraan " +
                             " ORDER BY kode";
         

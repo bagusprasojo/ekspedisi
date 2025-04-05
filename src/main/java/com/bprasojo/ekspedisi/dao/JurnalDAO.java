@@ -89,6 +89,15 @@ public class JurnalDAO extends ParentDAO{
             throw new SQLException("Jurnal tidak bisa disimpan karena sudah closing");
         }
         
+        PerkiraanDAO perkiraanDAO = new PerkiraanDAO();
+        for (int i = 0; i < jurnal.getJurnalDetails().size(); i++) {
+            String kodeAkun = jurnal.getJurnalDetails().get(i).getPerkiraan().getKode();
+            
+            if (perkiraanDAO.isPunyaAnak(kodeAkun)){
+                throw new SQLException("Kode akun " + kodeAkun + " tidak bisa digunakan untuk transaksi karena mempunyai akun anak");
+            }
+        }
+        
         String sql;
         boolean isInsert = jurnal.getId() == 0;
 

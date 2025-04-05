@@ -118,11 +118,12 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
         }
         
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = transaksi.getId() == 0;
         conn.setAutoCommit(false);
         try {
             String sql;
         
-            boolean isInsert = transaksi.getId() == 0;
+            
 
             if (isInsert) {
                 sql = "INSERT INTO " + _nama_table_ + " (armada_Id, tanggal, km_Terakhir, km_Sekarang, nominal_BBM, keterangan, driver_id, bank_id , no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)";
@@ -167,7 +168,9 @@ public class TransaksiPembelianBBMDAO extends ParentDAO {
             saveJurnal(transaksi);
             conn.commit();
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                transaksi.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {

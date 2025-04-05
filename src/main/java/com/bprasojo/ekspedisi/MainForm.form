@@ -252,6 +252,14 @@
             <Property name="text" type="java.lang.String" value="Akuntansi"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miJurnalPenyesuaian">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Jurnal Penyesuaian"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miJurnalPenyesuaianActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miPerkiraan">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Perkiraan / Akun"/>

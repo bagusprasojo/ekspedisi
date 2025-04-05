@@ -213,6 +213,10 @@ public class ParentDAO {
         
         if (id > 0){
             Date oldTransDate = getOldTransDate(id);
+            if (oldTransDate == null){
+                throw new SQLException("Terjadi kesalahan check tanggal closing.\nTutup form transaksi dan ulangi input lagi");
+            }
+            
             int oldDateTransInt  = AppUtils.dateToInt(oldTransDate);
             
             if (oldDateTransInt <= dateClsoingInt){

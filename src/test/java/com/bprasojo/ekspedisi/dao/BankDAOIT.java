@@ -47,7 +47,7 @@ public class BankDAOIT {
         noRekInt = noRekInt + 1;
         Bank bank = new Bank();
         
-        Perkiraan akun = perkiraanDAO.getById(1);
+        Perkiraan akun = perkiraanDAO.getById(perkiraanDAO.getRandomID());
         bank.setAkun(akun);
         bank.setAtasNama("test atasNama");
         bank.setKeterangan("keterangan");

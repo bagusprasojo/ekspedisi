@@ -67,13 +67,14 @@ public class KasBonKaryawanDAO extends ParentDAO{
             throw new SQLException("Data sudah dibayar, tidak bisa dihapus/ubah");
         }
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = kasBonKaryawan.getId() <= 0;
+
         conn.setAutoCommit(false);
         try {
             kasBonKaryawan.setStatuLunas(kasBonKaryawan.getNominal() > kasBonKaryawan.getPelunasan() ? "Belum" : "Lunas");
 
             Date tanggal = new Date(kasBonKaryawan.getTanggal().getTime());
-            boolean isInsert = kasBonKaryawan.getId() <= 0;
-
+            
             if (isInsert) {
                 kasBonKaryawan.setNoRegister(generateNoRegister(kasBonKaryawan.getTanggal()));
             }
@@ -119,7 +120,9 @@ public class KasBonKaryawanDAO extends ParentDAO{
             
             conn.commit();
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                kasBonKaryawan.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {

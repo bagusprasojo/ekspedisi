@@ -12,6 +12,7 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PerkiraanDAO extends ParentDAO{
     
@@ -63,6 +64,51 @@ public class PerkiraanDAO extends ParentDAO{
             }
         }
         return null;
+    }
+    
+    @Override
+    public int getRandomID() throws SQLException {
+        int id = 0;
+        String sql = "SELECT a.id FROM " + _nama_table_ + " a "
+                     + " left join perkiraan b on a.id = b.parent_id "
+                     + " where b.id is null";
+        
+        List<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Menyimpan semua id yang ditemukan ke dalam list
+            while (rs.next()) {
+                ids.add(rs.getInt("id"));
+            }
+
+            // Memilih id secara acak dari list jika ada id yang ditemukan
+            if (!ids.isEmpty()) {
+                Random rand = new Random();
+                id = ids.get(rand.nextInt(ids.size()));
+            }
+
+        }
+
+        return id;
+    }
+    
+    public boolean isPunyaAnak(String kodeAkun) throws SQLException {
+        String query = "SELECT count(1) as jml FROM perkiraan a "
+                       + " inner join perkiraan b on a.id = b.parent_id "
+                       + " WHERE a.kode = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, kodeAkun);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                if (rs.getInt("jml") > 0){
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     // Mengambil Perkiraan berdasarkan kode

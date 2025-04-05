@@ -131,6 +131,7 @@ public class ClosingDAO extends ParentDAO{
 
     public void save(Closing closing) throws SQLException {
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = closing.getId() <= 0;
         conn.setAutoCommit(false);
         try {
             String lastClosingSql = "SELECT tanggal FROM closing ORDER BY tanggal DESC LIMIT 1";
@@ -158,7 +159,7 @@ public class ClosingDAO extends ParentDAO{
 
             // 4️⃣ Lakukan INSERT atau UPDATE jika valid
             String sql;
-            if (closing.getId() == 0) {
+            if (isInsert) {
                 sql = "INSERT INTO closing (tanggal, keterangan) VALUES (?, ?)";
             } else {
                 sql = "UPDATE closing SET tanggal = ?, keterangan = ? WHERE id = ?";
@@ -188,7 +189,9 @@ public class ClosingDAO extends ParentDAO{
             
             conn.commit();
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                closing.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {

@@ -46,6 +46,7 @@ public class MainForm extends javax.swing.JFrame {
         }
         
         miPerkiraan.setVisible(false);
+        miJurnalPenyesuaian.setVisible(false);
     }
 
     /**
@@ -94,6 +95,7 @@ public class MainForm extends javax.swing.JFrame {
         jMenu9 = new javax.swing.JMenu();
         jMenuItem19 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
+        miJurnalPenyesuaian = new javax.swing.JMenuItem();
         miPerkiraan = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
@@ -329,6 +331,14 @@ public class MainForm extends javax.swing.JFrame {
         jMenuBar1.add(jMenu3);
 
         jMenu4.setText("Akuntansi");
+
+        miJurnalPenyesuaian.setText("Jurnal Penyesuaian");
+        miJurnalPenyesuaian.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miJurnalPenyesuaianActionPerformed(evt);
+            }
+        });
+        jMenu4.add(miJurnalPenyesuaian);
 
         miPerkiraan.setText("Perkiraan / Akun");
         miPerkiraan.addActionListener(new java.awt.event.ActionListener() {
@@ -621,6 +631,12 @@ public class MainForm extends javax.swing.JFrame {
         frmPerkiraan.setVisible(true);
     }//GEN-LAST:event_miPerkiraanActionPerformed
 
+    private void miJurnalPenyesuaianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miJurnalPenyesuaianActionPerformed
+        FrmJurnalPenyesuaian frmJurnalPenyesuaian = new FrmJurnalPenyesuaian(user);
+        desktopPane.add(frmJurnalPenyesuaian);
+        frmJurnalPenyesuaian.setVisible(true);
+    }//GEN-LAST:event_miJurnalPenyesuaianActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -717,6 +733,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
+    private javax.swing.JMenuItem miJurnalPenyesuaian;
     private javax.swing.JMenuItem miPerkiraan;
     private javax.swing.JMenuItem miTransaksiKas;
     private javax.swing.JMenuItem mnLogin;

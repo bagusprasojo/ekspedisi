@@ -115,6 +115,7 @@ public class TagihanCustomerDAO extends ParentDAO{
         }
         
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = tagihan.getId() == 0; 
         conn.setAutoCommit(false);
         try {
             if (tagihan.getNilaiPekerjaan() <= tagihan.getPelunasan()){
@@ -123,7 +124,7 @@ public class TagihanCustomerDAO extends ParentDAO{
                 tagihan.setStatusLunas("Belum");
             }
 
-            boolean isInsert = tagihan.getId() == 0; 
+            
             if (isInsert) {
                 tagihan.setNoInvoice(generateNoInvoice(tagihan.getTanggal()));
                 sql = "INSERT INTO " + _nama_table_ + " (customer_id, no_invoice, tanggal, pekerjaan, nilai_pekerjaan, ppn_persen, ppn, total, terbilang, pelunasan, status_lunas, keterangan, perkiraan_piutang_id, user_create) " +
@@ -169,7 +170,9 @@ public class TagihanCustomerDAO extends ParentDAO{
             
             conn.commit();
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                tagihan.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {

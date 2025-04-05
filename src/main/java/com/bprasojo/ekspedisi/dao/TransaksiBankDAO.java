@@ -121,10 +121,11 @@ public class TransaksiBankDAO extends ParentDAO{
         }
         
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = transaksi.getId() == 0;
         conn.setAutoCommit(false);        
         try {        
             String sql;
-            boolean isInsert = transaksi.getId() == 0;
+            
 
             if (isInsert) {
                 sql = "INSERT INTO " + _nama_table_ + " (tanggal, bank_utama_id, jenis_transaksi_id, debet, kredit, bank_tujuan_id, akun_utama_id, akun_tujuan_id, biaya_adm_bank, uraian, no_bukti, user_create) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
@@ -171,7 +172,9 @@ public class TransaksiBankDAO extends ParentDAO{
             
             conn.commit();
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                transaksi.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {

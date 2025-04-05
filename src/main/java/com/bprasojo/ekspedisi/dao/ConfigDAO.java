@@ -82,7 +82,9 @@ public class ConfigDAO {
                 }
             }
         }
-        return null;
+        
+        throw new SQLException("Config " + value + " tidak ditemukan");
+//        return null;
     }
 
     // 🔹 Get All

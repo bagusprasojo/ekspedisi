@@ -56,6 +56,7 @@ public class PembayaranKasBonDAO extends ParentDAO{
         
         
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = pembayaranKasBon.getId() == 0; 
         conn.setAutoCommit(false);
 
         try {
@@ -64,7 +65,7 @@ public class PembayaranKasBonDAO extends ParentDAO{
             // Menentukan SQL berdasarkan apakah ID ada atau tidak
             int kas_bon_old_id = 0;
             String sql;            
-            if (pembayaranKasBon.getId() <= 0) {
+            if (isInsert) {
                 String noRegister = generateNoRegister(pembayaranKasBon.getTanggal());
                 pembayaranKasBon.setNoRegister(noRegister);
 
@@ -119,7 +120,9 @@ public class PembayaranKasBonDAO extends ParentDAO{
             saveJurnal(pembayaranKasBon);
             conn.commit();
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                pembayaranKasBon.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {

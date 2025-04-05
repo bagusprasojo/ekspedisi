@@ -218,12 +218,13 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
         }
         
         boolean previousAutoCommit = conn.getAutoCommit();
+        boolean isInsert = pembayaran.getId() == 0; 
         conn.setAutoCommit(false);
         
         try {
             int tagihan_customer_old_id = 0;
             String sql;
-            if (pembayaran.getId() == 0) {
+            if (isInsert) {
                 String no_register = generateNoRegister(pembayaran.getTanggal());
                 pembayaran.setNoRegister(no_register);
                 
@@ -280,7 +281,9 @@ public class PembayaranTagihanCustomerDAO extends ParentDAO{
             conn.commit();
             
         } catch (SQLException ex) {
-            // Jika terjadi kesalahan, rollback transaksi
+            if (isInsert){
+                pembayaran.setId(0);
+            }
             conn.rollback();
             throw ex; // Rethrow exception setelah rollback
         } finally {
