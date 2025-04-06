@@ -4,7 +4,9 @@ import com.bprasojo.ekspedisi.model.Jurnal;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JurnalDAO extends ParentDAO{
     public JurnalDAO() {
@@ -19,8 +21,8 @@ public class JurnalDAO extends ParentDAO{
 
         // Query untuk mencari nomor bukti tertinggi yang memiliki awalan "BON-" + tahun + bulan yang sama
         String sql = "SELECT MAX(SUBSTRING(no_jurnal, 11)) AS last_number " +
-                     "FROM " + _nama_table_ +
-                     "WHERE no_jurnal LIKE 'JUR-" + yearMonth + "%'";
+                     " FROM " + _nama_table_ +
+                     " WHERE no_jurnal LIKE 'JUR-" + yearMonth + "%'";
 
         try (Statement stmt = conn.createStatement(); 
             ResultSet rs = stmt.executeQuery(sql)) {
@@ -107,7 +109,7 @@ public class JurnalDAO extends ParentDAO{
             sql = "UPDATE " + _nama_table_ + " SET no_jurnal = ?, tanggal = ?, transaksi_id = ?, transaksi = ?, keterangan = ?, user_update = ? WHERE id = ?";
         }
 
-        if (isInsert && jurnal.getNoJurnal().equals("")){
+        if (isInsert && (jurnal.getNoJurnal() == null || jurnal.getNoJurnal().equals(""))){
             String no_jurnal = generateNoJurnal(jurnal.getTanggal());
             jurnal.setNoJurnal(no_jurnal);            
         }
@@ -122,8 +124,8 @@ public class JurnalDAO extends ParentDAO{
             if (isInsert){
                 statement.setString(6, jurnal.getUserCreate());
             } else {
-                statement.setString(7, jurnal.getUserUpdate());
-                statement.setInt(8, jurnal.getId()); 
+                statement.setString(6, jurnal.getUserUpdate());
+                statement.setInt(7, jurnal.getId()); 
             }
 
             statement.executeUpdate();
@@ -209,5 +211,64 @@ public class JurnalDAO extends ParentDAO{
             }
         }
         return list;
+    }
+    
+    public List<Map<String, Object>> getJurnalByPage(Integer page, java.util.Date tglAwal, java.util.Date tglAkhir, String filter) {
+        List<Map<String, Object>> resultList = new ArrayList<>();
+
+        String sql = "select a.id, a.no_jurnal, a.tanggal, a.keterangan, a.user_create, sum(b.debet) as debet, sum(b.kredit) as kredit" +
+                     " from jurnal a " +
+                     " left join jurnal_detail b on a.id = b.jurnal_id " +
+                     " where a.transaksi = 'jurnal_memorial'" +
+                     " and a.tanggal BETWEEN ? AND ? " ;                     
+
+        if (filter != null && !filter.trim().isEmpty()) {
+            sql += " AND (a.no_jurnal like ? or a.keterangan LIKE ?)";
+        }
+
+        sql += " GROUP BY a.id, a.no_jurnal, a.tanggal, a.keterangan, a.user_create ";
+        sql += " order by a.no_jurnal, a.tanggal desc , a.id desc LIMIT ? OFFSET ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Set date parameters
+            stmt.setDate(1, new java.sql.Date(tglAwal.getTime()));
+            stmt.setDate(2, new java.sql.Date(tglAkhir.getTime()));
+
+            int paramIndex = 3;
+
+            // Set filter parameters if present
+            if (filter != null && !filter.trim().isEmpty()) {
+                for (int i = 0; i < 2; i++) { // Filter untuk 5 kolom
+                    stmt.setString(paramIndex++, "%" + filter + "%");
+                }
+            }
+
+            // Set limit and offset for pagination
+            int pageSize = 20; // Sesuaikan dengan kebutuhan Anda
+            stmt.setInt(paramIndex++, pageSize); // Parameter untuk LIMIT
+            stmt.setInt(paramIndex, (page - 1) * pageSize); // Parameter untuk OFFSET
+
+            // Eksekusi query
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Mendapatkan metadata kolom
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                // Proses setiap row hasil query
+                while (rs.next()) {
+                    Map<String, Object> rowMap = new LinkedHashMap<>();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i); // Nama kolom
+                        Object columnValue = rs.getObject(i); // Nilai kolom
+                        rowMap.put(columnName, columnValue); // Menyimpan dalam Map
+                    }
+                    resultList.add(rowMap); // Menambahkan baris ke dalam list
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Sesuaikan dengan penanganan error Anda
+        }
+
+        return resultList;
     }
 }

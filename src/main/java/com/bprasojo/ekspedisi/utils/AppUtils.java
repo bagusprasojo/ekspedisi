@@ -69,18 +69,18 @@ public class AppUtils {
     }
     public static void setDefaultValues(JComponent... components) {
         for (JComponent component : components) {
-            if (component instanceof JFormattedTextField) {
-                ((JFormattedTextField) component).setValue(0);
-            } else if (component instanceof JTextField) {
-                ((JTextField) component).setText("");
-            } else if (component instanceof JTextArea) {
-                ((JTextArea) component).setText("");
-            } else if (component instanceof JDateChooser) {
-                ((JDateChooser) component).setDate(new Date());
+            if (component instanceof JFormattedTextField jFormattedTextField) {
+                jFormattedTextField.setValue(0);
+            } else if (component instanceof JTextField jTextField) {
+                jTextField.setText("");
+            } else if (component instanceof JTextArea jTextArea) {
+                jTextArea.setText("");
+            } else if (component instanceof JDateChooser jDateChooser) {
+                jDateChooser.setDate(new Date());
             } else if (component instanceof JComboBox) {
                 ((JComboBox<?>) component).setSelectedIndex(-1);
-            } else if (component instanceof JLabel) {
-                ((JLabel) component).setText("");
+            } else if (component instanceof JLabel jLabel) {
+                jLabel.setText("");
             }
         }
     }

@@ -4,7 +4,25 @@
  */
 package com.bprasojo.ekspedisi;
 
+import com.bprasojo.ekspedisi.dao.JurnalDAO;
+import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
+import com.bprasojo.ekspedisi.model.Jurnal;
+import com.bprasojo.ekspedisi.model.JurnalDetail;
+import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.User;
+import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
+import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -17,6 +35,15 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
      */
     
     private User user;
+    private Jurnal jurnal;
+    private JurnalDAO jurnalDAO;
+    private Perkiraan perkiraanDebet;
+    private Perkiraan perkiraanKredit;
+    private PerkiraanDAO perkiraanDAO;
+    
+    private int currentPage = 1;
+    private boolean SilakanLoadData = false;
+    private DefaultTableModel tableModel;
     
     public FrmJurnalPenyesuaian(User user) {
         this();
@@ -24,8 +51,80 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
     }
     public FrmJurnalPenyesuaian() {
         initComponents();
+        
+        jurnalDAO = new JurnalDAO();
+        perkiraanDAO = new PerkiraanDAO();
+        
+        AppUtils.SetTanggalAwalBulan(edTglAwal);
+        AppUtils.SetTanggalAkhirBulan(edTglAkhir);
+        
+        InisialisasiTableJurnal();        
+        
+        SilakanLoadData = true;
+        LoadDataJurnal(currentPage);
+        setStatusTombol("awal");        
+        
+        inisialisasiEventTableModel();        
+        
+        pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edTanggal, btnAkunDebet, btnAkunKredit, edNominal, edKeterangan));
     }
 
+    private void inisialisasiEventTableModel() {
+        tblJurnal.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                // Memeriksa apakah ada baris yang dipilih
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = tblJurnal.getSelectedRow(); // Mendapatkan baris yang dipilih
+                    if (selectedRow != -1) {
+                        Integer id = (Integer) tblJurnal.getModel().getValueAt(selectedRow, 0);
+                        LoadJurnal(id);
+                        setStatusTombol("selected");
+                    }
+                }
+            }
+
+            private void LoadJurnal(Integer id) {
+                try {
+                    jurnal = jurnalDAO.getById(id);
+                    if (jurnal != null){
+                        edNoBukti.setText(jurnal.getNoJurnal());
+                        edTanggal.setDate(jurnal.getTanggal());
+                        
+                        int nominal = 0;
+                        if (jurnal.getJurnalDetails().size() > 0){
+                            if (jurnal.getJurnalDetails().get(0).getDebet() > 0){
+                                perkiraanDebet = perkiraanDAO.getById(jurnal.getJurnalDetails().get(0).getPerkiraanId());
+                                nominal = jurnal.getJurnalDetails().get(0).getDebet();
+                            } else {
+                                perkiraanKredit = perkiraanDAO.getById(jurnal.getJurnalDetails().get(0).getPerkiraanId());
+                                nominal = jurnal.getJurnalDetails().get(0).getKredit();
+                            }
+
+                            if (jurnal.getJurnalDetails().get(1).getDebet() > 0){
+                                perkiraanDebet = perkiraanDAO.getById(jurnal.getJurnalDetails().get(1).getPerkiraanId());
+                            } else {
+                                perkiraanKredit = perkiraanDAO.getById(jurnal.getJurnalDetails().get(1).getPerkiraanId());
+                            }
+                        
+                        
+                            edKodeAkunDebet.setText(perkiraanDebet.getKode());
+                            edNamaAkunDebet.setText(perkiraanDebet.getNama());
+
+                            edKodeAkunKredit.setText(perkiraanKredit.getKode());
+                            edNamaAkunKredit.setText(perkiraanKredit.getNama());
+
+                            edNominal.setValue(nominal);
+                        }
+                        edKeterangan.setText(jurnal.getKeterangan());
+                        
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(FrmJurnalPenyesuaian.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,7 +149,6 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        edKodeAkunKredit = new javax.swing.JTextField();
         btnAkunKredit = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         edNominal = new javax.swing.JFormattedTextField();
@@ -58,7 +156,10 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
         btnAkunDebet = new javax.swing.JButton();
         edNamaAkunDebet = new javax.swing.JTextField();
         edNamaAkunKredit = new javax.swing.JTextField();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        edTanggal = new com.toedter.calendar.JDateChooser();
+        jLabel8 = new javax.swing.JLabel();
+        edKeterangan = new javax.swing.JTextField();
+        edKodeAkunKredit = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -71,7 +172,7 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
         btnPrev = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblKasBon = new javax.swing.JTable();
+        tblJurnal = new javax.swing.JTable();
 
         setClosable(true);
         setIconifiable(true);
@@ -191,21 +292,18 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        pnlInput.setFocusCycleRoot(true);
+
         jLabel3.setText("No Bukti");
 
         edNoBukti.setEditable(false);
+        edNoBukti.setEnabled(false);
 
         jLabel4.setText("Tanggal");
 
         jLabel5.setText("Akun Debet");
 
         jLabel6.setText("Akun Kredit");
-
-        edKodeAkunKredit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edKodeAkunKreditActionPerformed(evt);
-            }
-        });
 
         btnAkunKredit.setText("...");
         btnAkunKredit.addActionListener(new java.awt.event.ActionListener() {
@@ -226,8 +324,14 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
         });
 
         edNamaAkunDebet.setEditable(false);
+        edNamaAkunDebet.setEnabled(false);
 
         edNamaAkunKredit.setEditable(false);
+        edNamaAkunKredit.setEnabled(false);
+
+        jLabel8.setText("Keterangan");
+
+        edKodeAkunKredit.setEnabled(false);
 
         javax.swing.GroupLayout pnlInputLayout = new javax.swing.GroupLayout(pnlInput);
         pnlInput.setLayout(pnlInputLayout);
@@ -236,35 +340,32 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
             .addGroup(pnlInputLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(edKeterangan, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(edKodeAkunDebet, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(edTanggal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(edNoBukti, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edKodeAkunKredit))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlInputLayout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(edNoBukti, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnlInputLayout.createSequentialGroup()
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(edNominal, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(edKodeAkunDebet, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                                    .addComponent(edKodeAkunKredit, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(pnlInputLayout.createSequentialGroup()
-                                        .addComponent(btnAkunKredit)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(edNamaAkunKredit))
-                                    .addGroup(pnlInputLayout.createSequentialGroup()
-                                        .addComponent(btnAkunDebet)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(edNamaAkunDebet, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addComponent(btnAkunKredit)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(29, Short.MAX_VALUE))
+                        .addComponent(edNamaAkunKredit))
+                    .addGroup(pnlInputLayout.createSequentialGroup()
+                        .addComponent(btnAkunDebet)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edNamaAkunDebet, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         pnlInputLayout.setVerticalGroup(
             pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -276,7 +377,7 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(edKodeAkunDebet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -285,14 +386,18 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
                     .addComponent(edNamaAkunDebet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(edKodeAkunKredit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAkunKredit)
                     .addComponent(jLabel6)
-                    .addComponent(edNamaAkunKredit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(edNamaAkunKredit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(edKodeAkunKredit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(edNominal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(edKeterangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -381,7 +486,7 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
         pnlNextPrevLayout.setHorizontalGroup(
             pnlNextPrevLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNextPrevLayout.createSequentialGroup()
-                .addContainerGap(545, Short.MAX_VALUE)
+                .addContainerGap(548, Short.MAX_VALUE)
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext)
@@ -399,7 +504,7 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
 
         jPanel3.add(pnlNextPrev, java.awt.BorderLayout.PAGE_END);
 
-        tblKasBon.setModel(new javax.swing.table.DefaultTableModel(
+        tblJurnal.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -410,12 +515,12 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblKasBon.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblJurnal.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tblKasBonFocusGained(evt);
+                tblJurnalFocusGained(evt);
             }
         });
-        jScrollPane1.setViewportView(tblKasBon);
+        jScrollPane1.setViewportView(tblJurnal);
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -468,20 +573,22 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
     }
     
     private void SetEnableKomponenInput(boolean enable) {
-//        cbJenisKasBon.setEnabled(enable);
-//        edNama.setEnabled(enable);
-////        edAlamat.setEnabled(enable);
-//        edTanggal.setEnabled(enable);
-//        cbBank.setEnabled(enable);
-//        edNominal.setEnabled(enable);
-//        edKeterangan.setEnabled(enable);
-//        btnKaryawan.setEnabled(enable);
+        
+        edTanggal.setEnabled(enable);
+        edKodeAkunDebet.setEnabled(enable);
+        edKodeAkunKredit.setEnabled(enable);
+        edNominal.setEnabled(enable);
+        edKeterangan.setEnabled(enable);
+        
+        btnAkunDebet.setEnabled(enable);
+        btnAkunKredit.setEnabled(enable);
+        
     }
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-//        kasBonKaryawan = new KasBonKaryawan();
-//        //        bank = null;
-//
-//        AppUtils.setDefaultValues(edNama, edAlamat, edTanggal, edNominal, edKeterangan, cbJenisKasBon);
+        jurnal = new Jurnal();
+        
+        edNoBukti.setText("Otomatis");
+        AppUtils.setDefaultValues(edTanggal, edKodeAkunDebet, edKodeAkunKredit, edNamaAkunDebet, edNamaAkunKredit, edNominal, edKeterangan);
 
         setStatusTombol("tambah");
     }//GEN-LAST:event_btnNewActionPerformed
@@ -491,64 +598,93 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-//        if (validasiInput() == false){
-//            return;
-//        }
-//
-//        try {
-//            Perkiraan perkiraan = (Perkiraan) cbJenisKasBon.getSelectedItem();
-//            kasBonKaryawan.setPerkiraanPinjamanId(perkiraan.getId());
-//            kasBonKaryawan.setKaryawanId(karyawan.getId());
-//            kasBonKaryawan.setSumberDana(cbBank.getSelectedItem().toString());
-//            kasBonKaryawan.setTanggal(edTanggal.getDate());
-//
-//            Bank selectedBank = (Bank) cbBank.getSelectedItem();
-//            kasBonKaryawan.setBankId(selectedBank.getId());
-//            kasBonKaryawan.setPerkiraanKasId(selectedBank.getAkun().getId());
-//
-//            kasBonKaryawan.setNominal(((Number)edNominal.getValue()).intValue());
-//            kasBonKaryawan.setKeterangan(edKeterangan.getText());
-//            kasBonKaryawan.setUserCreate(user.getUsername());
-//            kasBonKaryawan.setUserUpdate(user.getUsername());
-//
-//            kasBonKaryawanDAO.save(kasBonKaryawan);
-//
-//            AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + kasBonKaryawan.getNoRegister());
-//            LoadDataKasBon(currentPage);
-//
-//            setStatusTombol("selected");
-//
-//        } catch (SQLException ex) {
-//            AppUtils.showErrorDialog("Gagal menyimpan data dengan error :\n" + ex.getMessage());
-//        }
+        try {
+            
+            if (validasiInput() == false){
+                return;
+            }
+        
+            jurnal.setTanggal(edTanggal.getDate());
+            jurnal.setKeterangan(edKeterangan.getText());
+            jurnal.setTransaksi("jurnal_memorial");
+            jurnal.setUserCreate(user.getUsername());
+            jurnal.setUserUpdate(user.getUsername());
+            
+            JurnalDetail jdDebet = new JurnalDetail();
+            jdDebet.setDebet((int) edNominal.getValue());
+            jdDebet.setKredit(0);
+            jdDebet.setPerkiraanId(perkiraanDebet.getId());
+            
+            JurnalDetail jdKredit = new JurnalDetail();
+            jdKredit.setDebet(0);
+            jdKredit.setKredit((int) edNominal.getValue());
+            jdKredit.setPerkiraanId(perkiraanKredit.getId());
+            
+            jurnal.getJurnalDetails().clear();
+            jurnal.getJurnalDetails().add(jdDebet);
+            jurnal.getJurnalDetails().add(jdKredit);
+            
+            jurnalDAO.save(jurnal);
+            AppUtils.showInfoDialog("Data berhasil disimpan dengan no register : " + jurnal.getNoJurnal());
+            LoadDataJurnal(currentPage);
+
+            setStatusTombol("selected");
+
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog("Gagal menyimpan data dengan error :\n" + ex.getMessage());
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
+    private void LoadDataJurnal(int page){
+        tableModel.setRowCount(0); // Bersihkan tabel
+        
+        List<Map<String, Object>> result = jurnalDAO.getJurnalByPage(currentPage, edTglAwal.getDate(), edTglAkhir.getDate(), edFilter.getText());
+        for (Map<String, Object> row : result) {
+            
+            Number debet = 0;
+            if (row.get("debet") != null){
+                debet = (Number) row.get("debet");
+            }
+
+            Number kredit = 0;
+            if (row.get("kredit") != null){
+                kredit = (Number) row.get("debet");
+            }
+
+            tableModel.addRow(new Object[]{
+                    (Integer) row.get("id"),
+                    (String) row.get("no_jurnal"),
+                    AppUtils.DateFormatShort((Date) row.get("tanggal")),
+                    (String) row.get("keterangan"),
+                    AppUtils.NumericFormat(debet),
+                    AppUtils.NumericFormat(kredit),
+                    (String) row.get("user_create")
+            });
+        }
+        
+        tblJurnal.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    }
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         setStatusTombol("awal");
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-//        if (kasBonKaryawan == null){
-//            AppUtils.showWarningDialog("Tidak ada data yang dihapus");
-//            return;
-//        }
-//
-//        if (kasBonKaryawan.getPelunasan() > 0){
-//            AppUtils.showWarningDialog("Data sudah dibayar, tidak bisa dihapus/ubah");
-//            return;
-//        }
-//
-//        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
-//
-//        if (userConfirmed) {
-//            try {
-//                kasBonKaryawanDAO.delete(kasBonKaryawan.getId());
-//                setStatusTombol("awal");
-//                LoadDataKasBon(currentPage);
-//            } catch (SQLException ex) {
-//                AppUtils.showErrorDialog("Ada kesalahan hapus data dengan error :\n" + ex.getMessage());
-//            }
-//        }
+        if (jurnal == null){
+            AppUtils.showWarningDialog("Tidak ada data yang dihapus");
+            return;
+        }
+
+        boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
+
+        if (userConfirmed) {
+            try {
+                jurnalDAO.delete(jurnal.getId());
+                setStatusTombol("awal");
+                LoadDataJurnal(currentPage);
+            } catch (SQLException ex) {
+                AppUtils.showErrorDialog("Ada kesalahan hapus data dengan error :\n" + ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
@@ -591,54 +727,96 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
 //        }
     }//GEN-LAST:event_btnJurnalActionPerformed
 
+    private void InisialisasiTableJurnal() {
+        tableModel = new DefaultTableModel(new String[]{"ID","No Jurnal", "Tanggal", "Keterangan", "Debet", "Kredit", "User"}, 0);
+        tblJurnal.setModel(tableModel);
+        AppUtils.SetTableAligmentRight(tblJurnal, 4);
+        AppUtils.SetTableAligmentRight(tblJurnal, 5);
+        tblJurnal.removeColumn(tblJurnal.getColumnModel().getColumn(0));
+        
+    }
     private void edTglAwalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAwalPropertyChange
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataKasBon(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataJurnal(currentPage);
+        }
     }//GEN-LAST:event_edTglAwalPropertyChange
 
     private void edTglAkhirPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_edTglAkhirPropertyChange
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataKasBon(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataJurnal(currentPage);
+        }
     }//GEN-LAST:event_edTglAkhirPropertyChange
 
     private void edFilterKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edFilterKeyReleased
-//        if (SilakanLoadData){
-//            currentPage = 1;
-//            LoadDataKasBon(currentPage);
-//        }
+        if (SilakanLoadData){
+            currentPage = 1;
+            LoadDataJurnal(currentPage);
+        }
     }//GEN-LAST:event_edFilterKeyReleased
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
-//        if (currentPage > 1) {
-//            currentPage--;
-//            LoadDataKasBon(currentPage);
-//        }
+        if (currentPage > 1) {
+            currentPage--;
+            LoadDataJurnal(currentPage);
+        }
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-//        currentPage++;
-//        LoadDataKasBon(currentPage);
+        currentPage++;
+        LoadDataJurnal(currentPage);
     }//GEN-LAST:event_btnNextActionPerformed
 
-    private void tblKasBonFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblKasBonFocusGained
+    private void tblJurnalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblJurnalFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_tblKasBonFocusGained
+    }//GEN-LAST:event_tblJurnalFocusGained
 
     private void btnAkunKreditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAkunKreditActionPerformed
-        // TODO add your handling code here:
+        String sqlQuery = "SELECT " +
+                            " concat(REPEAT(' ', level * 4), kode) as kode_akun, " +
+                            " concat(REPEAT(' ', level * 4), nama) as nama_akun, id " +
+                            " FROM perkiraan " +
+                            " where nama not like '%KAS%'" +
+                            " ORDER BY kode";
+        
+        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+        if (selectedRecord != null) {
+            try {
+                String kode = selectedRecord.get("kode_akun").toString().trim();
+                perkiraanKredit = perkiraanDAO.getPerkiraanByKode(kode);
+                edKodeAkunKredit.setText(perkiraanKredit.getKode());
+                edNamaAkunKredit.setText(perkiraanKredit.getNama());
+            } catch (SQLException ex) {
+                AppUtils.showErrorDialog(ex.getMessage());
+            }
+            
+        }
     }//GEN-LAST:event_btnAkunKreditActionPerformed
 
     private void btnAkunDebetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAkunDebetActionPerformed
-        // TODO add your handling code here:
+        String sqlQuery = "SELECT " +
+                            " concat(REPEAT(' ', level * 4), kode) as kode_akun, " +
+                            " concat(REPEAT(' ', level * 4), nama) as nama_akun, id " +
+                            " FROM perkiraan " +
+                            " where nama not like '%KAS%'" +
+                            " ORDER BY kode";
+        
+        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+        if (selectedRecord != null) {
+            try {
+                String kode = selectedRecord.get("kode_akun").toString().trim();
+                perkiraanDebet = perkiraanDAO.getPerkiraanByKode(kode);
+                edKodeAkunDebet.setText(perkiraanDebet.getKode());
+                edNamaAkunDebet.setText(perkiraanDebet.getNama());
+            } catch (SQLException ex) {
+                AppUtils.showErrorDialog(ex.getMessage());
+            }
+            
+        }
     }//GEN-LAST:event_btnAkunDebetActionPerformed
-
-    private void edKodeAkunKreditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edKodeAkunKreditActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_edKodeAkunKreditActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -654,15 +832,16 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JTextField edFilter;
+    private javax.swing.JTextField edKeterangan;
     private javax.swing.JTextField edKodeAkunDebet;
     private javax.swing.JTextField edKodeAkunKredit;
     private javax.swing.JTextField edNamaAkunDebet;
     private javax.swing.JTextField edNamaAkunKredit;
     private javax.swing.JTextField edNoBukti;
     private javax.swing.JFormattedTextField edNominal;
+    private com.toedter.calendar.JDateChooser edTanggal;
     private com.toedter.calendar.JDateChooser edTglAkhir;
     private com.toedter.calendar.JDateChooser edTglAwal;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -671,6 +850,7 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -678,6 +858,47 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlFilter;
     private javax.swing.JPanel pnlInput;
     private javax.swing.JPanel pnlNextPrev;
-    private javax.swing.JTable tblKasBon;
+    private javax.swing.JTable tblJurnal;
     // End of variables declaration//GEN-END:variables
+
+    private boolean validasiInput() throws SQLException {
+        if (jurnal == null){
+            AppUtils.showWarningDialog("Tidak ada data yang disimpan");
+            return false;
+        }
+        
+        if (perkiraanDebet == null){
+            AppUtils.showWarningDialog("Akun debet belum dipilih");
+            btnAkunDebet.requestFocus();
+            return false;
+        }
+        
+        if (perkiraanDAO.isPunyaAnak(perkiraanDebet.getKode())){
+            AppUtils.showErrorDialog("Akun " + perkiraanDebet.getKode() + " Tidak bisa digunakan untuk jurnal karena akun induk");
+            btnAkunDebet.requestFocus();
+            return false;
+        }
+        
+        if (perkiraanKredit == null){
+            AppUtils.showWarningDialog("Akun kredit belum dipilih");
+            btnAkunKredit.requestFocus();
+            return false;
+        }
+        
+        if (perkiraanDAO.isPunyaAnak(perkiraanKredit.getKode())){
+            AppUtils.showErrorDialog("Akun " + perkiraanKredit.getKode() + " Tidak bisa digunakan untuk jurnal karena akun induk");
+            btnAkunKredit.requestFocus();
+            return false;
+        }
+        
+        if (edNominal.getValue() == null || ((Number) edNominal.getValue()).intValue() <= 0){
+            AppUtils.showWarningDialog("Nominal belum diisi");
+            edNominal.requestFocus();
+            return false;
+        }
+        
+        
+        
+        return true;
+    }
 }

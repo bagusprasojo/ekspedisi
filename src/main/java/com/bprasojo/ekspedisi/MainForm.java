@@ -46,7 +46,7 @@ public class MainForm extends javax.swing.JFrame {
         }
         
         miPerkiraan.setVisible(false);
-        miJurnalPenyesuaian.setVisible(false);
+//        miJurnalPenyesuaian.setVisible(false);
     }
 
     /**

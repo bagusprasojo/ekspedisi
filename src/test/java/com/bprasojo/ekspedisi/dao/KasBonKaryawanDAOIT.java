@@ -90,7 +90,7 @@ public class KasBonKaryawanDAOIT {
         
     }
 
-@Test
+    @Test
     @Order(5)
     public void testSaveUpdate() throws Exception {
         System.out.println(this.getClass().getName() + ": testSaveUpdate");
@@ -113,6 +113,30 @@ public class KasBonKaryawanDAOIT {
         assertEquals(kbk.getTanggal().getTime(), jurnal.getTanggal().getTime());
         assertEquals(kbk.getNominal(), jurnal.getKredit());
         assertEquals(kbk.getNominal(), jurnal.getDebet());
+    }
+    
+    @Test
+    @Order(8)
+    public void testSaveUpdateNoBuktiSama() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveUpdateNoBuktiSama");
+        
+        KasBonKaryawan transaksi = instance.getById(idSave);        
+        
+        int idRandom = transaksi.getId(); 
+        while (idRandom == transaksi.getId()) {            
+            idRandom = instance.getRandomID();
+        }
+        
+        KasBonKaryawan kbk = instance.getById(idRandom);        
+        transaksi.setNoRegister(kbk.getNoRegister());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("Duplicate entry"));        
+        
     }
     
     @Test

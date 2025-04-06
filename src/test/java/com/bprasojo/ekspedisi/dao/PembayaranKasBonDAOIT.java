@@ -151,6 +151,29 @@ public class PembayaranKasBonDAOIT {
     }
     
     @Test
+    @Order(8)
+    public void testSaveUpdateNoBuktiSama() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveUpdateNoBuktiSama");
+        
+        PembayaranKasBon transaksi = instance.getById(idSave);        
+        
+        int idRandom = transaksi.getId(); 
+        while (idRandom == transaksi.getId()) {            
+            idRandom = instance.getRandomID();
+        }
+        
+        PembayaranKasBon pkb = instance.getById(idRandom);        
+        transaksi.setNoRegister(pkb.getNoRegister());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("Duplicate entry"));        
+    }
+    
+    @Test
     @Order(10)
     public void testSaveUpdateLunas() throws Exception {
         System.out.println(this.getClass().getName() + ": testSaveUpdate");

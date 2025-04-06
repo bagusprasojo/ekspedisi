@@ -107,7 +107,7 @@ public class PembayaranTagihanCustomerDAOIT {
     }
     
     @Test
-    @Order(1)
+    @Order(5)
     public void testSaveUpdate() throws Exception {
         System.out.println(this.getClass().getName() + ": testSave");
         PembayaranTagihanCustomer transaksi = instance.getById(idSave);
@@ -127,6 +127,30 @@ public class PembayaranTagihanCustomerDAOIT {
         assertEquals(transaksi.getTotal(), jurnal.getKredit());
     }
 
+    @Test
+    @Order(8)
+    public void testSaveUpdateNoBuktiSama() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveUpdateNoBuktiSama");
+        
+        PembayaranTagihanCustomer transaksi = instance.getById(idSave);        
+        
+        int idRandom = transaksi.getId(); 
+        while (idRandom == transaksi.getId()) {            
+            idRandom = instance.getRandomID();
+        }
+        
+        PembayaranTagihanCustomer ptc = instance.getById(idRandom);        
+        transaksi.setNoRegister(ptc.getNoRegister());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("Duplicate entry"));        
+        
+    }
+    
     @Test
     @Order(10)
     public void testSaveUpdateLunas() throws Exception {
