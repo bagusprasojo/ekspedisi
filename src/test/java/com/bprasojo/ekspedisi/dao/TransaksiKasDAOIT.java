@@ -193,6 +193,30 @@ public class TransaksiKasDAOIT {
     }
     
     @Test
+    @Order(8)
+    public void testSaveUpdateNoBuktiSama() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveUpdateNoBuktiSama");
+        
+        TransaksiKas transaksi = instance.getById(idSave);        
+        
+        int idRandom = transaksi.getId(); 
+        while (idRandom == transaksi.getId()) {            
+            idRandom = instance.getRandomID();
+        }
+        
+        TransaksiKas tk = instance.getById(idRandom);        
+        transaksi.setNoBukti(tk.getNoBukti());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("Duplicate entry"));        
+        
+    }
+    
+    @Test
     @Order(10)
     public void testGetTransaksiKasByPage_withFilter() throws SQLException {
         System.out.println("testGetTransaksiKasByPage_withFilter");

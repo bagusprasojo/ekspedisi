@@ -124,6 +124,30 @@ public class TagihanCustomerDAOIT {
     }
 
     @Test
+    @Order(8)
+    public void testSaveUpdateNoBuktiSama() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveUpdateNoBuktiSama");
+        
+        TagihanCustomer transaksi = instance.getById(idSave);        
+        
+        int idRandom = transaksi.getId(); 
+        while (idRandom == transaksi.getId()) {            
+            idRandom = instance.getRandomID();
+        }
+        
+        TagihanCustomer tc = instance.getById(idRandom);        
+        transaksi.setNoInvoice(tc.getNoInvoice());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("Duplicate entry"));        
+        
+    }
+    
+    @Test
     @Order(10)
     public void testSaveClosing() throws Exception {
         System.out.println(this.getClass().getName() + ": testSaveClosing");

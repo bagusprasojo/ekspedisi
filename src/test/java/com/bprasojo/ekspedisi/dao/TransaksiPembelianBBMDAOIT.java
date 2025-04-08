@@ -160,6 +160,30 @@ public class TransaksiPembelianBBMDAOIT {
     }
 
     @Test
+    @Order(12)
+    public void testSaveUpdateNoBuktiSama() throws Exception {
+        System.out.println(this.getClass().getName() + ": testSaveUpdateNoBuktiSama");
+        
+        TransaksiPembelianBBM transaksi = instance.getById(idSave);        
+        
+        int idRandom = transaksi.getId(); 
+        while (idRandom == transaksi.getId()) {            
+            idRandom = instance.getRandomID();
+        }
+        
+        TransaksiPembelianBBM tpb = instance.getById(idRandom);        
+        transaksi.setNoBukti(tpb.getNoBukti());
+        
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            instance.save(transaksi);
+        });
+
+        System.out.println("Message : " + exception.getMessage());
+        assertTrue(exception.getMessage().contains("Duplicate entry"));        
+        
+    }
+    
+    @Test
     @Order(15)
     public void testGetById() throws Exception {
         System.out.println(this.getClass().getName() +  ": testGetById");
