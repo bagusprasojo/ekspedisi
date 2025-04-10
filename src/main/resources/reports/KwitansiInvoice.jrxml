@@ -13,9 +13,13 @@
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="p_no_invoice" class="java.lang.String"/>
 	<parameter name="KW" class="java.lang.String"/>
-	<query language="SQL"><![CDATA[select a.*, b.nama, b.alamat from tagihan_customer a
+	<query language="SQL"><![CDATA[select REPLACE(a.no_invoice, 'INV', 'KWI') AS no_kwitansi, a.*, b.nama, b.alamat from tagihan_customer a
 inner join stake_holder b on a.customer_id = b.id
 where no_invoice = $P{p_no_invoice} ]]></query>
+	<field name="no_kwitansi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="no_kwitansi"/>
+		<property name="com.jaspersoft.studio.field.label" value="no_kwitansi"/>
+	</field>
 	<field name="id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>
 		<property name="com.jaspersoft.studio.field.label" value="id"/>
@@ -119,11 +123,11 @@ where no_invoice = $P{p_no_invoice} ]]></query>
 	<background/>
 	<title height="42"/>
 	<detail>
-		<band height="383">
-			<element kind="frame" uuid="8c4a82d1-7009-4263-ba03-1236eed753e9" x="0" y="-2" width="780" height="360">
-				<element kind="frame" uuid="dab5c0ea-6e26-4e0a-a988-a9246595f62c" x="83" y="63" width="688" height="287">
+		<band height="489">
+			<element kind="frame" uuid="8c4a82d1-7009-4263-ba03-1236eed753e9" x="0" y="-2" width="780" height="432">
+				<element kind="frame" uuid="dab5c0ea-6e26-4e0a-a988-a9246595f62c" x="83" y="63" width="688" height="357">
 					<element kind="textField" uuid="60194ace-ba53-4681-b74b-8d771474b7f7" x="171" y="11" width="150" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
-						<expression><![CDATA["KWI" + RIGHT( $F{no_invoice}, 11)]]></expression>
+						<expression><![CDATA[$F{no_kwitansi}]]></expression>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</element>
 					<element kind="textField" uuid="8360b3bc-3e5c-4f42-b9ee-7ea6a10fc30b" x="171" y="37" width="509" height="20" fontSize="14.0" bold="true" vTextAlign="Middle">
@@ -139,9 +143,10 @@ where no_invoice = $P{p_no_invoice} ]]></query>
 						</box>
 					</element>
 					<element kind="textField" uuid="efd48e24-9775-4883-8e66-f4d854286ec9" x="170" y="111" width="508" height="50" fontSize="14.0" bold="true" vTextAlign="Top">
-						<expression><![CDATA[$F{pekerjaan}]]></expression>
+						<expression><![CDATA[$F{pekerjaan}
++ " No Invoice : " + $F{no_invoice}]]></expression>
 					</element>
-					<element kind="textField" uuid="343fe8ac-af66-4e8b-81de-7df94e3952a7" x="496" y="261" width="140" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
+					<element kind="textField" uuid="343fe8ac-af66-4e8b-81de-7df94e3952a7" x="491" y="328" width="140" height="19" fontSize="12.0" bold="true" hTextAlign="Center">
 						<expression><![CDATA["Lia Wahyuningsih"]]></expression>
 						<box>
 							<pen lineWidth="1.0"/>
@@ -223,7 +228,7 @@ where no_invoice = $P{p_no_invoice} ]]></query>
 							<rightPen lineWidth="0.0"/>
 						</box>
 					</element>
-					<element kind="frame" uuid="b53eb54e-8efe-4d4f-9c9b-0ebedbfe4386" x="14" y="217" width="313" height="52">
+					<element kind="frame" uuid="b53eb54e-8efe-4d4f-9c9b-0ebedbfe4386" x="14" y="294" width="313" height="52">
 						<element kind="staticText" uuid="2d00ca4d-fce2-4f71-bc64-995fb8bde269" x="0" y="6" width="124" height="40" fontSize="16.0" italic="true" vTextAlign="Middle">
 							<text><![CDATA[Terbilang Rp]]></text>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -250,7 +255,7 @@ where no_invoice = $P{p_no_invoice} ]]></query>
 						<rightPen lineWidth="1.0"/>
 					</box>
 				</element>
-				<element kind="rectangle" uuid="63c37d71-222c-4eff-9c47-d3b5758104d8" mode="Opaque" x="11" y="14" width="58" height="336" backcolor="#F5F4F2"/>
+				<element kind="rectangle" uuid="63c37d71-222c-4eff-9c47-d3b5758104d8" mode="Opaque" x="11" y="14" width="58" height="406" backcolor="#F5F4F2"/>
 				<element kind="frame" uuid="47238f1f-9a41-401e-9042-34587ea7296b" x="82" y="14" width="689" height="41">
 					<element kind="staticText" uuid="fe00a89a-c980-459f-a31a-c06fcea5fd11" x="141" y="6" width="390" height="30" fontSize="20.0" bold="true" hTextAlign="Center">
 						<text><![CDATA[KWITANSI]]></text>

@@ -265,7 +265,7 @@ ORDER BY a.no_invoice]]></query>
 	</group>
 	<detail>
 		<band height="399" splitType="Stretch">
-			<element kind="rectangle" uuid="db119e08-d978-45fe-8647-0d3077af3fcd" x="0" y="0" width="556" height="370"/>
+			<element kind="rectangle" uuid="db119e08-d978-45fe-8647-0d3077af3fcd" x="0" y="0" width="556" height="399"/>
 			<element kind="textField" uuid="602c58e0-bd70-48bc-9558-faf5c7f3b146" x="10" y="10" width="335" height="30">
 				<expression><![CDATA[$F{pekerjaan}]]></expression>
 			</element>
@@ -329,10 +329,10 @@ ORDER BY a.no_invoice]]></query>
 			<element kind="staticText" uuid="a1d4ea9c-3d94-435f-bc8b-da3aac9ae312" x="10" y="189" width="90" height="20">
 				<text><![CDATA[Terbilag :]]></text>
 			</element>
-			<element kind="textField" uuid="61c8ff89-93e8-4d34-a9b0-dbb53be7aed2" x="10" y="210" width="299" height="39" bold="true" italic="true">
+			<element kind="textField" uuid="61c8ff89-93e8-4d34-a9b0-dbb53be7aed2" x="10" y="210" width="299" height="39" italic="true" bold="true">
 				<expression><![CDATA[$F{terbilang}]]></expression>
 			</element>
-			<element kind="staticText" uuid="5a899bb4-a7b7-4efc-afcd-ba831ad8ad66" x="10" y="319" width="179" height="20">
+			<element kind="staticText" uuid="5a899bb4-a7b7-4efc-afcd-ba831ad8ad66" x="10" y="339" width="179" height="20">
 				<text><![CDATA[Pembayaran Melalui :]]></text>
 			</element>
 			<element kind="textField" uuid="fb39d283-2cd4-4ed5-9413-80d531579e60" x="330" y="250" width="214" height="19" hTextAlign="Center">
@@ -341,7 +341,7 @@ ORDER BY a.no_invoice]]></query>
 			<element kind="textField" uuid="485b7453-a55a-4d2c-acfa-5f72ba99675b" x="330" y="270" width="214" height="19" hTextAlign="Center">
 				<expression><![CDATA["PT. Tampir Baru Logistik"]]></expression>
 			</element>
-			<element kind="textField" uuid="226ee722-5041-492e-a87a-051b2b1cc296" x="390" y="320" width="99" height="19" hTextAlign="Center">
+			<element kind="textField" uuid="226ee722-5041-492e-a87a-051b2b1cc296" x="390" y="340" width="99" height="19" hTextAlign="Center">
 				<expression><![CDATA["Lia Wahyuningsih"]]></expression>
 				<box>
 					<pen lineWidth="1.0"/>
@@ -351,10 +351,10 @@ ORDER BY a.no_invoice]]></query>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="2ce7ed17-1d08-4d63-8388-94057b1818bf" x="330" y="340" width="214" height="19" hTextAlign="Center">
+			<element kind="textField" uuid="2ce7ed17-1d08-4d63-8388-94057b1818bf" x="330" y="360" width="214" height="19" hTextAlign="Center">
 				<expression><![CDATA["Admin"]]></expression>
 			</element>
-			<element kind="textField" uuid="374d56da-691f-460f-9301-441d57020ea9" x="10" y="340" width="309" height="30" hTextAlign="Left">
+			<element kind="textField" uuid="374d56da-691f-460f-9301-441d57020ea9" x="10" y="360" width="309" height="30" hTextAlign="Left">
 				<expression><![CDATA["Transfer Bank Mandiri No Rek. 138.001.7272456\nPT. Tampir Baru Logistik"]]></expression>
 			</element>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
