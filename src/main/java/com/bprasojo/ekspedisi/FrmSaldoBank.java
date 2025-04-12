@@ -4,13 +4,8 @@
  */
 package com.bprasojo.ekspedisi;
 
-import com.bprasojo.ekspedisi.dao.BankDAO;
-import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.utils.AppUtils;
-import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,13 +16,14 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmSaldoBank extends javax.swing.JInternalFrame {
+public class FrmSaldoBank extends FrmDefault {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
     
     public FrmSaldoBank() {
+        super();
         initComponents();
         
         edTanggal.setDate(new Date());

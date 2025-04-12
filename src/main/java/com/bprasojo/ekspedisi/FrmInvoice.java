@@ -8,7 +8,6 @@ import com.bprasojo.ekspedisi.dao.ConfigDAO;
 import com.bprasojo.ekspedisi.dao.StakeHolderDAO;
 import com.bprasojo.ekspedisi.dao.TagihanCustomerDAO;
 import com.bprasojo.ekspedisi.model.Config;
-import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.model.TagihanCustomer;
 import com.bprasojo.ekspedisi.model.User;
@@ -19,7 +18,6 @@ import java.beans.PropertyVetoException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +33,7 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmInvoice extends javax.swing.JInternalFrame {
+public class FrmInvoice extends FrmDefault {
 
     /**
      * Creates new form FrmInvoice
@@ -47,7 +45,6 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     StakeHolder customer;
     StakeHolderDAO customerDAO;
     
-    Config config;
     ConfigDAO configDAO;
     
     boolean SilakanLoadData = false;
@@ -62,6 +59,7 @@ public class FrmInvoice extends javax.swing.JInternalFrame {
     }
     
     public FrmInvoice() {
+        super();
         initComponents();
         
         

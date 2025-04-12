@@ -13,7 +13,7 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
  *
  * @author USER
  */
-public class FrmPerkiraan extends javax.swing.JInternalFrame {
+public class FrmPerkiraan extends FrmDefault {
 
     /**
      * Creates new form FrmPerkiraan
@@ -27,6 +27,7 @@ public class FrmPerkiraan extends javax.swing.JInternalFrame {
     }
     
     public FrmPerkiraan() {
+        super();
         initComponents();
     }
 

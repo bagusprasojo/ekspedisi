@@ -22,7 +22,7 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmRekeningKoranBank extends javax.swing.JInternalFrame {
+public class FrmRekeningKoranBank extends FrmDefault {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
@@ -31,6 +31,7 @@ public class FrmRekeningKoranBank extends javax.swing.JInternalFrame {
     Bank bank = null;
     BankDAO bankDAO = null;
     public FrmRekeningKoranBank() {
+        super();
         initComponents();
         
         bankDAO = new BankDAO();

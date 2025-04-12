@@ -31,7 +31,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmTransaksiBank extends javax.swing.JInternalFrame {
+public class FrmTransaksiBank extends FrmDefault {
 
     /**
      * Creates new form FrmTransaksiBank
@@ -59,6 +59,7 @@ public class FrmTransaksiBank extends javax.swing.JInternalFrame {
     }
     
     public FrmTransaksiBank() {
+        super();
         initComponents();
         
         pnlInput.remove(pnlBank);

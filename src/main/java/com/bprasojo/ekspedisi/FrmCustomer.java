@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmCustomer extends javax.swing.JInternalFrame {
+public class FrmCustomer extends FrmDefault {
 
     /**
      * Creates new form FrmArmada
@@ -41,6 +41,7 @@ public class FrmCustomer extends javax.swing.JInternalFrame {
     }
     
     public FrmCustomer() {
+        super();
         initComponents();
         
         tableModel = new DefaultTableModel(new String[]{"Id","Kode","Nama","Alamat","Kota","Kode Pos","Telp","No KTP","Lokasi Kerja"}, 0);

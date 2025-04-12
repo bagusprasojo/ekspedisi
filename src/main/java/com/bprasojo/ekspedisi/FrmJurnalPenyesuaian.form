@@ -255,12 +255,10 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="edKeterangan" alignment="1" pref="211" max="32767" attributes="0"/>
-                          <Group type="103" alignment="1" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="edKodeAkunDebet" alignment="0" max="32767" attributes="0"/>
-                              <Component id="edTanggal" alignment="0" min="-2" pref="205" max="-2" attributes="0"/>
-                              <Component id="edNoBukti" alignment="0" max="32767" attributes="0"/>
-                              <Component id="edNominal" min="-2" pref="210" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="edKodeAkunDebet" alignment="0" max="32767" attributes="0"/>
+                          <Component id="edTanggal" alignment="0" min="-2" pref="205" max="-2" attributes="0"/>
+                          <Component id="edNoBukti" alignment="0" max="32767" attributes="0"/>
+                          <Component id="edNominal" min="-2" pref="210" max="-2" attributes="0"/>
                           <Component id="edKodeAkunKredit" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>

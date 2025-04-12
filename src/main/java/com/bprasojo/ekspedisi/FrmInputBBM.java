@@ -32,7 +32,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmInputBBM extends javax.swing.JInternalFrame {
+public class FrmInputBBM extends FrmDefault {
 
     /**
      * Creates new form FrmTransaksiKas
@@ -61,6 +61,7 @@ public class FrmInputBBM extends javax.swing.JInternalFrame {
     }
     
     public FrmInputBBM() {
+        super();
         initComponents();
         
         transaksiPembelianBBMDAO = new TransaksiPembelianBBMDAO();

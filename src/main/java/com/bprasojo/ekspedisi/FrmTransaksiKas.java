@@ -36,7 +36,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmTransaksiKas extends javax.swing.JInternalFrame {
+public class FrmTransaksiKas extends FrmDefault {
 
     /**
      * Creates new form FrmTransaksiKas
@@ -64,6 +64,7 @@ public class FrmTransaksiKas extends javax.swing.JInternalFrame {
         this.user = user;
     }
     public FrmTransaksiKas() {
+        super();
         initComponents();
         
         

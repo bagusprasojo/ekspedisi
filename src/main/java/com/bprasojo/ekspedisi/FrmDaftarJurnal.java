@@ -6,7 +6,6 @@ package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,12 +17,13 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmDaftarJurnal extends javax.swing.JInternalFrame {
+public class FrmDaftarJurnal extends FrmDefault {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
     public FrmDaftarJurnal() {
+        super();
         initComponents();
         
         edTglAkhir.setDate(new Date());

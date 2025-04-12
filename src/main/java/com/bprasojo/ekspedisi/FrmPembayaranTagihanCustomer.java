@@ -14,7 +14,6 @@ import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
-import java.awt.event.ItemEvent;
 import java.beans.PropertyVetoException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -36,7 +34,7 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
+public class FrmPembayaranTagihanCustomer extends FrmDefault {
 
     /**
      * Creates new form FrmKasBonKaryawan
@@ -55,7 +53,6 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     private boolean SilakanLoadData = false;
     
     private DefaultTableModel tableModel;
-    private boolean showLoopUpBank = false;
     private User user;
     
     public FrmPembayaranTagihanCustomer(User user) {
@@ -64,6 +61,7 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
     
     }
     public FrmPembayaranTagihanCustomer() {
+        super();
         initComponents();
         
         pnlInput.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(edInvoice, btnInvoice, edTanggal, cbBank, edNominal, edPPHPersen, edPPH, edTotal, edPPNBayar, edKeterangan));
@@ -708,7 +706,6 @@ public class FrmPembayaranTagihanCustomer extends javax.swing.JInternalFrame {
                                     edPPNBayar);  
         
         
-        showLoopUpBank = true;
         
         setStatusTombol("tambah");
     }//GEN-LAST:event_btnNewActionPerformed

@@ -10,7 +10,6 @@ import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -21,7 +20,7 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
+public class FrmRptRiwayatPembelianBBM extends FrmDefault {
 
     private ArmadaDAO armadaDAO;
     private Armada armada;
@@ -30,6 +29,7 @@ public class FrmRptRiwayatPembelianBBM extends javax.swing.JInternalFrame {
      * Creates new form FrmRptRiwayatPembelianBBM
      */
     public FrmRptRiwayatPembelianBBM() {
+        super();
         initComponents();
         
         armadaDAO = new ArmadaDAO();

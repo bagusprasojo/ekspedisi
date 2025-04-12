@@ -13,8 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -23,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmClosing extends javax.swing.JInternalFrame {
+public class FrmClosing extends FrmDefault {
 
     /**
      * Creates new form FrmArmada
@@ -39,6 +37,7 @@ public class FrmClosing extends javax.swing.JInternalFrame {
     
     
     public FrmClosing() {
+        super();
         initComponents();
 
         tableModel = new DefaultTableModel(new String[]{"Id","Tanggal","Keterangan"}, 0);

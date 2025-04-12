@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
+public class FrmKasBonKaryawan extends FrmDefault {
 
     /**
      * Creates new form FrmKasBonKaryawan
@@ -60,6 +60,7 @@ public class FrmKasBonKaryawan extends javax.swing.JInternalFrame {
         this.user = user;
     }
     public FrmKasBonKaryawan() {
+        super();
         initComponents();
 //        lblBank.setText("");
         

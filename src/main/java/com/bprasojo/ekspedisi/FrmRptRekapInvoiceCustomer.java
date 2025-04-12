@@ -18,12 +18,13 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmRptRekapInvoiceCustomer extends javax.swing.JInternalFrame {
+public class FrmRptRekapInvoiceCustomer extends FrmDefault {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
     public FrmRptRekapInvoiceCustomer() {
+        super();
         initComponents();
         
         edTglAkhir.setDate(new Date());

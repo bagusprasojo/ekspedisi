@@ -31,7 +31,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
+public class FrmPembayaranKasBon extends FrmDefault {
 
     /**
      * Creates new form FrmKasBonKaryawan
@@ -58,6 +58,7 @@ public class FrmPembayaranKasBon extends javax.swing.JInternalFrame {
         this.user = user;
     }
     public FrmPembayaranKasBon() {
+        super();
         initComponents();
         
         

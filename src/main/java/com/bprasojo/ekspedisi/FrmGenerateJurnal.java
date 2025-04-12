@@ -4,25 +4,19 @@
  */
 package com.bprasojo.ekspedisi;
 
-import com.bprasojo.ekspedisi.utils.AppUtils;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.sf.jasperreports.engine.JRException;
 
 /**
  *
  */
-public class FrmGenerateJurnal extends javax.swing.JInternalFrame {
+public class FrmGenerateJurnal extends FrmDefault {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
     public FrmGenerateJurnal() {
+        super();
         initComponents();
         
         edTglAkhir.setDate(new Date());

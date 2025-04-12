@@ -28,7 +28,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author USER
  */
-public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
+public class FrmJurnalPenyesuaian extends FrmDefault {
 
     /**
      * Creates new form FrmJurnalPenyesuaian
@@ -50,6 +50,7 @@ public class FrmJurnalPenyesuaian extends javax.swing.JInternalFrame {
         this.user = user;
     }
     public FrmJurnalPenyesuaian() {
+        super();
         initComponents();
         
         jurnalDAO = new JurnalDAO();

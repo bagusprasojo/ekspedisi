@@ -16,13 +16,14 @@ import net.sf.jasperreports.engine.JRException;
 /**
  *
  */
-public class FrmSaldoKasbon extends javax.swing.JInternalFrame {
+public class FrmSaldoKasbon extends FrmDefault {
 
     /**
      * Creates new form FrmRptRekapTransaksiKas
      */
     
     public FrmSaldoKasbon() {
+        super();
         initComponents();
         
         edTanggal.setDate(new Date());

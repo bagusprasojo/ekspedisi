@@ -6,22 +6,18 @@ package com.bprasojo.ekspedisi;
 
 import com.bprasojo.ekspedisi.dao.JenisTransaksiDAO;
 import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
-import com.bprasojo.ekspedisi.model.Bank;
 import com.bprasojo.ekspedisi.model.JenisTransaksi;
 import com.bprasojo.ekspedisi.model.Perkiraan;
-import com.bprasojo.ekspedisi.model.StakeHolder;
 import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -31,7 +27,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmJenisTransaksi extends javax.swing.JInternalFrame {
+public class FrmJenisTransaksi extends FrmDefault {
 
     /**
      * Creates new form FrmKasBonKaryawan
@@ -56,6 +52,7 @@ public class FrmJenisTransaksi extends javax.swing.JInternalFrame {
         this.user = user;
     }
     public FrmJenisTransaksi() {
+        super();
         initComponents();
 
         jenisTransaksiDAO = new JenisTransaksiDAO();

@@ -12,15 +12,9 @@ import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.CustomFocusTraversalPolicy;
 import com.bprasojo.ekspedisi.utils.LookupForm;
-import java.awt.Component;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -28,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  */
-public class FrmArmada extends javax.swing.JInternalFrame {
+public class FrmArmada extends FrmDefault {
 
     /**
      * Creates new form FrmArmada
@@ -50,20 +44,10 @@ public class FrmArmada extends javax.swing.JInternalFrame {
     }
     
     public FrmArmada() {
+        super();
         initComponents();
         
-         // Fokus pindah pakai Enter
-            KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                    .addKeyEventDispatcher(e -> {
-                        if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ENTER) {
-                            Component comp = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-                            if (comp instanceof JTextField) {
-                                e.consume(); // Jangan lanjut proses Enter
-                                KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
-                            }
-                        }
-                        return false;
-                    });
+         
             
         tableModel = new DefaultTableModel(new String[]{"Id","Nopol", "Kendaraan", "Pemilik", "Alamat", "Kota", "Telp","Driver"}, 0);
         tblArmada.setModel(tableModel);
