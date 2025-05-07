@@ -327,7 +327,7 @@ ORDER BY a.no_invoice]]></query>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			</element>
 			<element kind="staticText" uuid="a1d4ea9c-3d94-435f-bc8b-da3aac9ae312" x="10" y="189" width="90" height="20">
-				<text><![CDATA[Terbilag :]]></text>
+				<text><![CDATA[Terbilang :]]></text>
 			</element>
 			<element kind="textField" uuid="61c8ff89-93e8-4d34-a9b0-dbb53be7aed2" x="10" y="210" width="299" height="39" italic="true" bold="true">
 				<expression><![CDATA[$F{terbilang}]]></expression>
