@@ -362,7 +362,7 @@
             <Component class="javax.swing.JLabel" name="jLabel8">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="PPN 12%"/>
+                <Property name="text" type="java.lang.String" value="PPN 11%"/>
               </Properties>
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="edTanggal">

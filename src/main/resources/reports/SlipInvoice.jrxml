@@ -311,7 +311,7 @@ ORDER BY a.no_invoice]]></query>
 			</element>
 			<element kind="line" uuid="015a383b-f7c3-4d6b-bd22-a3737343d2b7" x="410" y="186" width="146" height="1"/>
 			<element kind="staticText" uuid="2f84ea29-57dc-4697-b7de-7bd591657d81" x="260" y="121" width="148" height="20" hTextAlign="Left">
-				<text><![CDATA[PPN 12%]]></text>
+				<text><![CDATA[PPN 11%]]></text>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			</element>
 			<element kind="staticText" uuid="cbfbf2a9-9036-4086-aa35-d5307b3dda62" x="260" y="80" width="148" height="20" hTextAlign="Left">
@@ -355,7 +355,7 @@ ORDER BY a.no_invoice]]></query>
 				<expression><![CDATA["Admin"]]></expression>
 			</element>
 			<element kind="textField" uuid="374d56da-691f-460f-9301-441d57020ea9" x="10" y="360" width="309" height="30" hTextAlign="Left">
-				<expression><![CDATA["Transfer Bank Mandiri No Rek. 138.001.7272456\nPT. Tampir Baru Logistik"]]></expression>
+				<expression><![CDATA["Transfer Bank Mandiri No Rek. 138.002.2313964\nCV. Tampir Baru Logistik"]]></expression>
 			</element>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</band>

@@ -291,7 +291,7 @@ public class FrmInvoice extends FrmDefault {
         jLabel7.setText("Pekerjaan");
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel8.setText("PPN 12%");
+        jLabel8.setText("PPN 11%");
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Keterangan");
