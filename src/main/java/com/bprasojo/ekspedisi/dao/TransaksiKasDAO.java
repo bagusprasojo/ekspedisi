@@ -51,8 +51,8 @@ public class TransaksiKasDAO extends ParentDAO{
             jdD = new JurnalDetail(0, transaksi.getAkunKasId(), transaksi.getNominalMasuk(), 0);
             jdK = new JurnalDetail(0, transaksi.getAkunTransaksiId(), 0, transaksi.getNominalMasuk());
         } else {
-            jdK = new JurnalDetail(0, transaksi.getAkunKasId(), transaksi.getNominalKeluar(), 0);
-            jdD = new JurnalDetail(0, transaksi.getAkunTransaksiId(), 0, transaksi.getNominalKeluar());        
+            jdK = new JurnalDetail(0, transaksi.getAkunKasId(), 0, transaksi.getNominalKeluar());
+            jdD = new JurnalDetail(0, transaksi.getAkunTransaksiId(), transaksi.getNominalKeluar(), 0);        
         } 
         
         jurnal.getJurnalDetails().add(jdD);
