@@ -59,7 +59,7 @@
 	<parameter name="perkiraan_id" class="java.lang.Integer"/>
 	<parameter name="tahun" class="java.lang.Integer"/>
 	<parameter name="bulan" class="java.lang.Integer"/>
-	<parameter name="tgl_saldo_awal" class="java.sql.Date"/>
+	<parameter name="tgl_saldo_awal" class="java.util.Date"/>
 	<query language="SQL"><![CDATA[select q.*, p.* from (
 select 1 as urutan, b.kode, b.nama,  a.tanggal, 'SALDO AWAL' as no_jurnal,'' as keterangan, debet, kredit, 
 case 
@@ -70,7 +70,7 @@ end as saldo_akhir
 from closing_perkiraan a
 inner join perkiraan b on a.perkiraan_id = b.id
 where a.perkiraan_id =  $P{perkiraan_id} 
-and date(a.tanggal) = '2025-01-31'
+and date(a.tanggal) = date($P{tgl_saldo_awal})
 
 union all
 

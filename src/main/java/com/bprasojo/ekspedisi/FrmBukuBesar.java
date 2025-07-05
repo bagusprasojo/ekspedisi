@@ -9,13 +9,20 @@ import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.utils.AppUtils;
 import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  *
@@ -51,8 +58,6 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         pnlData = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblBukuBesar = new javax.swing.JTable();
         pnlFilter = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         edKode = new javax.swing.JTextField();
@@ -71,19 +76,6 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
         setTitle("Buku Besar");
 
         pnlData.setLayout(new java.awt.BorderLayout());
-
-        tblBukuBesar.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "Tanggal", "No Bukti", "Keterangan", "Debet", "Kredit", "Saldo"
-            }
-        ));
-        jScrollPane1.setViewportView(tblBukuBesar);
-
-        pnlData.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("Kode Perkiraan");
@@ -208,25 +200,29 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_cbBulanActionPerformed
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        tableModel.setRowCount(0); // Bersihkan tabel
-//        List<Map<String, Object>> result = bukubesarDAO.getDataBukuBesar(2025, 5, perkiraan);
-//        for (Map<String, Object> row : result) {
-//            
-//            BigDecimal debet =  (BigDecimal) row.get("debet");
-//            BigDecimal kredit = (BigDecimal) row.get("kredit");
-//            BigDecimal saldo = debet - kredit;
-//            
-//            tableModel.addRow(new Object[]{
-//                        AppUtils.DateFormatShort((Date) row.get("tanggal")),                        
-//                        (String) row.get("no_jurnal"),
-//                        (String) row.get("keterangan"),
-//                        AppUtils.NumericFormat(debet),
-//                        AppUtils.NumericFormat(kredit),
-//                        AppUtils.NumericFormat(saldo)
-//                });
-//        }
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/BukuBesar.jasper");
+        Map<String, Object> params = new HashMap<>();
+        params.put("perkiraan_id", perkiraan.getId());
+        int tahun = (Integer)cbTahun.getSelectedItem();
+        int bulan = cbBulan.getSelectedIndex() + 1;
+        params.put("tahun", tahun);
+        params.put("bulan", bulan);
         
-        tblBukuBesar.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        LocalDate tanggalPertamaBulan = LocalDate.of(tahun, bulan, 1);
+
+        // Menentukan tanggal terakhir bulan sebelumnya
+        LocalDate tanggalTerakhirBulanSebelumnya = tanggalPertamaBulan.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+        
+        
+        params.put("tgl_saldo_awal", tanggalTerakhirBulanSebelumnya);
+        
+        
+        
+        try {
+            AppUtils.showReport(jasperStream, params);
+        } catch (JRException ex) {
+            Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnTampilkanActionPerformed
 
 
@@ -240,9 +236,7 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnlData;
     private javax.swing.JPanel pnlFilter;
-    private javax.swing.JTable tblBukuBesar;
     // End of variables declaration//GEN-END:variables
 }
