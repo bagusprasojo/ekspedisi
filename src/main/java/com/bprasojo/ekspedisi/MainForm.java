@@ -97,9 +97,11 @@ public class MainForm extends javax.swing.JFrame {
         jMenu4 = new javax.swing.JMenu();
         miJurnalPenyesuaian = new javax.swing.JMenuItem();
         miPerkiraan = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jMenuItem22 = new javax.swing.JMenuItem();
+        jMenu11 = new javax.swing.JMenu();
+        jMenuItem21 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu10 = new javax.swing.JMenu();
         jMenuItem20 = new javax.swing.JMenuItem();
 
@@ -347,14 +349,6 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu4.add(miPerkiraan);
-
-        jMenuItem2.setText("Daftar Jurnal");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
-            }
-        });
-        jMenu4.add(jMenuItem2);
         jMenu4.add(jSeparator5);
 
         jMenuItem22.setText("Jenis Transaksi");
@@ -364,6 +358,26 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         jMenu4.add(jMenuItem22);
+
+        jMenu11.setText("Laporan");
+
+        jMenuItem21.setText("Buku Besar");
+        jMenuItem21.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem21ActionPerformed(evt);
+            }
+        });
+        jMenu11.add(jMenuItem21);
+
+        jMenuItem2.setText("Daftar Jurnal");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu11.add(jMenuItem2);
+
+        jMenu4.add(jMenu11);
 
         jMenuBar1.add(jMenu4);
 
@@ -637,6 +651,12 @@ public class MainForm extends javax.swing.JFrame {
         frmJurnalPenyesuaian.setVisible(true);
     }//GEN-LAST:event_miJurnalPenyesuaianActionPerformed
 
+    private void jMenuItem21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem21ActionPerformed
+        FrmBukuBesar frmBukuBesar = new FrmBukuBesar();
+        desktopPane.add(frmBukuBesar);
+        frmBukuBesar.setVisible(true);
+    }//GEN-LAST:event_jMenuItem21ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -696,6 +716,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JDesktopPane desktopPane;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu10;
+    private javax.swing.JMenu jMenu11;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
@@ -718,6 +739,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem20;
+    private javax.swing.JMenuItem jMenuItem21;
     private javax.swing.JMenuItem jMenuItem22;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

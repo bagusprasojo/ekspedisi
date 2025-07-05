@@ -50,7 +50,7 @@ public class ClosingDAO extends ParentDAO{
 
     // 🔹 Save (Insert/Update)
     
-    private int getLastClosingValue(int bank_id) throws SQLException{
+    private int getLastClosingBank(int bank_id) throws SQLException{
         int saldo_akhir = 0;
         
         String sql = "select saldo_akhir from closing_bank a " +
@@ -65,12 +65,95 @@ public class ClosingDAO extends ParentDAO{
                 }
                
             }
-        }
-            
-
-            
+        }   
         
         return saldo_akhir;
+    }
+    
+    private int getLastClosingPerkiraan(int perkiraan_id) throws SQLException{
+        int saldo_akhir = 0;
+        
+        String sql = "select saldo_normal, debet, kredit from closing_perkiraan a " +
+                     " where a.perkiraan_id = ? " +
+                     " order by a.tanggal desc limit 1 ";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, perkiraan_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String saldo_normal = rs.getString("saldo_normal");
+                    int debet = rs.getInt("debet");
+                    int kredit = rs.getInt("kredit");
+                    
+                    if (saldo_normal.equals("DEBET")){
+                        saldo_akhir = debet - kredit;
+                    } else {
+                        saldo_akhir = kredit - debet;
+                    }
+                    
+                }
+               
+            }
+        }   
+        
+        return saldo_akhir;
+    }
+    
+    private void saveClosingPerkiraan(Closing closing) throws SQLException {
+        Calendar calendar = Calendar.getInstance();
+
+        // Pastikan closing.getTanggal() mengembalikan objek Date yang valid
+        calendar.setTime(closing.getTanggal()); 
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Karena bulan dimulai dari 0 di Calendar
+
+        String sql = "select b.perkiraan_id, c.saldo_normal, sum(b.debet - b.kredit) as mutasi " 
+                    + " from jurnal a " 
+                    + " inner join jurnal_detail b on a.id = b.jurnal_id " 
+                    + " inner join perkiraan c on b.perkiraan_id = c.id " 
+                    + " inner join transaksi_kas d on a.no_jurnal = d.no_bukti " 
+                    + " where year(a.tanggal) = ? " 
+                    + " and month(a.tanggal) = ? " 
+                    + " group by b.perkiraan_id, c.saldo_normal";
+
+        Date tanggal = new Date(closing.getTanggal().getTime());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, year);
+            stmt.setInt(2, month);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) { // Menggunakan while untuk insert lebih dari satu bank_id
+                    String sqlInsert = "INSERT INTO closing_perkiraan(closing_id, perkiraan_id, tanggal, saldo_normal, debet, kredit) VALUES (?, ?, ?, ?, ?, ?)";
+
+                    // Gunakan objek PreparedStatement baru untuk query INSERT
+                    try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert)) {
+                        int saldo_last_month = getLastClosingPerkiraan(rs.getInt("perkiraan_id"));
+                        
+                        String saldo_normal  = rs.getString("saldo_normal");
+                        int mutasi = rs.getInt("mutasi");
+                        if (saldo_normal.equals("KREDIT")){
+                            mutasi = -1 * mutasi;
+                        }
+                        int saldo_akhir = saldo_last_month + mutasi;
+                        
+                        stmtInsert.setInt(1, closing.getId());
+                        stmtInsert.setInt(2, rs.getInt("perkiraan_id"));
+                        stmtInsert.setDate(3, tanggal);
+                        stmtInsert.setString(4, saldo_normal);
+                        
+                        if (saldo_normal.equals("DEBET")){
+                            stmtInsert.setInt(5, saldo_akhir);
+                            stmtInsert.setInt(6, 0);
+                        } else {
+                            stmtInsert.setInt(5, 0);
+                            stmtInsert.setInt(6, saldo_akhir);
+                        }
+
+                        stmtInsert.executeUpdate(); // Menjalankan query INSERT
+                    }
+                }
+            }
+        }
     }
     
     private void saveClosingBank(Closing closing) throws SQLException {
@@ -96,7 +179,7 @@ public class ClosingDAO extends ParentDAO{
 
                     // Gunakan objek PreparedStatement baru untuk query INSERT
                     try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert)) {
-                        int saldo_last_month = getLastClosingValue(rs.getInt("bank_id"));
+                        int saldo_last_month = getLastClosingBank(rs.getInt("bank_id"));
                         int mutasi = rs.getInt("mutasi");
                         int saldo_akhir = saldo_last_month + mutasi;
                         
@@ -184,7 +267,10 @@ public class ClosingDAO extends ParentDAO{
                 }
                 
                 deleteClosingBank(closing.getId());
+                deleteClosingPerkiraan(closing.getId());
+                
                 saveClosingBank(closing);
+                saveClosingPerkiraan(closing);
             }
             
             conn.commit();
@@ -313,6 +399,7 @@ public class ClosingDAO extends ParentDAO{
             }
             
             deleteClosingBank(id);
+            deleteClosingPerkiraan(id);
             conn.commit();
         } catch (SQLException ex) {
             conn.rollback();
@@ -324,6 +411,14 @@ public class ClosingDAO extends ParentDAO{
 
     private void deleteClosingBank(int closingID) throws SQLException {
         String deleteSql = "DELETE FROM closing_bank WHERE closing_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
+            stmt.setInt(1, closingID);
+            stmt.executeUpdate();
+        }
+    }
+    
+    private void deleteClosingPerkiraan(int closingID) throws SQLException {
+        String deleteSql = "DELETE FROM closing_perkiraan WHERE closing_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(deleteSql)) {
             stmt.setInt(1, closingID);
             stmt.executeUpdate();

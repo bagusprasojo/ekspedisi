@@ -76,6 +76,7 @@
 
     <build>
         <finalName>ekspedisi</finalName>
+        <!--<finalName>ekspedisiJurnal</finalName>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -111,6 +112,7 @@
                         <!-- Transformer untuk menambahkan mainClass ke manifest JAR -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <mainClass>com.bprasojo.ekspedisi.MainForm</mainClass>
+                            <!--<mainClass>com.bprasojo.ekspedisi.UpdateJurnalKas</mainClass>-->
                         </transformer>
                     </transformers>
                 </configuration>
