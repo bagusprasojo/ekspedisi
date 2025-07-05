@@ -111,7 +111,6 @@ public class ClosingDAO extends ParentDAO{
                     + " from jurnal a " 
                     + " inner join jurnal_detail b on a.id = b.jurnal_id " 
                     + " inner join perkiraan c on b.perkiraan_id = c.id " 
-                    + " inner join transaksi_kas d on a.no_jurnal = d.no_bukti " 
                     + " where year(a.tanggal) = ? " 
                     + " and month(a.tanggal) = ? " 
                     + " group by b.perkiraan_id, c.saldo_normal";

@@ -100,8 +100,9 @@ public class MainForm extends javax.swing.JFrame {
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jMenuItem22 = new javax.swing.JMenuItem();
         jMenu11 = new javax.swing.JMenu();
-        jMenuItem21 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem21 = new javax.swing.JMenuItem();
+        jMenuItem23 = new javax.swing.JMenuItem();
         jMenu10 = new javax.swing.JMenu();
         jMenuItem20 = new javax.swing.JMenuItem();
 
@@ -361,6 +362,14 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenu11.setText("Laporan");
 
+        jMenuItem2.setText("Daftar Jurnal");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu11.add(jMenuItem2);
+
         jMenuItem21.setText("Buku Besar");
         jMenuItem21.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -369,13 +378,13 @@ public class MainForm extends javax.swing.JFrame {
         });
         jMenu11.add(jMenuItem21);
 
-        jMenuItem2.setText("Daftar Jurnal");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem23.setText("Neraca Saldo");
+        jMenuItem23.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jMenuItem23ActionPerformed(evt);
             }
         });
-        jMenu11.add(jMenuItem2);
+        jMenu11.add(jMenuItem23);
 
         jMenu4.add(jMenu11);
 
@@ -657,6 +666,12 @@ public class MainForm extends javax.swing.JFrame {
         frmBukuBesar.setVisible(true);
     }//GEN-LAST:event_jMenuItem21ActionPerformed
 
+    private void jMenuItem23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem23ActionPerformed
+        FrmNeracaSaldo frmNeracaSaldo = new FrmNeracaSaldo();
+        desktopPane.add(frmNeracaSaldo);
+        frmNeracaSaldo.setVisible(true);
+    }//GEN-LAST:event_jMenuItem23ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -741,6 +756,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem20;
     private javax.swing.JMenuItem jMenuItem21;
     private javax.swing.JMenuItem jMenuItem22;
+    private javax.swing.JMenuItem jMenuItem23;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;

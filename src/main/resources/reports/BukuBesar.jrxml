@@ -74,7 +74,7 @@ and date(a.tanggal) = date($P{tgl_saldo_awal})
 
 union all
 
-select 2, e.kode, e.nama, a.tanggal, a.no_jurnal, a.keterangan, b.debet, b.kredit,
+select 2, c.kode, c.nama, a.tanggal, a.no_jurnal, a.keterangan, b.debet, b.kredit,
 case 
 	when c.saldo_normal = 'DEBET' then  b.debet - b.kredit
 	else b.kredit - b.debet
@@ -83,8 +83,6 @@ end as saldo_akhir
 from jurnal a
 inner join jurnal_detail b on a.id = b.jurnal_id
 inner join perkiraan c on b.perkiraan_id = c.id
-inner join transaksi_kas d on a.no_jurnal = d.no_bukti
-inner join perkiraan e on b.perkiraan_id = e.id
 where year(a.tanggal) =  $P{tahun} 
 and month(a.tanggal) =  $P{bulan} 
 and b.perkiraan_id = $P{perkiraan_id} 

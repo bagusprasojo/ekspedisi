@@ -23,7 +23,7 @@ import net.sf.jasperreports.engine.JRException;
  *
  * @author USER
  */
-public class FrmBukuBesar extends javax.swing.JInternalFrame {
+public class FrmNeracaSaldo extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmBukuBesar
@@ -33,7 +33,7 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
     private PerkiraanDAO perkiraanDAO;
     private BukuBesarDAO bukubesarDAO;
     
-    public FrmBukuBesar() {
+    public FrmNeracaSaldo() {
         initComponents();
         
         perkiraanDAO = new PerkiraanDAO();
@@ -55,11 +55,6 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
 
         pnlData = new javax.swing.JPanel();
         pnlFilter = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        edKode = new javax.swing.JTextField();
-        btnRek = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        edNama = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         cbBulan = new javax.swing.JComboBox<>();
         cbTahun = new javax.swing.JComboBox<>();
@@ -72,19 +67,6 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
         setTitle("Buku Besar");
 
         pnlData.setLayout(new java.awt.BorderLayout());
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel3.setText("Kode Perkiraan");
-
-        btnRek.setText("...");
-        btnRek.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRekActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Nama Perkiraan");
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Periode");
@@ -109,22 +91,13 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
             pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFilterLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlFilterLayout.createSequentialGroup()
-                        .addComponent(cbBulan, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbTahun, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(edNama)
-                    .addComponent(edKode, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(cbBulan, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnRek)
-                    .addComponent(btnTampilkan))
+                .addComponent(cbTahun, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnTampilkan)
                 .addContainerGap(220, Short.MAX_VALUE))
         );
         pnlFilterLayout.setVerticalGroup(
@@ -132,20 +105,11 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
             .addGroup(pnlFilterLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(edKode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRek))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbBulan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbTahun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(btnTampilkan))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         pnlData.add(pnlFilter, java.awt.BorderLayout.PAGE_START);
@@ -157,41 +121,15 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
 
     
     
-    private void btnRekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRekActionPerformed
-        String sqlQuery = "select kode,nama from v_akun_transaksi";
-        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
-        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
-        if (selectedRecord != null) {
-            try {
-                // Mengambil nilai dengan nama kolom
-                String kode = selectedRecord.get("kode").toString();
-                perkiraan = perkiraanDAO.getPerkiraanByKode(kode);
-
-                if (perkiraan != null){
-                    edKode.setText(perkiraan.getKode());
-                    edNama.setText(perkiraan.getNama());                   
-                } else {
-                    edKode.setText("");
-                    edNama.setText("");
-                }
-            } catch (SQLException ex) {
-                AppUtils.showErrorDialog("Ada error : \n" + ex.getMessage());
-            }
-
-        } else {            
-            AppUtils.showInfoDialog("Tidak ada data yang dipilih.");
-        }
-    }//GEN-LAST:event_btnRekActionPerformed
-
     private void cbBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbBulanActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbBulanActionPerformed
 
     private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/BukuBesar.jasper");
+        InputStream jasperStream = getClass().getClassLoader().getResourceAsStream("reports/NeracaSaldo.jasper");
         Map<String, Object> params = new HashMap<>();
         params.put("REPORT_LOGO", "reports/logo.png");
-        params.put("perkiraan_id", perkiraan.getId());
+        
         int tahun = (Integer)cbTahun.getSelectedItem();
         int bulan = cbBulan.getSelectedIndex() + 1;
         params.put("tahun", tahun);
@@ -204,7 +142,7 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
             try {
                 AppUtils.showReport(jasperStream, params);
             } catch (JRException ex) {
-                Logger.getLogger(FrmBukuBesar.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FrmNeracaSaldo.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             AppUtils.showWarningDialog("Periode Sebelumnya Belum Closing\nLakukan Closing Untuk Mendapatkan Saldo Awal yang Benar");
@@ -215,14 +153,9 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnRek;
     private javax.swing.JButton btnTampilkan;
     private javax.swing.JComboBox<String> cbBulan;
     private javax.swing.JComboBox<Integer> cbTahun;
-    private javax.swing.JTextField edKode;
-    private javax.swing.JTextField edNama;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel pnlData;
     private javax.swing.JPanel pnlFilter;
@@ -265,7 +198,7 @@ public class FrmBukuBesar extends javax.swing.JInternalFrame {
 
             return dateTransInt <= dateClsoingInt;
         } catch (SQLException ex) {
-            Logger.getLogger(FrmBukuBesar.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FrmNeracaSaldo.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
