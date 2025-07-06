@@ -30,20 +30,46 @@ public class PerkiraanDAO extends ParentDAO{
         
         return null;
     }
+    public void save(Perkiraan perkiraan) throws SQLException {
+        if (perkiraan.getId() == 0){
+            addPerkiraan(perkiraan);
+        } else {
+            updatePerkiraan(perkiraan);
+        }
+    }
     // Menambah Perkiraan
-    public void addPerkiraan(Perkiraan perkiraan) throws SQLException {
+    private void addPerkiraan(Perkiraan perkiraan) throws SQLException {
         String query = "INSERT INTO perkiraan (kode, nama, parent_id, golongan, kelompok, level, saldo_normal) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, perkiraan.getKode());
-            stmt.setString(2, perkiraan.getNama());
-            stmt.setInt(3, perkiraan.getParent_Id());
-            stmt.setString(4, perkiraan.getGolongan());
-            stmt.setString(5, perkiraan.getKelompok());
-            stmt.setInt(6, perkiraan.getLevel());
-            stmt.setString(7, perkiraan.getSaldo_normal());
+            fillPerkiraanStatement(stmt, perkiraan, false);
             stmt.executeUpdate();
         }
     }
+
+    // Memperbarui Perkiraan
+    private void updatePerkiraan(Perkiraan perkiraan) throws SQLException {
+        String query = "UPDATE perkiraan SET kode = ? ,nama = ?, parent_id = ?, golongan = ?, kelompok = ?, level = ?, saldo_normal= ? WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            fillPerkiraanStatement(stmt, perkiraan, true);
+            stmt.executeUpdate();
+        }
+    }
+
+    // Method pembantu untuk isi PreparedStatement
+    private void fillPerkiraanStatement(PreparedStatement stmt, Perkiraan perkiraan, boolean includeId) throws SQLException {
+        stmt.setString(1, perkiraan.getKode());
+        stmt.setString(2, perkiraan.getNama());
+        stmt.setInt(3, perkiraan.getParent_Id());
+        stmt.setString(4, perkiraan.getGolongan());
+        stmt.setString(5, perkiraan.getKelompok());
+        stmt.setInt(6, perkiraan.getLevel());
+        stmt.setString(7, perkiraan.getSaldo_normal().name().toUpperCase());
+
+        if (includeId) {
+            stmt.setInt(8, perkiraan.getId());
+        }
+    }
+
 
     private Perkiraan getPerkiraan(String column, Object value) throws SQLException {
         String query = "SELECT * FROM perkiraan WHERE " + column + " = ?";
@@ -58,7 +84,7 @@ public class PerkiraanDAO extends ParentDAO{
                         rs.getString("golongan"),
                         rs.getString("kelompok"),
                         rs.getInt("level"),
-                        rs.getString("saldo_normal"),
+                        Perkiraan.SaldoNormal.valueOf(rs.getString("saldo_normal").toUpperCase()),
                         rs.getInt("id")
                 );
             }
@@ -138,7 +164,7 @@ public class PerkiraanDAO extends ParentDAO{
                         rs.getString("golongan"),
                         rs.getString("kelompok"),
                         rs.getInt("level"),
-                        rs.getString("saldo_normal"),
+                        Perkiraan.SaldoNormal.valueOf(rs.getString("saldo_normal").toUpperCase()),
                         rs.getInt("id")
                 ));
             }
@@ -159,7 +185,7 @@ public class PerkiraanDAO extends ParentDAO{
                         rs.getString("golongan"),
                         rs.getString("kelompok"),
                         rs.getInt("level"),
-                        rs.getString("saldo_normal"),
+                        Perkiraan.SaldoNormal.valueOf(rs.getString("saldo_normal").toUpperCase()),
                         rs.getInt("id")
                 ));
             }
@@ -180,7 +206,7 @@ public class PerkiraanDAO extends ParentDAO{
                         rs.getString("golongan"),
                         rs.getString("kelompok"),
                         rs.getInt("level"),
-                        rs.getString("saldo_normal"),
+                        Perkiraan.SaldoNormal.valueOf(rs.getString("saldo_normal").toUpperCase()),
                         rs.getInt("id")
                 ));
             }
@@ -188,20 +214,7 @@ public class PerkiraanDAO extends ParentDAO{
         return perkiraans;
     }
 
-    // Memperbarui Perkiraan
-    public void updatePerkiraan(Perkiraan perkiraan) throws SQLException {
-        String query = "UPDATE perkiraan SET nama = ?, parent_id = ?, golongan = ?, kelompok = ?, level = ?, saldo_normal= ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, perkiraan.getNama());
-            stmt.setInt(2, perkiraan.getParent_Id());
-            stmt.setString(3, perkiraan.getGolongan());
-            stmt.setString(4, perkiraan.getKelompok());
-            stmt.setInt(5, perkiraan.getLevel());
-            stmt.setString(6, perkiraan.getSaldo_normal());
-            stmt.setInt(7, perkiraan.getId());
-            stmt.executeUpdate();
-        }
-    }
+    
 
     // Menghapus Perkiraan berdasarkan kode
     public void deletePerkiraanByKode(String kode) throws SQLException {

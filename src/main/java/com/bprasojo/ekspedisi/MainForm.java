@@ -103,6 +103,8 @@ public class MainForm extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem21 = new javax.swing.JMenuItem();
         jMenuItem23 = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem24 = new javax.swing.JMenuItem();
         jMenu10 = new javax.swing.JMenu();
         jMenuItem20 = new javax.swing.JMenuItem();
 
@@ -387,6 +389,15 @@ public class MainForm extends javax.swing.JFrame {
         jMenu11.add(jMenuItem23);
 
         jMenu4.add(jMenu11);
+        jMenu4.add(jSeparator6);
+
+        jMenuItem24.setText("Perkiraan");
+        jMenuItem24.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem24ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem24);
 
         jMenuBar1.add(jMenu4);
 
@@ -672,6 +683,12 @@ public class MainForm extends javax.swing.JFrame {
         frmNeracaSaldo.setVisible(true);
     }//GEN-LAST:event_jMenuItem23ActionPerformed
 
+    private void jMenuItem24ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem24ActionPerformed
+        FrmPerkiraan frmPerkiraan = new FrmPerkiraan(user);
+        desktopPane.add(frmPerkiraan);
+        frmPerkiraan.setVisible(true);
+    }//GEN-LAST:event_jMenuItem24ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -757,6 +774,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem21;
     private javax.swing.JMenuItem jMenuItem22;
     private javax.swing.JMenuItem jMenuItem23;
+    private javax.swing.JMenuItem jMenuItem24;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
@@ -769,6 +787,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JMenuItem miArmada;
     private javax.swing.JMenuItem miCustomer;
     private javax.swing.JMenuItem miJurnalPenyesuaian;

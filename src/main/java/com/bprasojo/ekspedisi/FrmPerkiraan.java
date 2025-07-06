@@ -4,10 +4,20 @@
  */
 package com.bprasojo.ekspedisi;
 
-import com.bprasojo.ekspedisi.model.Bank;
+import com.bprasojo.ekspedisi.dao.PerkiraanDAO;
 import com.bprasojo.ekspedisi.model.Perkiraan;
 import com.bprasojo.ekspedisi.model.User;
 import com.bprasojo.ekspedisi.utils.AppUtils;
+import com.bprasojo.ekspedisi.utils.LookupForm;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -20,6 +30,8 @@ public class FrmPerkiraan extends FrmDefault {
      */
     private User user;
     private Perkiraan perkiraan;
+    private PerkiraanDAO perkiraanDAO;
+    private Perkiraan perkiraan_parent;
     
     public FrmPerkiraan(User user) {
         this();
@@ -29,6 +41,16 @@ public class FrmPerkiraan extends FrmDefault {
     public FrmPerkiraan() {
         super();
         initComponents();
+        btnJurnal.setVisible(false);
+        
+        setStatusTombol("awal");        
+        
+        perkiraanDAO = new PerkiraanDAO();
+        try {
+            loadPerkiraanTree();
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog(ex.getMessage());
+        }
     }
 
     /**
@@ -48,11 +70,24 @@ public class FrmPerkiraan extends FrmDefault {
         btnHapus = new javax.swing.JButton();
         btnKeluar = new javax.swing.JButton();
         btnJurnal = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTreePerkiraan = new javax.swing.JTree();
+        jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        edInduk = new javax.swing.JComboBox<>();
+        edNamaAkunParent = new javax.swing.JTextField();
+        btnAkunParent = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        edKode = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        edNama = new javax.swing.JTextField();
+        cbKelompok = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        cbGolongan = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        cbSaldoNormal = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setIconifiable(true);
@@ -168,52 +203,128 @@ public class FrmPerkiraan extends FrmDefault {
         });
         jToolBar1.add(btnJurnal);
 
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Refresh.32.png"))); // NOI18N
+        btnRefresh.setText("Refresh");
+        btnRefresh.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setMaximumSize(new java.awt.Dimension(60, 70));
+        btnRefresh.setMinimumSize(new java.awt.Dimension(60, 70));
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnRefresh);
+
         getContentPane().add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jTreePerkiraan.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                jTreePerkiraanValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTreePerkiraan);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 336, Short.MAX_VALUE)
+        jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jLabel1.setText("Parent");
+
+        edNamaAkunParent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edNamaAkunParentActionPerformed(evt);
+            }
+        });
+
+        btnAkunParent.setText("...");
+        btnAkunParent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAkunParentActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Kode");
+
+        jLabel3.setText("Nama");
+
+        cbKelompok.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "AKTIVA", "PASIVA", "KEWAJIBAN", "EQUITAS", "PENDAPATAN", "BIAYA" }));
+
+        jLabel4.setText("Kelompok");
+
+        jLabel5.setText("Golongan");
+
+        cbGolongan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "AKTIVA", "PASIVA", "LABA/RUGI" }));
+
+        jLabel6.setText("Saldo Normal");
+
+        cbSaldoNormal.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DEBET", "KREDIT" }));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addGap(49, 49, 49)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel3)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel4)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel5))))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(edNamaAkunParent)
+                    .addComponent(edKode)
+                    .addComponent(edNama)
+                    .addComponent(cbKelompok, 0, 274, Short.MAX_VALUE)
+                    .addComponent(cbGolongan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbSaldoNormal, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAkunParent)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 438, Short.MAX_VALUE)
-        );
-
-        jPanel1.add(jPanel2, java.awt.BorderLayout.WEST);
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabel1.setText("Induk");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jLabel1)
-                .addGap(43, 43, 43)
-                .addComponent(edInduk, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(edInduk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(410, Short.MAX_VALUE))
+                    .addComponent(edNamaAkunParent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAkunParent))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(edKode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(edNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbKelompok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbGolongan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(cbSaldoNormal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(273, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
+        jPanel1.add(jPanel4, java.awt.BorderLayout.EAST);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -268,17 +379,14 @@ public class FrmPerkiraan extends FrmDefault {
     }
     
     private void SetEnableKomponenInput(boolean enable) {
-//        edNopol.setEnabled(enable);
-//        btnKendaraan.setEnabled(enable);
-//        cbBank.setEnabled(enable);
-//        edTanggal.setEnabled(enable);
-//        edKMSekarang.setEnabled(enable);
-//        edKMTerakhir.setEnabled(enable);
-//        edPembelianBBM.setEnabled(enable);
-//        edKeterangan.setEnabled(enable);
-//        
-//        edDriver.setEnabled(enable);
-//        btnDriver.setEnabled(enable);
+        edNamaAkunParent.setEnabled(enable);
+        btnAkunParent.setEnabled(enable);
+        edKode.setEnabled(enable);
+        edNama.setEnabled(enable);
+        cbKelompok.setEnabled(enable);
+        cbGolongan.setEnabled(enable);
+        cbSaldoNormal.setEnabled(enable);
+//        edLevel.setEnabled(enable);
     }
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         setStatusTombol("edit");
@@ -288,8 +396,27 @@ public class FrmPerkiraan extends FrmDefault {
         if (validasiInput() == false){
             return;
         }
-
         
+        perkiraan.setKode(edKode.getText());
+        perkiraan.setNama(edKode.getText());
+        perkiraan.setGolongan(cbGolongan.getSelectedItem().toString());
+        perkiraan.setKelompok(cbKelompok.getSelectedItem().toString());
+        
+        if (perkiraan_parent == null){
+            perkiraan.setLevel(0);
+        } else {
+            perkiraan.setLevel(perkiraan_parent.getLevel() + 1);
+        }
+        
+        perkiraan.setParent_Id(perkiraan_parent.getId());
+        perkiraan.setSaldo_normal(Perkiraan.SaldoNormal.valueOf(cbSaldoNormal.getSelectedItem().toString()));
+        
+        try {
+            perkiraanDAO.save(perkiraan);
+            AppUtils.showInfoDialog("Berhasil simpan perkiraan");
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialogSimpan(ex);
+        }        
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
@@ -297,7 +424,38 @@ public class FrmPerkiraan extends FrmDefault {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        if (perkiraan == null){
+            AppUtils.showWarningDialog("Tidak ada data yang akan dihapus");
+            return;
+        }
+        
+        try {
+            if (perkiraanDAO.isPunyaAnak(perkiraan.getKode())){
+                AppUtils.showWarningDialog("Data tidak bisa dihapus karena mempunyai perkiraan anak");
+                return;
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmPerkiraan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
         boolean userConfirmed = AppUtils.showConfirmDialog("Apakah Anda yakin akan menghapus data?");
+        
+        if (userConfirmed == false){
+            return;
+        }
+        
+        try {
+            perkiraanDAO.deletePerkiraan(perkiraan.getId());
+            AppUtils.showInfoDialog("Berhasil hapus data");
+            btnRefreshActionPerformed(evt);
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialogHapus(ex);
+        }
+        
+        
 
         
     }//GEN-LAST:event_btnHapusActionPerformed
@@ -310,24 +468,191 @@ public class FrmPerkiraan extends FrmDefault {
         
     }//GEN-LAST:event_btnJurnalActionPerformed
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        try {
+            loadPerkiraanTree();
+            setStatusTombol("awal");
+        } catch (SQLException ex) {
+            AppUtils.showErrorDialog(ex.getMessage());
+        }
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void edNamaAkunParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edNamaAkunParentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edNamaAkunParentActionPerformed
+
+    private void btnAkunParentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAkunParentActionPerformed
+        String sqlQuery = "SELECT " +
+        " concat(REPEAT(' ', level * 4), kode) as kode_akun, " +
+        " concat(REPEAT(' ', level * 4), nama) as nama_akun, id " +
+        " FROM perkiraan " +
+        " ORDER BY kode";
+
+        LookupForm lookupForm = new LookupForm(this, sqlQuery, true);
+        Map<String, Object> selectedRecord = lookupForm.getSelectedRecord();
+        if (selectedRecord != null) {
+            try {
+                // Mengambil nilai dengan nama kolom
+                String kode = selectedRecord.get("kode_akun").toString().trim();
+                perkiraan_parent = perkiraanDAO.getPerkiraanByKode(kode);
+                
+                edNamaAkunParent.setText(perkiraan_parent.toString());
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmTransaksiKas.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }//GEN-LAST:event_btnAkunParentActionPerformed
+
+    private void jTreePerkiraanValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreePerkiraanValueChanged
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreePerkiraan.getLastSelectedPathComponent();
+        
+        if (selectedNode == null) return; // Tidak ada yang dipilih
+
+        Object userObject = selectedNode.getUserObject();
+
+        // Jika node menyimpan data Perkiraan, tampilkan detailnya
+        if (userObject instanceof Perkiraan) {
+            try {
+                int id_perkiraan = ((Perkiraan) userObject).getId();
+                perkiraan = perkiraanDAO.getById(id_perkiraan);
+                
+                tampilkanDetailPerkiraan(perkiraan);
+                setStatusTombol("selected");
+            } catch (SQLException ex) {
+                AppUtils.showConfirmDialog("Gagal Load Perkiraan\n" + ex.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jTreePerkiraanValueChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAkunParent;
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnJurnal;
     private javax.swing.JButton btnKeluar;
     private javax.swing.JButton btnNew;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSimpan;
-    private javax.swing.JComboBox<Perkiraan> edInduk;
+    private javax.swing.JComboBox<String> cbGolongan;
+    private javax.swing.JComboBox<String> cbKelompok;
+    private javax.swing.JComboBox<String> cbSaldoNormal;
+    private javax.swing.JTextField edKode;
+    private javax.swing.JTextField edNama;
+    private javax.swing.JTextField edNamaAkunParent;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JTree jTreePerkiraan;
     // End of variables declaration//GEN-END:variables
 
     private boolean validasiInput() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        if (perkiraan_parent == null){
+            if (AppUtils.showConfirmDialog("Anda yakin menyimpan perkiraan level 1") == false){
+                return false;
+            }
+        }
+        
+        if (edKode.getText().equals("")){
+            AppUtils.showWarningDialog("Kode belum diisi");
+            edKode.requestFocus();
+            return false;
+        }
+        
+        if (edNama.getText().equals("")){
+            AppUtils.showWarningDialog("Nama belum diisi");
+            edNama.requestFocus();
+            return false;
+        }
+        
+        if (cbKelompok.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Kelompok belum dipilih");
+            cbKelompok.requestFocus();
+            return false;
+        }
+        
+        if (cbGolongan.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Golongan belum dipilih");
+            cbGolongan.requestFocus();
+            return false;
+        }
+        
+        if (cbSaldoNormal.getSelectedIndex() < 0){
+            AppUtils.showWarningDialog("Saldo Normal belum dipilih");
+            cbSaldoNormal.requestFocus();
+            return false;
+        }
+        
+        if (AppUtils.showConfirmDialog("Anda yakin menyimpan data") == false){
+            return false;
+        }
+        
+        return true;
     }
+
+    public void loadPerkiraanTree() throws SQLException {
+        List<Perkiraan> semua = perkiraanDAO.getAllPerkiraan();
+
+        Map<Integer, List<Perkiraan>> treeMap = new HashMap<>();
+        for (Perkiraan p : semua) {
+            treeMap.computeIfAbsent(p.getParent_Id(), k -> new ArrayList<>()).add(p);
+        }
+
+        // Root Node manual
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Daftar Perkiraan");
+
+        // Tambahkan semua Perkiraan dengan parent_id = 0
+        List<Perkiraan> roots = treeMap.get(0);
+        if (roots != null) {
+            for (Perkiraan p : roots) {
+                DefaultMutableTreeNode node = buildTreeNode(p, treeMap);
+                rootNode.add(node);
+            }
+        }
+
+        jTreePerkiraan.setModel(new DefaultTreeModel(rootNode));
+    }
+
+    private DefaultMutableTreeNode buildTreeNode(Perkiraan perkiraan, Map<Integer, List<Perkiraan>> treeMap) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(perkiraan);
+        List<Perkiraan> anak = treeMap.get(perkiraan.getId());
+        if (anak != null) {
+            for (Perkiraan p : anak) {
+                node.add(buildTreeNode(p, treeMap));
+            }
+        }
+        return node;
+    }
+
+    private void tampilkanDetailPerkiraan(Perkiraan perkiraan) throws SQLException {
+        if (perkiraan != null){
+            if (perkiraan.getParent_Id() > 0){
+                perkiraan_parent = perkiraanDAO.getById(perkiraan.getParent_Id());
+                edNamaAkunParent.setText(perkiraan_parent.toString());                
+            } else {
+                perkiraan_parent = null;
+                edNamaAkunParent.setText("");                
+            }
+            
+            edKode.setText(perkiraan.getKode());
+            edNama.setText(perkiraan.getNama());
+        } else {
+            perkiraan_parent = null;
+            
+            edNamaAkunParent.setText("");
+            edKode.setText("");
+            edNama.setText("");
+        }
+    }
+
 }

@@ -8,17 +8,26 @@ package com.bprasojo.ekspedisi.model;
  *
  */
 public class Perkiraan extends BaseClass{
+    public enum SaldoNormal {
+        DEBET, KREDIT;
+    }
+
     private String kode;
     private String nama;
     private Integer parent_Id;
     private String golongan;
     private String kelompok;
     private Integer level;
-    private String saldo_normal;
+    private SaldoNormal saldo_normal;
     private Integer id;
+    
+    
 
     // Constructor
-    public Perkiraan(String kode, String nama, Integer parentId, String golongan, String kelompok, Integer level, String saldo_normal, Integer id) {
+    public Perkiraan() {
+    }
+
+    public Perkiraan(String kode, String nama, Integer parentId, String golongan, String kelompok, Integer level, SaldoNormal saldo_normal, Integer id) {
         this.kode = kode;
         this.nama = nama;
         this.parent_Id = parentId;
@@ -90,17 +99,18 @@ public class Perkiraan extends BaseClass{
     }
 
 
-    public String getSaldo_normal() {
+    public SaldoNormal getSaldo_normal() {
         return saldo_normal;
     }
 
-    public void setSaldo_normal(String saldo_normal) {
+    public void setSaldo_normal(SaldoNormal saldo_normal) {
         this.saldo_normal = saldo_normal;
     }
 
     @Override
-    public String toString() {        
-        return kode + '-' + nama; // Agar JComboBox menampilkan hanya nama
+    public String toString() {
+        return (kode != null ? kode : "") + " - " + (nama != null ? nama : "");
     }
+
 }
 

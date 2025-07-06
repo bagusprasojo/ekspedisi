@@ -70,6 +70,48 @@ public class ClosingDAO extends ParentDAO{
         return saldo_akhir;
     }
     
+    private int getLastClosingPerkiraanDebet(int perkiraan_id) throws SQLException{
+        int debet = 0;
+        
+        String sql = "select debet from closing_perkiraan a " +
+                     " where a.perkiraan_id = ? " +
+                     " order by a.tanggal desc limit 1 ";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, perkiraan_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    debet = rs.getInt("debet");                    
+                    
+                }
+               
+            }
+        }   
+        
+        return debet;
+    }
+    
+    private int getLastClosingPerkiraanKredit(int perkiraan_id) throws SQLException{
+        int kredit = 0;
+        
+        String sql = "select kredit from closing_perkiraan a " +
+                     " where a.perkiraan_id = ? " +
+                     " order by a.tanggal desc limit 1 ";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, perkiraan_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    kredit = rs.getInt("kredit");                    
+                    
+                }
+               
+            }
+        }   
+        
+        return kredit;
+    }
+    
     private int getLastClosingPerkiraan(int perkiraan_id) throws SQLException{
         int saldo_akhir = 0;
         
@@ -107,13 +149,19 @@ public class ClosingDAO extends ParentDAO{
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1; // Karena bulan dimulai dari 0 di Calendar
 
-        String sql = "select b.perkiraan_id, c.saldo_normal, sum(b.debet - b.kredit) as mutasi " 
-                    + " from jurnal a " 
-                    + " inner join jurnal_detail b on a.id = b.jurnal_id " 
-                    + " inner join perkiraan c on b.perkiraan_id = c.id " 
-                    + " where year(a.tanggal) = ? " 
-                    + " and month(a.tanggal) = ? " 
-                    + " group by b.perkiraan_id, c.saldo_normal";
+        String sql = "select p.perkiraan_id, p.saldo_normal, sum(p.debet) as debet, sum(p.kredit) as kredit   from " 
+                + "(" 
+                + " select a.perkiraan_id, a.saldo_normal, 0 as debet, 0 as kredit  " 
+                + " from closing_perkiraan a " 
+                + " union all " 
+                + " select b.perkiraan_id, c.saldo_normal, sum(b.debet) as debet, sum(b.kredit) as kredit " 
+                + " from jurnal a  " 
+                + " inner join jurnal_detail b on a.id = b.jurnal_id  " 
+                + " inner join perkiraan c on b.perkiraan_id = c.id  " 
+                + " where year(a.tanggal) = ? " 
+                + " and month(a.tanggal) = ? " 
+                + " group by b.perkiraan_id, c.saldo_normal " 
+                + " ) p GROUP BY p.perkiraan_id, p.saldo_normal ";
 
         Date tanggal = new Date(closing.getTanggal().getTime());
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -126,14 +174,16 @@ public class ClosingDAO extends ParentDAO{
 
                     // Gunakan objek PreparedStatement baru untuk query INSERT
                     try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert)) {
-                        int saldo_last_month = getLastClosingPerkiraan(rs.getInt("perkiraan_id"));
+                        String saldo_normal = rs.getString("saldo_normal");
+                        int perkiraan_id = rs.getInt("perkiraan_id");
+                        int saldo_last_month_debet = getLastClosingPerkiraanDebet(perkiraan_id);
+                        int saldo_last_month_kredit = getLastClosingPerkiraanKredit(perkiraan_id);
                         
-                        String saldo_normal  = rs.getString("saldo_normal");
-                        int mutasi = rs.getInt("mutasi");
-                        if (saldo_normal.equals("KREDIT")){
-                            mutasi = -1 * mutasi;
-                        }
-                        int saldo_akhir = saldo_last_month + mutasi;
+                        int debet = rs.getInt("debet");
+                        int kredit = rs.getInt("kredit");
+                        
+                        int total_debet = saldo_last_month_debet + debet;
+                        int total_kredit = saldo_last_month_kredit + kredit;
                         
                         stmtInsert.setInt(1, closing.getId());
                         stmtInsert.setInt(2, rs.getInt("perkiraan_id"));
@@ -141,13 +191,16 @@ public class ClosingDAO extends ParentDAO{
                         stmtInsert.setString(4, saldo_normal);
                         
                         if (saldo_normal.equals("DEBET")){
-                            stmtInsert.setInt(5, saldo_akhir);
+                            stmtInsert.setInt(5, total_debet - total_kredit);
                             stmtInsert.setInt(6, 0);
                         } else {
                             stmtInsert.setInt(5, 0);
-                            stmtInsert.setInt(6, saldo_akhir);
+                            stmtInsert.setInt(6, total_kredit - total_debet);
                         }
-
+                            
+//                        stmtInsert.setInt(5, total_debet);
+//                        stmtInsert.setInt(6, total_kredit);
+                        
                         stmtInsert.executeUpdate(); // Menjalankan query INSERT
                     }
                 }
