@@ -195,7 +195,7 @@ public class PerkiraanDAO extends ParentDAO{
     // Mengambil seluruh data Perkiraan
     public List<Perkiraan> getAllPerkiraan() throws SQLException {
         List<Perkiraan> perkiraans = new ArrayList<>();
-        String query = "SELECT * FROM perkiraan";
+        String query = "SELECT * FROM perkiraan order by kode";
         try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {

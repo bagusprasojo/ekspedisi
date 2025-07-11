@@ -64,7 +64,7 @@ public class FrmNeracaSaldo extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
-        setTitle("Buku Besar");
+        setTitle("Neraca Saldo");
 
         pnlData.setLayout(new java.awt.BorderLayout());
 

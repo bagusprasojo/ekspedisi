@@ -25,6 +25,14 @@ public class Perkiraan extends BaseClass{
 
     // Constructor
     public Perkiraan() {
+        this.kode = "";
+        this.nama = "";
+        this.parent_Id = 0;
+        this.golongan = "";
+        this.kelompok = "";
+        this.level = 0;
+        this.saldo_normal = SaldoNormal.DEBET;
+        this.id = 0;
     }
 
     public Perkiraan(String kode, String nama, Integer parentId, String golongan, String kelompok, Integer level, SaldoNormal saldo_normal, Integer id) {

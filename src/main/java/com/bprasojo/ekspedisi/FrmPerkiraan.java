@@ -332,6 +332,12 @@ public class FrmPerkiraan extends FrmDefault {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        setStatusTombol("tambah");
+        perkiraan = new Perkiraan();
+        perkiraan_parent = null;
+        edKode.setText("");
+        edNama.setText("");
+        edNamaAkunParent.setText("");
         
     }//GEN-LAST:event_btnNewActionPerformed
 
@@ -398,7 +404,7 @@ public class FrmPerkiraan extends FrmDefault {
         }
         
         perkiraan.setKode(edKode.getText());
-        perkiraan.setNama(edKode.getText());
+        perkiraan.setNama(edNama.getText());
         perkiraan.setGolongan(cbGolongan.getSelectedItem().toString());
         perkiraan.setKelompok(cbKelompok.getSelectedItem().toString());
         
@@ -646,6 +652,10 @@ public class FrmPerkiraan extends FrmDefault {
             
             edKode.setText(perkiraan.getKode());
             edNama.setText(perkiraan.getNama());
+            cbGolongan.setSelectedItem(perkiraan.getGolongan());
+            cbKelompok.setSelectedItem(perkiraan.getKelompok());
+            cbSaldoNormal.setSelectedItem(perkiraan.getSaldo_normal().toString());
+            
         } else {
             perkiraan_parent = null;
             
