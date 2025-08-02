@@ -1222,7 +1222,11 @@ public class FrmPembayaranTagihanCustomer extends FrmDefault {
         pph = ((Number)edPPH.getValue()).intValue();
       
       edTotal.setValue(nominalKas + pph);
-      int ppnBayar = (int) ((nominalKas + pph) / 111 * 11);
+      double ppnBayarD = nominalKas + pph;
+      ppnBayarD = ppnBayarD / 111;
+      ppnBayarD = ppnBayarD * 11;
+      
+      int ppnBayar = (int) Math.round(ppnBayarD);
       edPPNBayar.setValue(ppnBayar);
     }
     

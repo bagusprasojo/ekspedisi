@@ -921,7 +921,7 @@ public class FrmInvoice extends FrmDefault {
             nilaiPekerjaan = ((Number) edNilaiPekerjaan.getValue()).intValue();
         }
         
-        int ppn = (int) (0.11 * nilaiPekerjaan);
+        int ppn = (int) Math.round(0.11 * nilaiPekerjaan);
         
         edPPN.setValue(ppn);
         
